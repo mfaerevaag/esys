@@ -4,10 +4,14 @@ static const char filename[] = "ECG.txt";
 
 int main(int argc, const char * args[]) {
 	FILE *file = fopen(filename, "r");
-	int i1;
-	fscanf(file,"%i", &i1);
+	int num;
+	int max = 0;
+	while (fscanf(file,"%i", &num) == 1) {
+		if (num > max)
+			max = num;
+	}
 
-	printf("Det er %i\n", i1);
+	printf("Max er %i\n", max);
 
 	return 0;
 }

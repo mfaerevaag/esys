@@ -1,10 +1,6 @@
 COMP := clang
 
-.PHONY: one run
+.PHONY: day1
 
-one:
-	$(COMP) one.c -o one
-
-run:
-	one
-	./one ARG="test"
+day1:
+	$(COMP) day1/maxint.c -o bin/maxint

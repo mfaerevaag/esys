@@ -7,16 +7,19 @@
 int main() {
 	init_sensor("test_data/ECG.txt");
 
-	int max = 10000;
+	int max = 40;
 	int idx = 0;
 
-	int filt[max];
-	int sig[max];
+	int sig[max], filt_low[max], filt_high[max];
 	do {
 		sig[idx] = get_next_data();
-		filt[idx] = apply_low_pass(sig, filt, idx + 1, idx);
+		printf("%4i", sig[idx]);
 
-		printf("%i \t\t-> %i\n", sig[idx], filt[idx]);
+		filt_low[idx] = apply_low_pass(sig, filt_low, idx + 1, idx);
+		printf(" -> %5i", filt_low[idx]);
+
+		filt_high[idx] = apply_high_pass(filt_low, filt_high, idx + 1, idx);
+		printf(" -> %5i\n", filt_high[idx]);
 	} while (++idx < max);
 
 	destroy_sensor();

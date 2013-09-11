@@ -31,13 +31,13 @@ int apply_high_pass(int sig_data[], int filter_data[],
 
     int val_x = 0;
     if (sig_len >= 1)
-	val_x -= sig_data[sig_len - 1] / 32.0;
+	val_x -= sig_data[sig_len - 1] / 32;
     if (sig_len >= 17)
 	val_x += sig_data[sig_len - 17];
     if (sig_len >= 18)
 	val_x -= sig_data[sig_len - 18];
     if (sig_len >= 33)
-	val_x += sig_data[sig_len - 33] / 32.0;
+	val_x += sig_data[sig_len - 33] / 32;
 
     return val_y + val_x;
 }

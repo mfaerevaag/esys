@@ -7,7 +7,7 @@
 int main() {
 	init_sensor("test_data/ECG.txt");
 
-	int max = 40;
+	int max = 10000;
 	int idx = 0;
 
 	int sig[max], filt_low[max], filt_high[max];

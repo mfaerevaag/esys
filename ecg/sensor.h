@@ -4,6 +4,6 @@
 #ifndef _SENSOR_H_
 #define _SENSOR_H_
 
-int getNextData();
+int get_next_data();
 
 #endif

@@ -16,3 +16,7 @@
 *.out
 *.app
 /bin
+
+# large test data
+ECG10800K.txt
+ECG8100K.txt

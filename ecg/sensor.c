@@ -6,7 +6,7 @@
 static const char *filename = "ECG.txt";
 static long fpos = 0;
 
-int getNextData() {
+int get_next_data() {
 	FILE *file = fopen(filename, "r");
 	
 	fseek(file, fpos, SEEK_SET);

@@ -8,4 +8,4 @@ day1:
 ECG_FILES := $(wildcard ecg/*.c)
 
 ecg:
-	$(COMP) -g $(ECG_FILES) -o bin/ecg
+	$(COMP) -g $(ECG_FILES) -o bin/ecg -lm

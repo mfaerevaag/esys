@@ -41,3 +41,24 @@ int apply_high_pass(int sig_data[], int filter_data[],
 
     return val_y + val_x;
 }
+
+int apply_derivative(int sig_data[], int filter_data[], int sig_len, int filter_len) {
+	int val_x = 0;
+	if (sig_len >= 1)
+		val_x += 2 * sig_data[sig_len - 1];
+	if (sig_len >= 2)
+		val_x += sig_data[sig_len - 2];
+	if (sig_len >= 4)
+		val_x -= sig_data[sig_len - 4];
+	if (sig_len >= 5)
+		val_x -= 2 * sig_data[sig_len - 5];
+
+	val_x *= 1.0 / 8.0;
+
+	return val_x;
+}
+
+int apply_square(int sig_data[], int filter_data[], int sig_len, int filter_len) {
+    if (sig_len >= 1)
+		return sig_data[sig_len - 1] * sig_data[sig_len - 1];
+}

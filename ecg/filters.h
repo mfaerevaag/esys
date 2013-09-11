@@ -1,5 +1,3 @@
 #include <stdlib.h>
 
-int apply_low_pass() {
-	
-}
+int apply_low_pass(int sig_data[], int filter_data[], int sig_len, int filter_len);

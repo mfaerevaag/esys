@@ -5,5 +5,7 @@ COMP := clang
 day1:
 	$(COMP) -g day1/maxint.c -o bin/maxint
 
+ECG_FILES := $(wildcard ecg/*.c)
+
 ecg:
-	$(COMP) -g ecg/main.c ecg/sensor.c -o bin/ecg
+	$(COMP) -g $(ECG_FILES) -o bin/ecg

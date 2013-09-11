@@ -3,7 +3,6 @@
 #ifndef _SENSOR_C_
 #define _SENSOR_C_
 
-static long fpos = 0;
 static FILE *file;
 
 void init_sensor(const char *filename) {
@@ -16,16 +15,10 @@ void destroy_sensor() {
 }
 
 int get_next_data() {
-	
-	fseek(file, fpos, SEEK_SET);
-
 	int val;
 	fscanf(file,"%i", &val);
 
-	fpos = ftell(file);
-
 	return val;
 }
-
 
 #endif

@@ -1,5 +1,8 @@
 #include "filters.h"
 
+#ifndef _FILTERS_C_
+#define _FILTERS_C_
+
 int apply_low_pass(int sig_data[], int filter_data[],
                    int sig_len, int filter_len) {
 
@@ -74,3 +77,5 @@ int apply_window(int sig_data[], int filter_data[], int sig_len, int filter_len)
 
     return sum / count;
 }
+
+#endif

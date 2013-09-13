@@ -6,6 +6,7 @@
 #include "sensor.h"
 #include "filters.h"
 #include "opt_parser.h"
+#include "array_utils.h"
 
 // filter buffer size
 static const int LIST_SIZE = 100000;

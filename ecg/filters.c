@@ -45,7 +45,8 @@ int apply_high_pass(int sig_data[], int filter_data[],
     return val_y + val_x;
 }
 
-int apply_derivative(int sig_data[], int filter_data[], int sig_len, int filter_len) {
+int apply_derivative(int sig_data[], int filter_data[], 
+					 int sig_len, int filter_len) {
     int val_x = 0;
     if (sig_len >= 1)
         val_x += 2 * sig_data[sig_len - 1];
@@ -61,13 +62,15 @@ int apply_derivative(int sig_data[], int filter_data[], int sig_len, int filter_
     return val_x;
 }
 
-int apply_square(int sig_data[], int filter_data[], int sig_len, int filter_len) {
+int apply_square(int sig_data[], int filter_data[], 
+				 int sig_len, int filter_len) {
     if (sig_len >= 1)
         return sig_data[sig_len - 1] * sig_data[sig_len - 1];
     return 0;
 }
 
-int apply_window(int sig_data[], int filter_data[], int sig_len, int filter_len) {
+int apply_window(int sig_data[], int filter_data[], 
+				 int sig_len, int filter_len) {
     int sum = 0;
     int count = sig_len < 31 ? sig_len : 31;
 

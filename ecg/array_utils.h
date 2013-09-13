@@ -11,4 +11,11 @@ int unshift_array(int *arr, int arr_len) {
 	return ret;
 }
 
+void prepend_array(int *arr, int arr_len, int val) {
+	for (int i = arr_len - 2; i >= 0; i--) {
+		arr[i + 1] = arr[i];
+	}
+	arr[0] = val;
+}
+
 #endif

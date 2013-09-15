@@ -9,12 +9,11 @@
 #include "array_utils.h"
 
 // filter buffer size
-static const int LIST_SIZE = 33;
-static options opts;
-typedef int list[33];
+#define LIST_SIZE 33
+typedef int list[LIST_SIZE];
 
 int main(int argc, char *argv[]) {
-	opts = parse_opts(argc, argv);
+	options opts = parse_opts(argc, argv);
     
 	init_sensor(opts.file_name);
 
@@ -25,7 +24,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < LIST_SIZE; i++) {
 		sig[i] = filt_high[i] = filt_low[i] = filt_der[i] = filt_sqr[i] = filt_win[i] = 0;
 	}
-
+	
 	while(idx < opts.limit)  {
         int curr_size = (idx < LIST_SIZE - 1 ? idx : LIST_SIZE - 1) + 1;
         int sig_data = get_next_data();

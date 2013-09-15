@@ -9,6 +9,9 @@ day1:
 ECG_FILES := $(wildcard ecg/*.c)
 
 ecg:
+	$(COMP) -std=gnu99 $(ECG_FILES) -o bin/ecg -lm
+
+ecgd:
 	$(COMP) -std=gnu99 -g $(ECG_FILES) -o bin/ecg -lm
 
 ecgp:

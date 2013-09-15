@@ -11,14 +11,14 @@
 // filter buffer size
 static const int LIST_SIZE = 33;
 static options opts;
-typedef int list[LIST_SIZE];
+typedef int list[33];
 
 int main(int argc, char *argv[]) {
 	opts = parse_opts(argc, argv);
     
 	init_sensor(opts.file_name);
 
-	int idx;
+	int idx = 0;
 	list sig, filt_low, filt_high, filt_der, filt_sqr, filt_win;
 
 	// zero-init lists

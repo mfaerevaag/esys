@@ -4,33 +4,35 @@
 #ifndef _OPT_PARSER_H_
 #define _OPT_PARSER_H_
 
-struct options {
+typedef struct options_s {
 	char *file_name;
+	int limit;
 	int print_flag;
-};
+} options;
 
-struct options parse_opts(int argc, char *argv[]) {
-	struct options opts;
+options parse_opts(int argc, char *argv[]) {
+	options opts2;
 	
-	char *file_name = "test_data/ECG.txt";
-	int print_flag = 0;
+	opts2.file_name = "test_data/ECG.txt";
+	opts2.print_flag = 0;
+	opts2.limit = -1;
 
 	char opt;
-	while ((opt = getopt(argc, argv, "f:p")) != -1) {
+	while ((opt = getopt(argc, argv, "f:pl:")) != -1) {
 		switch(opt) {
 		case 'f':
-			file_name = optarg;
+			opts2.file_name = optarg;
 			break;
 		case 'p':
-			print_flag = 1;
+			opts2.print_flag = 1;
+			break;
+		case 'l':
+			opts2.limit = atoi(optarg);
 			break;
 		}
 	}
 
-	opts.file_name = file_name;
-	opts.print_flag = print_flag;
-
-	return opts;
+	return opts2;
 }
 
 #endif

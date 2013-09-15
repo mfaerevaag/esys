@@ -9,36 +9,44 @@
 #include "array_utils.h"
 
 // filter buffer size
-static const int LIST_SIZE = 100000;
-
+static const int LIST_SIZE = 33;
+static options opts;
 typedef int list[LIST_SIZE];
 
 int main(int argc, char *argv[]) {
-	struct options opts = parse_opts(argc, argv);
+	opts = parse_opts(argc, argv);
     
 	init_sensor(opts.file_name);
 
-	int idx, next_data;
+	int idx;
 	list sig, filt_low, filt_high, filt_der, filt_sqr, filt_win;
-	while((next_data = get_next_data()) != 32767)  {
-		// run filters
-		sig[idx] = next_data;
-		if (opts.print_flag) printf("%4i", sig[idx]);
 
-		filt_low[idx] = apply_low_pass(sig, filt_low, idx + 1, idx);
-		if (opts.print_flag) printf(" -> %8i", filt_low[idx]);
+	// zero-init lists
+	for (int i = 0; i < LIST_SIZE; i++) {
+		sig[i] = filt_high[i] = filt_low[i] = filt_der[i] = filt_sqr[i] = filt_win[i] = 0;
+	}
 
-		filt_high[idx] = apply_high_pass(filt_low, filt_high, idx + 1, idx);
-		if (opts.print_flag) printf(" -> %5i", filt_high[idx]);
+	while(idx < opts.limit)  {
+        int curr_size = (idx < LIST_SIZE - 1 ? idx : LIST_SIZE - 1) + 1;
+        int sig_data = get_next_data();
 
-		filt_der[idx] = apply_derivative(filt_high, filt_der, idx + 1, idx);
-		if (opts.print_flag) printf(" -> %5i", filt_der[idx]);
+        prepend_array(sig, curr_size, sig_data);
+		if (opts.print_flag) printf("%4i", sig[0]);
 
-		filt_sqr[idx] = apply_square(filt_der, filt_sqr, idx + 1, idx);
-		if (opts.print_flag) printf(" -> %5i", filt_sqr[idx]);
+		prepend_array(filt_low, curr_size, apply_low_pass(sig, filt_low));
+		if (opts.print_flag) printf(" -> %8i", filt_low[0]);
 
-		filt_win[idx] = apply_window(filt_sqr, filt_win, idx + 1, idx);
-		if (opts.print_flag) printf(" -> %i\n", filt_win[idx]);
+		prepend_array(filt_high, curr_size, apply_high_pass(filt_low, filt_high));
+		if (opts.print_flag) printf(" -> %5i", filt_high[0]);
+
+		prepend_array(filt_der, curr_size, apply_derivative(filt_high, filt_der));
+		if (opts.print_flag) printf(" -> %5i", filt_der[0]);
+
+		prepend_array(filt_sqr, curr_size, apply_square(filt_der, filt_sqr));
+		if (opts.print_flag) printf(" -> %5i", filt_sqr[0]);
+
+		prepend_array(filt_win, curr_size, apply_window(filt_sqr, filt_win));
+		if (opts.print_flag) printf(" -> %i\n", filt_win[0]);
 
 		idx++;
 	}

@@ -7,6 +7,7 @@ static list sig, filt_low, filt_high, filt_der, filt_sqr, filt_win;
 
 void init_filters() {
 	for (int i = 0; i < LIST_SIZE; i++) {
+		// TODO this might not be needed because the lists are declared static
 		sig[i] = filt_high[i] = filt_low[i] = filt_der[i] = filt_sqr[i] = filt_win[i] = 0;
 	}
 }

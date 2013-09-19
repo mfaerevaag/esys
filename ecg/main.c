@@ -37,13 +37,13 @@ int main(int argc, char *argv[]) {
 			update_peak(mwi, idx, &pulse, &rpeak);
 			peak pk = rpeak;
 
-			printf(" R-peak: %i (%05.2f) \t Pulse: %4f \t Avg: %5i", 
+			printf(" R-peak: %i (%05.2f) \t Pulse: %4f \t Avg: %5i",
 				   pk.value, pk.time / 250.0, pulse, mwi[0]);
 
 			if (pk.value < 2000) 
 				printf(" Warning: Peak < 2000: %5i ", pk.value);
 			else
-				printf("                                          ", pk.value);
+				printf("                                        ", pk.value);
 
 			printf("\r");
 			fflush(stdout);

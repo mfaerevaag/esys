@@ -1,8 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "opt_parser.h"
+
 #ifndef _OUTPUT_H_
 #define _OUTPUT_H_
+
+extern options opts;
 
 void init_output(char *output_file_name);
 void destroy_output();

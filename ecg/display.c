@@ -3,47 +3,67 @@
 #ifndef _DISPLAY_C_
 #define _DISPLAY_C_
 
-
 void init_display() {
 	initscr();
+    start_color();
+
+    //init_pair(1, COLOR_BLACK, COLOR_BLACK);
+    init_pair(1, COLOR_WHITE, COLOR_RED);
+    init_pair(2, COLOR_GREEN, COLOR_GREEN);
+    init_pair(3, COLOR_BLACK, COLOR_WHITE);
 }
 
 void destroy_display() {
 	endwin();
 }
 
-void update_display(float time, int mwi, int rpk, int pk, float pulse) {	
+void update_display(float time, int mwi, int rpk, int pk, float pulse, int raw) {	
 	// add mwi to local buffer
-	prepend_array_int(mwi_buffer, 100, mwi);
+	prepend_array_int(raw_buffer, 100, raw);
 
 	// clear screen
 	erase();
 	
+	// title
+    attron(COLOR_PAIR(3));
+	mvprintw(0, 0, "                      \n Medembed ECG monitor \n                      ");
+    attroff(COLOR_PAIR(3));
+
+	int y_base = 3;
+
 	// labels
-	mvprintw(1, 1, "Time:");
-	mvprintw(2, 1, "MWI:");	
-	mvprintw(3, 1, "Last R-peak:");	
-	mvprintw(4, 1, "Last peak:");	
-	mvprintw(5, 1, "Pulse:");
+	mvprintw(y_base + 1, 1, "Time:");
+	mvprintw(y_base + 2, 1, "MWI:");	
+	mvprintw(y_base + 3, 1, "Last R-peak:");	
+	mvprintw(y_base + 4, 1, "Last peak:");	
+	mvprintw(y_base + 5, 1, "Pulse:");
 
 	// values
-	mvprintw(1, 15, "%5.2f", time);
-	mvprintw(2, 15, "%5i", mwi);	
-	mvprintw(3, 15, "%5i", rpk);	
-	mvprintw(4, 15, "%5i", pk);	
-	mvprintw(5, 15, "%5.1f", pulse);
+	mvprintw(y_base + 1, 15, "%5.2f", time);
+	mvprintw(y_base + 2, 15, "%5i", mwi);	
+	mvprintw(y_base + 3, 15, "%5i", rpk);	
+	mvprintw(y_base + 4, 15, "%5i", pk);	
+	mvprintw(y_base + 5, 15, "%5.1f", pulse);
 
 	// graph
-	int y_max = 1000;
-	//int y_min = -100;
+    attron(COLOR_PAIR(2));
 	// top right bottom left
-	int box[4] = {1, 400, 30, 20};
 	int xs = 100;
+	int box[4] = {1, xs, 20, 20};
 	for (int i = 0; i < xs; i++) {
-		mvaddch(box[0] + box[2] - (mwi_buffer[i] / 200.0), box[3] + i, '*');
+		mvaddch(y_base + box[0] + box[2] - (raw_buffer[i] / 50.0), box[3] + box[1] - i, '*');
+	}
+	attroff(COLOR_PAIR(2));
+	
+	// warn if R-peak is less than 2k
+	if (rpk < 2000 && rpk != 0) {
+		attron(COLOR_PAIR(1));
+		mvprintw(y_base + 7, 1, "WARNING!");
+		attroff(COLOR_PAIR(1));
+		mvprintw(y_base + 8, 1, "Weak beat");
 	}
 
-	move(0,0);
+	move(0, 0);
 
 	refresh();
 }

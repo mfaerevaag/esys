@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 		peak npeak;
 
 		update_peak(mwi, idx, &pulse, &rpeak, &npeak);
-		update_display(time, mwi[0], rpeak.value, npeak.value, pulse);
+		update_display(time, mwi[0], rpeak.value, npeak.value, pulse, data);
 		update_output(time, mwi[0], data);
 
 		idx++;

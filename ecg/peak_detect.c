@@ -6,7 +6,6 @@
 int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak) {
 	// r-peak flag
 	int is_r_peak = 0;
-	int p = 0;
 	peak pk;
 	static int rc = 0;
 	pk.value = mwi[1];
@@ -26,8 +25,6 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
-				if (p) printf("\n\nR! %i - %f - %f ------ %i \n\n",  
-							  pk.interval, rr_miss, threshold1, r_peaks[0].time);
 				is_r_peak = 1;
 
 				// inc counts
@@ -54,15 +51,11 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 				threshold2 = 0.5 * threshold1;
 			}
 			else if (pk.interval > rr_miss) {
-				//				if (p) 
-				//printf("\n\nS! %i - %f - %f\n\n", pk.interval, rr_miss, threshold1);
 				// do searchback
 				int idxx = 1;
 				peak peak2 = peaks[idxx];
 				while (peak2.value != 0) {
-					//printf("\nPeak2.value: %i threshold2:%f\n", peak2.value, threshold2);
 					if (peak2.value > threshold2) {
-						//printf("* %i \n", peak2.value);
 						is_r_peak = 1;
 
 						// store peak in r-peaks
@@ -88,19 +81,15 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 				}
 			} 
 			else {
-				if (p) printf("\n\nMissed! %i - %f - %f\n\n", pk.interval, rr_miss, threshold1);	
+				// TODO: MISS!
 			}
 		}
-		else {	
-			if (p) printf("\n\nNoise peak! %i - %f - %f\n\n", pk.value, rr_miss, threshold1);
-			
+		else {			
 			npkf = 0.125 * pk.value + 0.875 * npkf;
 			threshold1 = npkf + 0.25 * (spkf - npkf);
 			threshold2 = 0.5 * threshold1;
 		}
 	}
-
-	//printf("\n%i\n", rc);
 
 	*pulseOut = rr_average1;
 	*r_peak = r_peaks[0];

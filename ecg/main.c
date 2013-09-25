@@ -33,12 +33,14 @@ int main(int argc, char *argv[]) {
 
 		float pulse;
 		peak rpeak;
+		peak npeak;
 		if (opts.print_flag)  {
-			update_peak(mwi, idx, &pulse, &rpeak);
+			update_peak(mwi, idx, &pulse, &rpeak, &npeak);
 			peak pk = rpeak;
+			peak npk = npeak;
 
-			printf(" R-peak: %i (%05.2f) \t Pulse: %4f \t Avg: %5i",
-				   pk.value, pk.time / 250.0, pulse, mwi[0]);
+			printf(" R-Peak: %5i, N-Peak: %5i, Time: %05.2f, Pulse: %4.2f, Avg: %5i",
+				   pk.value, npk.value, time, pulse, mwi[0]);
 
 			if (pk.value < 2000) 
 				printf(" Warning: Peak < 2000: %5i ", pk.value);

@@ -3,28 +3,29 @@
 #ifndef _PEAK_DETECT_C_
 #define _PEAK_DETECT_C_
 
-int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak) {
+int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak) {
 	// r-peak flag
 	int is_r_peak = 0;
-	// get possible peak
+	int p = 0;
+
 	peak pk;
 	pk.value = mwi[1];
 	if (mwi[0] < pk.value && pk.value > mwi[2]) {
-		//printf("\nPEAK\n");
-
 		pk.time = time;
 		prepend_array_peak(peaks, PEAK_BUFFER_SIZE2, pk);
 		
 		// check if peak is noise or r-peak
 		if (pk.value > threshold1) {
-			//if (time > 0) {
-				//pk.interval = time - peaks[1].time;
-				//}
-			//else
+			if (time > 0)
+				pk.interval = time - peaks[1].time;
+			else 
 				pk.interval = time;
+
 
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
+				if (p) printf("\n\nR! %i - %f\n\n", pk.interval, rr_miss);
+
 				// inc counts
 				rr_count++;
 				rr_ok_count++;
@@ -49,7 +50,7 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak) {
 				spkf = 0.125 * mwi[0] + 0.875 * spkf;
 			}
 			else if (pk.interval > rr_miss) {
-				//printf("\nSEARCHBACK! %i\n", pk.interval);
+				if (p) printf("\n\nS! %i - %f\n\n", pk.interval, rr_miss);
 				// do searchback
 				int idx = 0;
 				peak peak2 = peaks[0];
@@ -65,9 +66,9 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak) {
 
 						rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
 
-						rr_low = 0.92 * rr_average2;
-						rr_high = 1.16 * rr_average2;
-						rr_miss = 1.66 * rr_average2;
+						rr_low = 0.92 * rr_average1;
+						rr_high = 1.16 * rr_average1;
+						rr_miss = 1.66 * rr_average1;
 
 						spkf = 0.125 * peak2.value + 0.875 * spkf;
 						threshold1 = npkf + 0.25 * (spkf - npkf);
@@ -79,21 +80,22 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak) {
 				}
 			} 
 			else {
-				printf("\nMISSED! %f\n");
+				if (p) printf("\n\nM! %i - %f\n\n", pk.interval, rr_miss);
 			}
 		}
 		else {		
-			//printf("\nNoise peak found %i, threshold: %f\n", pk.value, threshold1);
-
+			if (p) printf("\n\nN! %i - %f\n\n", pk.value, threshold1);
+			
 			// NB skiftet npkf til sidste
+			npkf = 0.125 * pk.value + 0.875 * npkf;
 			threshold1 = npkf + 0.25 * (spkf - npkf);
 			threshold2 = 0.5 * threshold1;
-			npkf = 0.125 * pk.value + 0.875 * npkf;
 		}
 	}
 	
 	*pulseOut = rr_average1;
 	*r_peak = r_peaks[0];
+	*n_peak = peaks[0];
 	return is_r_peak;
 }
 

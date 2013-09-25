@@ -13,7 +13,7 @@ options opts;
 
 int main(int argc, char *argv[]) {
 	opts = parse_opts(argc, argv);
-    
+
 	if (opts.print_flag) printf("Medembed ECG monitor\n");
 
 	init_sensor(opts.file_name);
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 			printf(" R-Peak: %5i, N-Peak: %5i, Time: %05.2f, Pulse: %4.2f, Avg: %5i",
 				   pk.value, npk.value, time, pulse, mwi[0]);
 
-			if (pk.value < 2000) 
+			if (pk.value < 2000)
 				printf(" Warning: Peak < 2000: %5i ", pk.value);
 			else
 				printf("                                        ", pk.value);
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 			printf("\r");
 			fflush(stdout);
 		}
-		
+
 		idx++;
 	}
 

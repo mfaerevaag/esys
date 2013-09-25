@@ -7,92 +7,101 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 	// r-peak flag
 	int is_r_peak = 0;
 	int p = 0;
-
 	peak pk;
+	static int rc = 0;
 	pk.value = mwi[1];
+
+	// find peak
 	if (mwi[0] < pk.value && pk.value > mwi[2]) {
 		pk.time = time;
+		
+		// store peak
 		prepend_array_peak(peaks, PEAK_BUFFER_SIZE2, pk);
 		
 		// check if peak is noise or r-peak
 		if (pk.value > threshold1) {
-			if (time > 0)
-				pk.interval = time - peaks[1].time;
-			else 
-				pk.interval = time;
 
+			// calculate RR
+			pk.interval = time - r_peaks[0].time;
 
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
-				if (p) printf("\n\nR! %i - %f\n\n", pk.interval, rr_miss);
+				if (p) printf("\n\nR! %i - %f - %f ------ %i \n\n",  
+							  pk.interval, rr_miss, threshold1, r_peaks[0].time);
+				is_r_peak = 1;
 
 				// inc counts
 				rr_count++;
 				rr_ok_count++;
 
 				// store peak as r-peak
+				rc++;
 				prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, pk);
-				is_r_peak = 1;
+				
+				// store rr in all and ok
+				prepend_array_int(rr_ok, PEAK_BUFFER_SIZE, pk.interval);
+				prepend_array_int(rr, PEAK_BUFFER_SIZE, pk.interval);
 
-				// store RR in all and ok
-				prepend_array_float(rr, PEAK_BUFFER_SIZE, pk.interval);
-				prepend_array_float(rr_ok, PEAK_BUFFER_SIZE, pk.interval);
-
-				rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
-				rr_average2 = array_average_float(rr_ok, min_int(rr_ok_count, PEAK_BUFFER_SIZE));
+				rr_average1 = array_average_int(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
+				rr_average2 = array_average_int(rr_ok, min_int(rr_ok_count, PEAK_BUFFER_SIZE));
 
 				rr_low = 0.92 * rr_average2;
 				rr_high = 1.16 * rr_average2;
 				rr_miss = 1.66 * rr_average2;
-
+				
+				spkf = 0.125 * mwi[1] + 0.875 * spkf;
 				threshold1 = npkf + 0.25 * (spkf - npkf);
 				threshold2 = 0.5 * threshold1;
-				spkf = 0.125 * mwi[0] + 0.875 * spkf;
 			}
 			else if (pk.interval > rr_miss) {
-				if (p) printf("\n\nS! %i - %f\n\n", pk.interval, rr_miss);
+				//				if (p) 
+				//printf("\n\nS! %i - %f - %f\n\n", pk.interval, rr_miss, threshold1);
 				// do searchback
-				int idx = 0;
-				peak peak2 = peaks[0];
+				int idxx = 1;
+				peak peak2 = peaks[idxx];
 				while (peak2.value != 0) {
 					//printf("\nPeak2.value: %i threshold2:%f\n", peak2.value, threshold2);
 					if (peak2.value > threshold2) {
+						//printf("* %i \n", peak2.value);
 						is_r_peak = 1;
-						prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, pk);
 
-						// store RR in all
+						// store peak in r-peaks
+						prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, peak2);
+
+						// store rr in rr
 						rr_count++;
-						prepend_array_float(rr, PEAK_BUFFER_SIZE, peak2.interval);
+						prepend_array_int(rr, PEAK_BUFFER_SIZE, pk.interval);
 
-						rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
-
+						rr_average1 = array_average_int(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
+						
 						rr_low = 0.92 * rr_average1;
 						rr_high = 1.16 * rr_average1;
 						rr_miss = 1.66 * rr_average1;
 
-						spkf = 0.125 * peak2.value + 0.875 * spkf;
+						spkf = 0.125 * pk.value + 0.875 * spkf;
 						threshold1 = npkf + 0.25 * (spkf - npkf);
 						threshold2 = 0.5 * threshold1;
 
 						break;
 					}
-					peak2 = peaks[++idx];
+					peak2 = peaks[++idxx];
 				}
 			} 
 			else {
-				if (p) printf("\n\nM! %i - %f\n\n", pk.interval, rr_miss);
+				if (p) printf("\n\nMissed! %i - %f - %f\n\n", pk.interval, rr_miss, threshold1);	
 			}
 		}
-		else {		
-			if (p) printf("\n\nN! %i - %f\n\n", pk.value, threshold1);
+		else {	
+			if (p) printf("\n\nNoise peak! %i - %f - %f\n\n", pk.value, rr_miss, threshold1);
 			
-			// NB skiftet npkf til sidste
 			npkf = 0.125 * pk.value + 0.875 * npkf;
 			threshold1 = npkf + 0.25 * (spkf - npkf);
 			threshold2 = 0.5 * threshold1;
 		}
 	}
-	
+
+	//printf("\n%i\n", rc);
+
 	*pulseOut = rr_average1;
 	*r_peak = r_peaks[0];
 	*n_peak = peaks[0];

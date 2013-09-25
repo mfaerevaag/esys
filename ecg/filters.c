@@ -13,12 +13,12 @@ void init_filters() {
 }
 
 int *apply_all_filters(int data, int curr_size) {
-	prepend_array(sig, curr_size, data);
-	prepend_array(filt_low, curr_size, apply_low_pass(sig, filt_low));
-	prepend_array(filt_high, curr_size, apply_high_pass(filt_low, filt_high));
-	prepend_array(filt_der, curr_size, apply_derivative(filt_high, filt_der));
-	prepend_array(filt_sqr, curr_size, apply_square(filt_der, filt_sqr));
-	prepend_array(filt_win, curr_size, apply_window(filt_sqr, filt_win));
+	prepend_array_int(sig, curr_size, data);
+	prepend_array_int(filt_low, curr_size, apply_low_pass(sig, filt_low));
+	prepend_array_int(filt_high, curr_size, apply_high_pass(filt_low, filt_high));
+	prepend_array_int(filt_der, curr_size, apply_derivative(filt_high, filt_der));
+	prepend_array_int(filt_sqr, curr_size, apply_square(filt_der, filt_sqr));
+	prepend_array_int(filt_win, curr_size, apply_window(filt_sqr, filt_win));
 
 	return filt_win;
 }
@@ -54,12 +54,10 @@ static int apply_square(int sd[], int fd[]) {
 
 static int apply_window(int sd[], int fd[]) {
     int sum = 0;
-
     for (int i = 1; i < 30; i++) {
-		sum += sd[i];
+		sum += sd[i] / 30.0;
     }
-
-    return sum / 30;
+    return sum;
 }
 
 #endif

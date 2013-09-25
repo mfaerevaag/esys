@@ -7,7 +7,8 @@
 typedef struct options_s {
 	char *file_name;
 	int limit;
-	int print_flag;
+	int output_flag;
+	char *output_file_name;
 } options;
 
 options parse_opts(int argc, char *argv[]);

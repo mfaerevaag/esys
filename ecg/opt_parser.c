@@ -7,17 +7,19 @@ options parse_opts(int argc, char *argv[]) {
 	options opts2;
 	
 	opts2.file_name = "test_data/ECG.txt";
-	opts2.print_flag = 0;
+	opts2.output_file_name = "output/ecg_out.txt";
+	opts2.output_flag = 0;
 	opts2.limit = -1;
 
 	char opt;
-	while ((opt = getopt(argc, argv, "f:pl:")) != -1) {
+	while ((opt = getopt(argc, argv, "f:o:l:")) != -1) {
 		switch(opt) {
 		case 'f':
 			opts2.file_name = optarg;
 			break;
-		case 'p':
-			opts2.print_flag = 1;
+		case 'o':
+			opts2.output_flag = 1;
+			opts2.output_file_name = optarg;
 			break;
 		case 'l':
 			opts2.limit = atoi(optarg);

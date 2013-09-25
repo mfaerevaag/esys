@@ -8,7 +8,7 @@
 // int
 int unshift_array(int *arr, int arr_len);
 int shift_array(int *arr, int arr_len);
-void prepend_array(int *arr, int arr_len, int val);
+void prepend_array_int(int *arr, int arr_len, int val);
 void append_array(int *arr, int arr_len, int val);
 float array_average_int(int *arr, int arr_len);
 

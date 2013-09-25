@@ -4,11 +4,13 @@ COMP := gcc
 
 FILES := $(wildcard ./*.c)
 
+COMMON := -std=gnu99 $(FILES) -o bin/ecg -lm -lncurses
+
 ecg:
-	$(COMP) -std=gnu99 $(FILES) -o bin/ecg -lm
+	$(COMP) $(COMMON)
 
 ecgd:
-	$(COMP) -std=gnu99 -g $(FILES) -o bin/ecg -lm
+	$(COMP) $(COMMON) -g
 
 ecgp:
-	$(COMP) -std=gnu99 -pg $(FILES) -o bin/ecg -lm
+	$(COMP) $(COMMON) -pg

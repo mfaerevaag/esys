@@ -4,6 +4,8 @@
 #define _DISPLAY_C_
 
 void init_display() {
+	if (!opts.display_flag) return;
+
 	initscr();
     start_color();
 
@@ -14,10 +16,14 @@ void init_display() {
 }
 
 void destroy_display() {
+	if (!opts.display_flag) return;
+
 	endwin();
 }
 
 void update_display(float time, int mwi, int raw, peak_update pu) {	
+	if (!opts.display_flag) return;
+
 	// add mwi to local buffer
 	prepend_array_int(raw_buffer, 100, raw);
 
@@ -26,7 +32,7 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	
 	// title
     attron(COLOR_PAIR(3));
-	mvprintw(2, 0, "     Medembed ECG    ");
+	mvprintw(2, 0, "     Medembed ECG %i    ", opts.display_flag);
     attroff(COLOR_PAIR(3));
 
 	int y_base = 3;

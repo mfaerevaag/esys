@@ -7,8 +7,9 @@
 typedef struct options_s {
 	char *file_name;
 	int limit;
-	int output_flag;
 	char *output_file_name;
+	int output_flag;
+	int display_flag;
 	float time_scale;
 } options;
 

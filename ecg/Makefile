@@ -1,6 +1,6 @@
 COMP := gcc
 
-.PHONY: ecg
+.PHONY: ecg ecgd ecgp
 
 FILES := $(wildcard ./*.c)
 

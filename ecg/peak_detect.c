@@ -3,11 +3,12 @@
 #ifndef _PEAK_DETECT_C_
 #define _PEAK_DETECT_C_
 
-int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak) {
-	// r-peak flag
-	int is_r_peak = 0;
+peak_update update_peak(int *mwi, int time) {
+	static int total_r_peaks = 0;
+
+	peak_update updt;
+
 	peak pk;
-	static int rc = 0;
 	pk.value = mwi[1];
 
 	// find peak
@@ -25,14 +26,14 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
-				is_r_peak = 1;
+				updt.found_r_peak = 1;
 
 				// inc counts
 				rr_count++;
 				rr_ok_count++;
 
 				// store peak as r-peak
-				rc++;
+				total_r_peaks++;
 				prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, pk);
 				
 				// store rr in all and ok
@@ -56,9 +57,10 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 				peak peak2 = peaks[idxx];
 				while (peak2.value != 0) {
 					if (peak2.value > threshold2) {
-						is_r_peak = 1;
+						updt.found_r_peak = 1;
 
 						// store peak in r-peaks
+						total_r_peaks++;
 						prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, peak2);
 
 						// store rr in rr
@@ -81,7 +83,8 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 				}
 			} 
 			else {
-				// TODO: MISS!
+				// the beat was missed :(
+				updt.missed = 1;
 			}
 		}
 		else {			
@@ -90,11 +93,14 @@ int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak)
 			threshold2 = 0.5 * threshold1;
 		}
 	}
+	
+	// fill in the rest of the update
+	updt.pulse = rr_average1;
+	updt.r_peak = r_peaks[0];
+	updt.n_peak = peaks[0];
+	updt.num_r_peaks = total_r_peaks;
 
-	*pulseOut = rr_average1;
-	*r_peak = r_peaks[0];
-	*n_peak = peaks[0];
-	return is_r_peak;
+	return updt;
 }
 
 #endif

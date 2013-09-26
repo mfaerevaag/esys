@@ -5,8 +5,10 @@
 #include <ncurses.h>
 
 #include "sensor.h"
+#include "math_utils.h"
 #include "filters.h"
 #include "opt_parser.h"
+#include "peak.h"
 #include "peak_detect.h"
 #include "array_utils.h"
 #include "display.h"
@@ -31,15 +33,10 @@ int main(int argc, char *argv[]) {
 		usleep(sample_rate * 1000000.0);
 		time += sample_rate;
 		int data = get_next_data();
-        int curr_size = (idx < LIST_SIZE - 1 ? idx : LIST_SIZE - 1) + 1;
-		int *mwi = apply_all_filters(data, curr_size);
+		int *mwi = apply_all_filters(data, min_int(idx, LIST_SIZE - 1) + 1);
 
-		float pulse;
-		peak rpeak;
-		peak npeak;
-
-		update_peak(mwi, idx, &pulse, &rpeak, &npeak);
-		update_display(time, mwi[0], rpeak.value, npeak.value, pulse, data);
+		peak_update pu = update_peak(mwi, idx);
+		update_display(time, mwi[0], data, pu);
 		update_output(time, mwi[0], data);
 
 		idx++;

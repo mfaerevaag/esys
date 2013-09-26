@@ -7,7 +7,7 @@ ylim <- c(min(data), max(data))
 
 title("Pulse", xlab = "Time (s)", ylab = "Pulse (mwi)")
 # draw pulse
-plot(raw, type="l", ylim = ylim, col = "blue", xlim = c(500, 1000))#, axes = F, ann = F)
+plot(raw, type="l", ylim = ylim, col = "blue", xlim = c(0000, 5000))#, axes = F, ann = F)
 lines(mwi, col = "red")
 
 # add zero-line

@@ -30,6 +30,6 @@ static int rr_ok[PEAK_BUFFER_SIZE];
 static int rr_count = 0;
 static int rr_ok_count = 0;
 
-int update_peak(int *mwi, int time, float *pulseOut, peak *r_peak, peak *n_peak);
+peak_update update_peak(int *mwi, int time);
 
 #endif

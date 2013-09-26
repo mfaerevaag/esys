@@ -5,6 +5,7 @@
 
 peak_update update_peak(int *mwi, int time) {
 	static int total_r_peaks = 0;
+	static int conseq_missed = 0;
 
 	peak_update updt;
 
@@ -26,6 +27,9 @@ peak_update update_peak(int *mwi, int time) {
 
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
+				// reset misses
+				conseq_missed = 0;
+
 				updt.found_r_peak = 1;
 
 				// inc counts
@@ -81,24 +85,31 @@ peak_update update_peak(int *mwi, int time) {
 					}
 					peak2 = peaks[++idxx];
 				}
-			} 
-			else {
+
 				// the beat was missed :(
 				updt.missed = 1;
+				conseq_missed++;
+			} 
+			else {
+				// This is a noise peak, do nothing
 			}
 		}
-		else {			
+		else {	
+			// reset misses
+			conseq_missed = 0;
+		
 			npkf = 0.125 * pk.value + 0.875 * npkf;
 			threshold1 = npkf + 0.25 * (spkf - npkf);
 			threshold2 = 0.5 * threshold1;
 		}
 	}
-	
+
 	// fill in the rest of the update
 	updt.pulse = rr_average1;
 	updt.r_peak = r_peaks[0];
 	updt.n_peak = peaks[0];
 	updt.num_r_peaks = total_r_peaks;
+	updt.conseq_missed = conseq_missed;
 
 	return updt;
 }

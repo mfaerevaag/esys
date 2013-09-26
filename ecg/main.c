@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	double sample_rate = 1.0 / 250.0;
 
 	while (idx < opts.limit) {
-		usleep(sample_rate * 1000000.0);
+		usleep(sample_rate * 2000000.0);
 		time += sample_rate;
 		int data = get_next_data();
 		int *mwi = apply_all_filters(data, min_int(idx, LIST_SIZE - 1) + 1);
@@ -41,7 +41,9 @@ int main(int argc, char *argv[]) {
 
 		idx++;
 	}
-	
+
+	getch();
+
 	destroy_output();
 	destroy_sensor();
 	destroy_display();

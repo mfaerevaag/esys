@@ -37,13 +37,32 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	mvprintw(y_base + 3, 1, "Last R-peak:");	
 	mvprintw(y_base + 4, 1, "Last peak:");	
 	mvprintw(y_base + 5, 1, "Pulse:");
+	mvprintw(y_base + 6, 1, "# R-peaks:");
+	mvprintw(y_base + 7, 1, "Misses:");
 
 	// values
 	mvprintw(y_base + 1, 15, "%5.2f", time);
 	mvprintw(y_base + 2, 15, "%5i", mwi);	
+
+	if (pu.r_peak.value < 2000 && pu.r_peak.value != 0) 
+		attron(COLOR_PAIR(1));
+
 	mvprintw(y_base + 3, 15, "%5i", pu.r_peak.value);	
+
+	if (pu.r_peak.value < 2000 && pu.r_peak.value != 0) 
+		attroff(COLOR_PAIR(1));
+
 	mvprintw(y_base + 4, 15, "%5i", pu.n_peak.value);	
 	mvprintw(y_base + 5, 15, "%5.1f", pu.pulse);
+	mvprintw(y_base + 6, 15, "%5i", pu.num_r_peaks);
+
+	if (pu.conseq_missed > 4) 
+		attron(COLOR_PAIR(1));
+
+	mvprintw(y_base + 7, 15, "%5i", pu.conseq_missed);
+
+	if (pu.conseq_missed > 4) 
+		attroff(COLOR_PAIR(1));
 
 	mvhline(y_base, 0, '-', 21);
 	
@@ -59,14 +78,6 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 		mvaddch(y_base + box[0] + box[2] - (curr / 50.0), box[3] + box[1] - i, ch);
 	}
 	attroff(COLOR_PAIR(2));
-	
-	// warn if R-peak is less than 2k
-	if (pu.r_peak.value < 2000 && pu.r_peak.value != 0 || true) {
-		attron(COLOR_PAIR(1));
-		mvprintw(y_base + 7, 1, "WARNING!");
-		attroff(COLOR_PAIR(1));
-		mvprintw(y_base + 8, 1, "Weak beat");
-	}
 
 	move(0, 0);
 

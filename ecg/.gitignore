@@ -4,3 +4,4 @@ bin/
 *.pdf
 *.dvi
 *.aux
+*.toc

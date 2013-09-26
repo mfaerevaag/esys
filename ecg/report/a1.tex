@@ -68,14 +68,28 @@ Datasættene har op til flere millioner samples, og det er derfor vigtigt at impl
 
 \section{Design}
 \subsection{Arkitektur}
-I programmet har vi lagt til filene \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med aa innlese raw data fra en simulert ECG maskin. \code{filter.c} filtrer saa denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
+I programmet har vi lagt til filene \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med aa innlese raw data fra en simulert ECG maskin. \code{filter.c} filtrerer saa denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
 
-Vi mener dette gir en oversiktelig inndeling av programmet da hver fil har, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, prosessert og til slutt vist til brukeren.
+Vi mener dette gir en oversiktelig inndeling av programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
 
 \subsection{Sensor}
+Innlesningen av bildet skjer paa den maate at den best skal simulere signalet fra en ECG maskin. Derfor leses test dataen inn og behandles linje for linje, i motsetning til aa lese inn hele filen. Dette ville konsumere meget hukommelse, i tillegg ikke viser en god simulering av hvordan det faktisk fungerer.
+
 \subsection{Filtre}
+Filtrene er implemetert for seg, altaa hvert filter har hver sin funksjon. Faar aa nemt kunne anvende disse funksjoner har vi saa samlet de i en funksjon kalt \code{apply\_all\_filters}. Denne tar en raw verdi fra sensoren, filtrerer denne med \code{low\_pass}, \code{high\_pass}, \code{derivate}, \code{squaring} og \code{moving\_window\_integration}, for saa aa returnere samme verdien.
+
+Filter dataen blir saa pushet til starten av en koe, der de verdier som overskyter lengde 32 blir slettet. Dette gjoer at vi ikke gemmer unoedvendig informasjon og dermed ikke kaster bort hukommelse plass.
+
 \subsection{Peak detektion}
+Vaares peak detektion er implementert i en forholdsvis kompleks algoritme der bruker de seneste filtrerte verdier. Her gemmer vi heller ikke for mange verdier for aa spare hukommelse plass. Algoritmen returnerer flere verdier som saa kan bli fremstilt til brukeren paa en hensiktsmessig maate.
+
 \subsection{Output}
+Maaten dataen blir framstilt er en avgjoerende faktor for brukervennligheten av programmet. Derfor har vi, i tillegg til normalt output til konsollen/fil, implemtert et tekst basert grensesnitt med et biblotek kalt \code{ncurses}. Dette gjoer at vi kan fremstille en bevegende kurve med raw dataen, noe som vil etteligne en sinus-kurve paa en riktig ECG maskin.
+
+Vi har ogsaa med muligheten til aa kjoere programmet slik at den outputter data til en \code{csv}-fil som saa kan plottes til en graf med for eksempel programmerings spraaket R. Eksempel paa vaares output fra filen \code{ECG.txt}:
+
+% TODO
+% \includegraphics[width=6in, keepaspectratio=true]{graph.r}
 
 \section{Implementering}
 

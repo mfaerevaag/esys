@@ -9,6 +9,7 @@ typedef struct options_s {
 	int limit;
 	int output_flag;
 	char *output_file_name;
+	float time_scale;
 } options;
 
 options parse_opts(int argc, char *argv[]);

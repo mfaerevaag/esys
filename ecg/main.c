@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 	double sample_rate = 1.0 / 250.0;
 
 	while (idx < opts.limit) {
-		usleep(sample_rate * 2000000.0);
+		usleep(sample_rate * 1000000.0 * (1/opts.time_scale));
 		time += sample_rate;
 		int data = get_next_data();
 		int *mwi = apply_all_filters(data, min_int(idx, LIST_SIZE - 1) + 1);

@@ -9,7 +9,6 @@ void init_display() {
 	initscr();
     start_color();
 
-    //init_pair(1, COLOR_BLACK, COLOR_BLACK);
     init_pair(1, COLOR_WHITE, COLOR_RED);
     init_pair(2, COLOR_GREEN, COLOR_GREEN);
     init_pair(3, COLOR_WHITE, COLOR_BLUE);
@@ -32,7 +31,7 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	
 	// title
     attron(COLOR_PAIR(3));
-	mvprintw(2, 0, "     Medembed ECG %i    ", opts.display_flag);
+	mvprintw(2, 1, "    Medembed ECG    ");
     attroff(COLOR_PAIR(3));
 
 	int y_base = 3;
@@ -46,31 +45,32 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	mvprintw(y_base + 6, 1, "# R-peaks:");
 	mvprintw(y_base + 7, 1, "Misses:");
 
+	int col = 16;
 	// values
-	mvprintw(y_base + 1, 15, "%5.2f", time);
-	mvprintw(y_base + 2, 15, "%5i", mwi);	
+	mvprintw(y_base + 1, col, "%5.2f", time);
+	mvprintw(y_base + 2, col, "%5i", mwi);	
 
 	if (pu.r_peak.value < 2000 && pu.r_peak.value != 0) 
 		attron(COLOR_PAIR(1));
 
-	mvprintw(y_base + 3, 15, "%5i", pu.r_peak.value);	
+	mvprintw(y_base + 3, col, "%5i", pu.r_peak.value);	
 
 	if (pu.r_peak.value < 2000 && pu.r_peak.value != 0) 
 		attroff(COLOR_PAIR(1));
 
-	mvprintw(y_base + 4, 15, "%5i", pu.n_peak.value);	
-	mvprintw(y_base + 5, 15, "%5.1f", pu.pulse);
-	mvprintw(y_base + 6, 15, "%5i", pu.num_r_peaks);
+	mvprintw(y_base + 4, col, "%5i", pu.n_peak.value);	
+	mvprintw(y_base + 5, col, "%5.1f", pu.pulse);
+	mvprintw(y_base + 6, col, "%5i", pu.num_r_peaks);
 
 	if (pu.conseq_missed > 4) 
 		attron(COLOR_PAIR(1));
 
-	mvprintw(y_base + 7, 15, "%5i", pu.conseq_missed);
+	mvprintw(y_base + 7, col, "%5i", pu.conseq_missed);
 
 	if (pu.conseq_missed > 4) 
 		attroff(COLOR_PAIR(1));
 
-	mvhline(y_base, 0, '-', 21);
+	mvhline(y_base, 1, '-', 20);
 	
 	// graph
     attron(COLOR_PAIR(2));

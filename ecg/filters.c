@@ -18,7 +18,7 @@ int *apply_all_filters(int data, int curr_size) {
 	prepend_array_int(filt_high, curr_size, apply_high_pass(filt_low, filt_high));
 	prepend_array_int(filt_der, curr_size, apply_derivative(filt_high, filt_der));
 	prepend_array_int(filt_sqr, curr_size, apply_square(filt_der, filt_sqr));
-	prepend_array_int(filt_win, curr_size, apply_window(filt_sqr, filt_win));
+	prepend_array_int(filt_win, curr_size, apply_mwi(filt_sqr, filt_win));
 
 	return filt_win;
 }
@@ -52,7 +52,7 @@ static int apply_square(int sd[], int fd[]) {
 	return sd[0] * sd[0];
 }
 
-static int apply_window(int sd[], int fd[]) {
+static int apply_mwi(int sd[], int fd[]) {
     int sum = 0;
     for (int i = 1; i < 30; i++) {
 		sum += sd[i] / 30.0;

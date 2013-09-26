@@ -5,10 +5,12 @@ mwi <- as.numeric(data$mwi)
 
 ylim <- c(min(data), max(data))
 
-title("Pulse", xlab = "Time (s)", ylab = "Pulse (mwi)")
 # draw pulse
-plot(raw, type="l", ylim = ylim, col = "blue", xlim = c(0000, 5000))#, axes = F, ann = F)
+plot(raw, type="l", ylim = ylim, col = "blue", xlim = c(0000, 10000), axes = T, ann = F)
+
 lines(mwi, col = "red")
+
+title("Pulse", xlab = "Time (s)", ylab = "Pulse (mwi)")
 
 # add zero-line
 abline(h=0)

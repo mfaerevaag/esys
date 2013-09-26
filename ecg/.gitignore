@@ -5,3 +5,4 @@ bin/
 *.dvi
 *.aux
 *.toc
+report/_region_.tex

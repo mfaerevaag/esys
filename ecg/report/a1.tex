@@ -51,10 +51,12 @@
 \section{Introduktion}
 Denne opgaver omhandler processering af signaler fra et Elektrokardiogram apparat (herefter ECG). Formålet er omdanne de rå signaler til filtreret data, som kan bruges til at måle puls og spænding, og advare om forestående problemer hos patienten.
 
-Data fra hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet funktionen der henter et nyt sample.
+Data fra hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet end funktionen der henter et nyt sample.
 
 \subsection{Problemstilling}
+Udfordringen i denne opgave er at implementere signalfiltre og detektere egenskaber effektivt og struktureret, samt at præsentere dataen for brugeren på en hensigtsmæssig og brugbar facon. 
 
+Datasættene har op til flere millioner samples, og det er derfor vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver god.
 
 \section{Analyse}
 \subsection{Funktioner}

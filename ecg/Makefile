@@ -2,7 +2,7 @@ COMP := gcc
 
 .PHONY: ecg ecgd ecgp
 
-FILES := $(wildcard ./*.c)
+FILES := $(wildcard ./src/*.c)
 
 COMMON := -std=gnu99 $(FILES) -o bin/ecg -lm -lncurses
 

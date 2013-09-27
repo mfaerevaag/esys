@@ -89,14 +89,41 @@ Maaten dataen blir framstilt er en avgjoerende faktor for brukervennligheten av 
 Vi har ogsaa med muligheten til aa kjoere programmet slik at den outputter data til en \code{csv}-fil som saa kan plottes til en graf med for eksempel programmerings spraaket R. Eksempel paa vaares output fra filen \code{ECG.txt}:
 
 % TODO
-% \includegraphics[width=6in, keepaspectratio=true]{graph.r}
+% \includegraphics{graph.r}
+
 
 \section{Implementering}
+Under implemetasjonen av oppgaven har vi holdt fokus paa god programmerings praksis. Vi vil holde logikk som har med en av ECG maskinens funksjoner isolert og nemt aa anvende av en bruker. Paa denne maaten holder man god oversikt hvordan maskinens funksjoner er knyttet sammen og gjoer det nemmer aa debugge eventuelle feil.
+
+\subsection{Sensor}
+Sensoren implementeres i tre deler. Foerste del inneholder initialiseringen av sensoren, \code{init\_sensor}. Dette gjoeres med en fil, som saa aapnes for lesing.
+
+Derefter kan man kalle funksjonen \code{get\_next\_data} som saa leser linje for linje, altsaa verdi for verdi, ut av filen. Ingen av denne dataen blir gemt av denne modulen, det anser vi ikke som dens ansvar.
+
+Til slutt saa kan man kalle \code{destroy\_sensor} for aa lukke filen.
+
+\subsection{Filtre}
+For hver av filtrene har vi en metode som heter for eksempel \code{apply\_low\_pass}. Disse funksjonene tar kun signalets data og den data filtrene tidligere har filtrert. Selve filter algoritmene er implementert i foelge formlene oppgaven. % TODO ?
+
+Da det vil ta meget kode aa selv kjoere alle disse algoritmene. Under denne prosessen skal man lave et array for hvert filter som dens resultater blir gemt, men passe paa at man ikke gemmer unoedvendig informasjon. I tillegg skal man tenke paa hvilken rekkefoelge de skal kjoeres i og hvilken verdier man gir dem. Alt dette blir meget komplisert og tar meget kode. Derfor har vi lavet to funksjoner der skal abstrahere all denne kompleksitet inn i \code{filters} modulen og gjoere den nemmer og mer oversiktlig aa bruke.
+
+Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, mens spraaket i seg selv krever en verdi for aa markere at arrayet er slutt. Naar vi saa skal tilfoere verdier til arrayene bruker vi vaar egen \code{prepend\_array\_int}. Denne tar et array, dens lengde og verdien srom skal legges til foerst i arrayet. Naar lengden overstiger vaar definerte stoerrelse blir de blaatt fjernet.
+
+Den andre av funksjonen heter \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
+
+\subsection{Peak detektion}
+
+
+\subsection{Output}
+
 
 \section{Resultater}
 
+
 \section{Diskussion}
 
+
 \section{Konklusion}
+
 
 \end{document}

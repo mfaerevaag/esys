@@ -17,6 +17,10 @@ void init_display() {
 void destroy_display() {
 	if (!opts.display_flag) return;
 
+	mvprintw(0, 1, "PRESS ANY KEY TO EXIT");
+
+	getch();
+
 	endwin();
 }
 

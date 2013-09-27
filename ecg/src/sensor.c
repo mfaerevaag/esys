@@ -15,6 +15,9 @@ void destroy_sensor() {
 }
 
 int get_next_data() {
+	if (opts.time_scale > 0)
+		usleep(sample_rate * 1000000.0 * (1 / opts.time_scale));
+
 	int val;
 	fscanf(file,"%i", &val);
 

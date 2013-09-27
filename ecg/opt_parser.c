@@ -11,7 +11,7 @@ options parse_opts(int argc, char *argv[]) {
 	opts2.output_flag = 0;
 	opts2.limit = -1;
 	opts2.display_flag = 0;
-	opts2.time_scale = 1.0;
+	opts2.time_scale = 0.0;
 
 	char opt;
 	while ((opt = getopt(argc, argv, "f:o:l:t:d")) != -1) {

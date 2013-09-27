@@ -12,7 +12,7 @@
 
 // vars
 static float threshold1 = 2500;
-static float threshold2 = 1250;
+static float threshold2;
 static float rr_average1;
 static float rr_average2;
 static float rr_low = 0;

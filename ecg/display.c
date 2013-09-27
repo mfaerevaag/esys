@@ -31,10 +31,10 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	
 	// title
     attron(COLOR_PAIR(3));
-	mvprintw(2, 1, "    Medembed ECG    ");
+	mvprintw(1, 1, "    Medembed ECG    ");
     attroff(COLOR_PAIR(3));
 
-	int y_base = 3;
+	int y_base = 2;
 
 	// labels
 	mvprintw(y_base + 1, 1, "Time:");

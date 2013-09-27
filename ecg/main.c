@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <signal.h>
 #include <ncurses.h>
 
 #include "sensor.h"
@@ -16,7 +17,13 @@
 
 options opts;
 
+void int_handler(int sig);
+void destroy();
+
 int main(int argc, char *argv[]) {
+	// register SIGNINT (ctrl-c) hook
+	signal(SIGINT, int_handler);
+
 	opts = parse_opts(argc, argv);
 
 	init_output(opts.output_file_name);
@@ -29,7 +36,7 @@ int main(int argc, char *argv[]) {
 	// it is given that sampling rate is 250 samples/sec
 	double sample_rate = 1.0 / 250.0;
 
-	while (idx < opts.limit) {
+	while (idx++ < opts.limit) {
 		if (opts.time_scale > 0)
 			usleep(sample_rate * 1000000.0 * (1 / opts.time_scale));
 
@@ -40,15 +47,22 @@ int main(int argc, char *argv[]) {
 		peak_update pu = update_peak(mwi, idx);
 		update_display(time, mwi[0], data, pu);
 		update_output(time, mwi[0], data);
-
-		idx++;
 	}
+	
+	destroy();
 
-	getch();
+	return 0;
+}
 
+void int_handler(int sig) {
+	// exit gracefully
+	signal(sig, SIG_IGN);
+	destroy();
+	exit(0);
+}
+
+void destroy() {
 	destroy_output();
 	destroy_sensor();
 	destroy_display();
-
-	return 0;
 }

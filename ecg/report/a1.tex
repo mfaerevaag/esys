@@ -17,6 +17,7 @@
 \usepackage{abstract}
 \usepackage{url}
 \usepackage{float}
+\usepackage{enumitem}
 
 \newcommand{\code}[1]{\texttt{#1}}
 
@@ -49,26 +50,40 @@
 \clearpage
 
 \section{Introduktion}
-Denne opgaver omhandler processering af signaler fra et Elektrokardiogram apparat (herefter ECG). Formålet er omdanne de rå signaler til filtreret data, som kan bruges til at måle puls og spænding, og advare om forestående problemer hos patienten.
+Denne opgaver omhandler processering af signaler fra et Elektrokardiogram apparat (herefter ECG). Formålet er omdanne de rå signaler til filtreret og fortolket data, som kan bruges til at måle puls og spænding, og advare om forestående problemer hos patienten.
 
-Data fra hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet end funktionen der henter et nyt sample.
+Data fra ECG hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet end funktionen der henter et nyt sample.
 
 \subsection{Problemstilling}
 Udfordringen i denne opgave er at implementere signalfiltre og detektere egenskaber effektivt og struktureret, samt at præsentere dataen for brugeren på en hensigtsmæssig og brugbar facon.
 
-Datasættene har op til flere millioner samples, og det er derfor vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver god.
+Da datasættene har op til flere millioner samples, er det vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver acceptabel. 
+
+Det er ydermere afgørende, at algoritmen giver korrekte resultater da diagnosticeringen af en patient i modsat fald kan være forkert og lede til forkerte eller manglende beslutninger.
 
 \section{Analyse}
 \subsection{Funktioner}
 \subsubsection{Sensor}
+
 \subsubsection{Filtre}
+Filter funktionerne
 \subsubsection{Peak detektion}
 \subsubsection{Output}
 
 
 \section{Design}
+Programmet tager en række options som styrer output, display og data. De er som følger:
+
+\begin{description}[labelindent=1cm, labelwidth=1.5cm]
+  \item[-f $file$] Angiv hvilken fil der skal bruges som testdata input
+  \item[-o $file$] Angiv at data ønskes gemt som csv, argumentet er filen
+  \item[-l $uint$] Angiver antal samples der skal køres, sættes normalt til antal linier i testdata filen
+  \item[-d] Angiver at der ønskes visuel repræsentation af programmets kørsel
+  \item[-t $float$] Tidsskalering, f.eks. 2 for at simulere data ved dobbelt hastighed og 0.5 for halv hastighed. Har ingen indflydelse hvis \code{-d} ikke er sat.
+\end{description}
+
 \subsection{Arkitektur}
-I programmet har vi lagt til filene \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med aa innlese raw data fra en simulert ECG maskin. \code{filter.c} filtrerer saa denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
+Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med aa innlese raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
 
 Vi mener dette gir en oversiktelig inndeling av programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
 
@@ -81,12 +96,12 @@ Filtrene er implemetert for seg, altaa hvert filter har hver sin funksjon. Faar 
 Filter dataen blir saa pushet til starten av en koe, der de verdier som overskyter lengde 32 blir slettet. Dette gjoer at vi ikke gemmer unoedvendig informasjon og dermed ikke kaster bort hukommelse plass.
 
 \subsection{Peak detektion}
-Vaares peak detektion er implementert i en forholdsvis kompleks algoritme der bruker de seneste filtrerte verdier. Her gemmer vi heller ikke for mange verdier for aa spare hukommelse plass. Algoritmen returnerer flere verdier som saa kan bli fremstilt til brukeren paa en hensiktsmessig maate.
+Vaares peak detektion er implementert i en forholdsvis kompleks algoritme der bruker de seneste filtrerte verdier. Her gemmer vi heller ikke for mange verdier for aa spare hukommelse plass. Algoritmen returnerer en \code{peak\_update} struct, der beskriver algoritmens resultater, og som danner grundlag for det den endelige repræsentation til brugeren.
 
 \subsection{Output}
-Maaten dataen blir framstilt er en avgjoerende faktor for brukervennligheten av programmet. Derfor har vi, i tillegg til normalt output til konsollen/fil, implemtert et tekst basert grensesnitt med et biblotek kalt \code{ncurses}. Dette gjoer at vi kan fremstille en bevegende kurve med raw dataen, noe som vil etteligne en sinus-kurve paa en riktig ECG maskin.
+Måden dataen bliver præsenteret er en afgørende faktor for brukervennligheten av programmet. Derfor har vi, i tillegg til normalt output til konsollen/fil, implemtert et tekst basert grensesnitt med et biblotek kalt \code{ncurses}. Dette gør at vi kan fremstille en realtids-kurve af raw dataen, der fuldstændig (om end dårlig oplæsning) efterligner en rigtig ECG maskines kurve display.
 
-Vi har ogsaa med muligheten til aa kjoere programmet slik at den outputter data til en \code{csv}-fil som saa kan plottes til en graf med for eksempel programmerings spraaket R. Eksempel paa vaares output fra filen \code{ECG.txt}:
+Vi har ogsaa med muligheten til aa kjoere programmet således at den outputter data til en \code{csv}-fil som saa kan plottes til en graf med for eksempel programmerings sproget \code{R}. Eksempel paa vores output fra filen \code{ECG.txt}:
 
 % TODO
 % \includegraphics{graph.r}
@@ -107,11 +122,24 @@ For hver av filtrene har vi en metode som heter for eksempel \code{apply\_low\_p
 
 Da det vil ta meget kode aa selv kjoere alle disse algoritmene. Under denne prosessen skal man lave et array for hvert filter som dens resultater blir gemt, men passe paa at man ikke gemmer unoedvendig informasjon. I tillegg skal man tenke paa hvilken rekkefoelge de skal kjoeres i og hvilken verdier man gir dem. Alt dette blir meget komplisert og tar meget kode. Derfor har vi lavet to funksjoner der skal abstrahere all denne kompleksitet inn i \code{filters} modulen og gjoere den nemmer og mer oversiktlig aa bruke.
 
-Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, mens spraaket i seg selv krever en verdi for aa markere at arrayet er slutt. Naar vi saa skal tilfoere verdier til arrayene bruker vi vaar egen \code{prepend\_array\_int}. Denne tar et array, dens lengde og verdien srom skal legges til foerst i arrayet. Naar lengden overstiger vaar definerte stoerrelse blir de blaatt fjernet.
+Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, og samtidig holde den nuværende værdi. Når vi så skal tilføre værdier til de arrays bruger vi vores egen \code{prepend\_array\_int} metode. Denne tager et array, dens længde og værdien som skal lægges til først i arrayet. Når længden overstiger vores definerede størrelse bliver de fjernet. %TODO hmm?
 
-Den andre av funksjonen heter \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
+Den anden funktion hedder \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
 
 \subsection{Peak detektion}
+Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgende start værdier for variabler nødvendigvis må initialiseres:
+
+\begin{description}[labelindent=1cm, labelwidth=3.5cm]
+	\item[threshold1 = 2500]
+      Den omtrentlige grænse for hvad der kan klasificeres som en R-peak 
+	\item[rr\_high = max]
+      Max da første peak skal falde inden for high og low
+	\item[spkf = 5000]
+      Den omtrentlige R-peak værdi
+	\item[npkf = 1000]
+      Den omtrentlige peak værdi
+\end{description}
+
 
 
 \subsection{Output}

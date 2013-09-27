@@ -1,7 +1,7 @@
 output/
 bin/
 *.out
-*.pdf
+a1.pdf
 *.dvi
 *.aux
 *.toc

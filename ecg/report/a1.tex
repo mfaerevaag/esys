@@ -13,13 +13,32 @@
 \usepackage{lastpage}
 \usepackage{hyperref}
 \usepackage{parskip}
-\usepackage{graphicx}
 \usepackage{abstract}
 \usepackage{url}
 \usepackage{float}
 \usepackage{enumitem}
+\usepackage[all]{xy}
+\usepackage{amstext}
+\usepackage{fancybox}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
 
+% styling
 \newcommand{\code}[1]{\texttt{#1}}
+
+% diagrams
+\newcommand{\boxsize}{1.2in}
+\newcommand{\state}[1]%
+  {\doublebox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
+\newcommand{\switch}[1]%
+  {\ovalbox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
+
+
+\newcounter{eqn}
+\renewcommand*{\theeqn}{\alph{eqn})}
+\newcommand{\num}{\refstepcounter{eqn}\text{\theeqn}\;}
+
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -83,7 +102,19 @@ Programmet tager en række options som styrer output, display og data. De er som 
 \end{description}
 
 \subsection{Arkitektur}
-Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med aa innlese raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
+\begin{figure}[H]
+\xymatrix{
+  \ar@{->}[r]_{raw} \switch{sensor} & 
+  \ar@{->}[r]_{mwi} \switch{filter} & 
+  \ar@{->}[r]_{peaks} \switch{peak detektion} & 
+  \switch{output} &
+}
+
+\label{fig_flow}
+\caption{Overordnet program flow}
+\end{figure}
+
+Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med indlæsning af raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
 
 Vi mener dette gir en oversiktelig inndeling av programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
 
@@ -115,7 +146,7 @@ Sensoren implementeres i tre deler. Foerste del inneholder initialiseringen av s
 
 Derefter kan man kalle funksjonen \code{get\_next\_data} som saa leser linje for linje, altsaa verdi for verdi, ut av filen. Ingen av denne dataen blir gemt av denne modulen, det anser vi ikke som dens ansvar.
 
-Til slutt saa kan man kalle \code{destroy\_sensor} for aa lukke filen.
+Til sidst saa kan man kalle \code{destroy\_sensor} for aa lukke filen.
 
 \subsection{Filtre}
 For hver av filtrene har vi en metode som heter for eksempel \code{apply\_low\_pass}. Disse funksjonene tar kun signalets data og den data filtrene tidligere har filtrert. Selve filter algoritmene er implementert i foelge formlene oppgaven. % TODO ?
@@ -144,6 +175,20 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
 
 \subsection{Output}
 
+\begin{document}
+\begin{figure}[H]
+  \centering
+  \subfigure{\label{fig:raw_good}\includegraphics[width=60mm]{graphs/graph_raw_good.pdf}}
+  \subfigure{\label{fig:raw_bad}\includegraphics[width=60mm]{graphs/graph_raw_bad.pdf}}
+  \caption{Normal puls, og puls som indikerer kritisk tilstand hos patienten}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \subfigure{\label{fig:mwi_good}\includegraphics[width=60mm]{graphs/graph_mwi_good.pdf}}
+  \subfigure{\label{fig:mwi_bad}\includegraphics[width=60mm]{graphs/graph_mwi_bad.pdf}}
+  \caption{MWI værdierne efter signal filtrering}
+\end{figure}
 
 \section{Resultater}
 

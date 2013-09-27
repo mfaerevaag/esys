@@ -10,7 +10,7 @@ void init_output(char *output_file_name) {
 
 	output_file = fopen(output_file_name, "w");
 	// write headers
-	fprintf(output_file, "mwi,raw\n");
+	fprintf(output_file, "time,mwi,raw\n");
 }
 
 void destroy_output() {
@@ -22,7 +22,7 @@ void destroy_output() {
 void update_output(float time, int mwi, int raw) {
 	if (!opts.output_flag) return;
 
-	fprintf(output_file, "%i,%i\n", mwi, raw);
+	fprintf(output_file, "%f,%i,%i\n", time, mwi, raw);
 }
 
 #endif

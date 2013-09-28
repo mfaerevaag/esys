@@ -175,19 +175,24 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
 
 \subsection{Output}
 
-\begin{document}
 \begin{figure}[H]
   \centering
-  \subfigure{\label{fig:raw_good}\includegraphics[width=60mm]{graphs/graph_raw_good.pdf}}
-  \subfigure{\label{fig:raw_bad}\includegraphics[width=60mm]{graphs/graph_raw_bad.pdf}}
-  \caption{Normal puls, og puls som indikerer kritisk tilstand hos patienten}
+  \subfigure{\label{fig:raw_good}\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
+  \subfigure{\label{fig:raw_bad}\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
+  \caption{Normal puls, raw data og det filtrerede MWI}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \subfigure{\label{fig:mwi_good}\includegraphics[width=60mm]{graphs/graph_mwi_good.pdf}}
-  \subfigure{\label{fig:mwi_bad}\includegraphics[width=60mm]{graphs/graph_mwi_bad.pdf}}
-  \caption{MWI værdierne efter signal filtrering}
+  \subfigure{\label{fig:mwi_good}\includegraphics[width=70mm]{graphs/graph_raw_bad.pdf}}
+  \subfigure{\label{fig:mwi_bad}\includegraphics[width=70mm]{graphs/graph_mwi_bad.pdf}}
+  \caption{Begyndende kritisk puls, raw data og det filtrerede MWI}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=15cm]{graphs/gui.png}
+  \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
 \section{Resultater}

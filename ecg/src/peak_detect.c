@@ -5,9 +5,11 @@
 
 peak_update update_peak(int *mwi, int time) {
 	static int total_r_peaks = 0;
-	static int conseq_missed = 0;
+	static int consec_missed = 0;
 
 	peak_update updt;
+	updt.found_r_peak = 0;
+	updt.missed = 0;
 
 	peak pk;
 	pk.value = mwi[1];
@@ -25,11 +27,17 @@ peak_update update_peak(int *mwi, int time) {
 			// calculate RR
 			pk.interval = time - r_peaks[0].time;
 
+			
+			// check missed beat
+			if (!(pk.interval > rr_low && pk.interval < rr_high))
+				updt.missed = 1;
+
 			// is peak value between rr low and rr high
 			if (pk.interval > rr_low && pk.interval < rr_high) {
 				// reset misses
-				conseq_missed = 0;
+				consec_missed = 0;
 
+				// mark as r peak
 				updt.found_r_peak = 1;
 
 				// inc counts
@@ -37,21 +45,20 @@ peak_update update_peak(int *mwi, int time) {
 				rr_ok_count++;
 
 				// store peak as r-peak
-				total_r_peaks++;
 				prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, pk);
 				
 				// store rr in all and ok
-				prepend_array_int(rr_ok, PEAK_BUFFER_SIZE, pk.interval);
-				prepend_array_int(rr, PEAK_BUFFER_SIZE, pk.interval);
+				prepend_array_float(rr_ok, PEAK_BUFFER_SIZE, pk.interval);
+				prepend_array_float(rr, PEAK_BUFFER_SIZE, pk.interval);
 
-				rr_average1 = array_average_int(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
-				rr_average2 = array_average_int(rr_ok, min_int(rr_ok_count, PEAK_BUFFER_SIZE));
+				rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
+				rr_average2 = array_average_float(rr_ok, min_int(rr_ok_count, PEAK_BUFFER_SIZE));
 
 				rr_low = 0.92 * rr_average2;
 				rr_high = 1.16 * rr_average2;
 				rr_miss = 1.66 * rr_average2;
 				
-				spkf = 0.125 * mwi[1] + 0.875 * spkf;
+				spkf = 0.125 * pk.value + 0.875 * spkf;
 				threshold1 = npkf + 0.25 * (spkf - npkf);
 				threshold2 = 0.5 * threshold1;
 			}
@@ -61,17 +68,17 @@ peak_update update_peak(int *mwi, int time) {
 				peak peak2 = peaks[idxx];
 				while (peak2.value != 0) {
 					if (peak2.value > threshold2) {
+						// mark as r peak
 						updt.found_r_peak = 1;
 
 						// store peak in r-peaks
-						total_r_peaks++;
 						prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, peak2);
 
 						// store rr in rr
 						rr_count++;
-						prepend_array_int(rr, PEAK_BUFFER_SIZE, pk.interval);
+						prepend_array_float(rr, PEAK_BUFFER_SIZE, pk.interval);
 
-						rr_average1 = array_average_int(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
+						rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
 						
 						rr_low = 0.92 * rr_average1;
 						rr_high = 1.16 * rr_average1;
@@ -83,33 +90,33 @@ peak_update update_peak(int *mwi, int time) {
 
 						break;
 					}
+					
 					peak2 = peaks[++idxx];
 				}
-
-				// the beat was missed :(
-				updt.missed = 1;
-				conseq_missed++;
-			} 
-			else {
+			} else {
 				// This is a noise peak, do nothing
 			}
 		}
 		else {	
-			// reset misses
-			conseq_missed = 0;
-		
 			npkf = 0.125 * pk.value + 0.875 * npkf;
 			threshold1 = npkf + 0.25 * (spkf - npkf);
 			threshold2 = 0.5 * threshold1;
 		}
 	}
 
+	if (updt.found_r_peak)
+		total_r_peaks++;
+
+	if (updt.missed)
+		consec_missed++;
+
+
 	// fill in the rest of the update
 	updt.pulse = rr_average1;
 	updt.r_peak = r_peaks[0];
 	updt.n_peak = peaks[0];
 	updt.num_r_peaks = total_r_peaks;
-	updt.conseq_missed = conseq_missed;
+	updt.consec_missed = consec_missed;
 
 	return updt;
 }

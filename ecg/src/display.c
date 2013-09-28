@@ -45,7 +45,7 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 	mvprintw(y_base + 2, 1, "MWI:");	
 	mvprintw(y_base + 3, 1, "Last R-peak:");	
 	mvprintw(y_base + 4, 1, "Last peak:");	
-	mvprintw(y_base + 5, 1, "Pulse:");
+	mvprintw(y_base + 5, 1, "BPM:");
 	mvprintw(y_base + 6, 1, "# R-peaks:");
 	mvprintw(y_base + 7, 1, "Misses:");
 
@@ -63,15 +63,16 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 		attroff(COLOR_PAIR(1));
 
 	mvprintw(y_base + 4, col, "%5i", pu.n_peak.value);	
-	mvprintw(y_base + 5, col, "%5.1f", pu.pulse);
+	float bpm = (60.0 * 250) / pu.pulse;
+	mvprintw(y_base + 5, col, "%5.1f", bpm);
 	mvprintw(y_base + 6, col, "%5i", pu.num_r_peaks);
 
-	if (pu.conseq_missed > 4) 
+	if (pu.consec_missed > 4) 
 		attron(COLOR_PAIR(1));
 
-	mvprintw(y_base + 7, col, "%5i", pu.conseq_missed);
+	mvprintw(y_base + 7, col, "%5i", pu.consec_missed);
 
-	if (pu.conseq_missed > 4) 
+	if (pu.consec_missed > 4) 
 		attroff(COLOR_PAIR(1));
 
 	mvhline(y_base, 1, '-', 20);

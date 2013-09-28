@@ -17,7 +17,7 @@ typedef struct peak_update_s {
 	int num_r_peaks;
 	int found_r_peak;
 	int missed;
-	int conseq_missed;
+	int consec_missed;
 } peak_update;
 
 #endif

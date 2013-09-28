@@ -31,19 +31,24 @@ int main(int argc, char *argv[]) {
 	init_filters();
 	init_display();
 
-	int idx = 0;
-	double time = 0;
 	// it is given that sampling rate is 250 samples/sec
-	double sample_rate = 1.0 / 250.0;
+	float sample_rate = 1.0 / 250.0;
 
+	int idx = 0;
 	while (idx++ < opts.limit) {
-		time += sample_rate;
 		int data = get_next_data();
-		int *mwi = apply_all_filters(data, min_int(idx, LIST_SIZE - 1) + 1);
-
+		int curr_size = min_int(idx, LIST_SIZE - 1) + 1;
+		int *mwi = apply_all_filters(data, curr_size);
+		
 		peak_update pu = update_peak(mwi, idx);
-		update_display(time, mwi[0], data, pu);
-		update_output(time, mwi[0], data);
+		update_display(idx * sample_rate, mwi[1], data, pu);
+		update_output(idx * sample_rate, mwi[1], data);
+		
+		if (pu.missed && 0)
+			getchar();
+
+		if (pu.found_r_peak && 0)
+			printf("%i - %i - %i - MWI: %i - Count: %i\n", idx, pu.r_peak.value, pu.num_r_peaks, mwi[0], curr_size);
 	}
 	
 	destroy();

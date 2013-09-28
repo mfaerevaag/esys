@@ -1,4 +1,3 @@
-
 data <- read.csv('../output/data.csv', header=T)
 
 time <- as.numeric(data$time) 

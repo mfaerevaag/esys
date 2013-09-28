@@ -8,7 +8,7 @@
 #ifndef _PEAK_DETECT_H_
 #define _PEAK_DETECT_H_
 #define PEAK_BUFFER_SIZE 8
-#define PEAK_BUFFER_SIZE2 100
+#define PEAK_BUFFER_SIZE2 5
 
 // vars
 static float threshold1 = 2500;
@@ -24,8 +24,8 @@ static float npkf = 1000;
 static peak peaks[PEAK_BUFFER_SIZE2];
 static peak r_peaks[PEAK_BUFFER_SIZE];
 
-static int rr[PEAK_BUFFER_SIZE];
-static int rr_ok[PEAK_BUFFER_SIZE];
+static float rr[PEAK_BUFFER_SIZE];
+static float rr_ok[PEAK_BUFFER_SIZE];
 
 static int rr_count = 0;
 static int rr_ok_count = 0;

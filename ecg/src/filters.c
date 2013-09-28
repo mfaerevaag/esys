@@ -54,8 +54,8 @@ static int apply_square(int sd[], int fd[]) {
 
 static int apply_mwi(int sd[], int fd[], int count) {
     int sum = 0;
-    for (int i = 1; i < count; i++) {
-		sum += sd[i] / count;
+    for (int i = 1; i < 30; i++) {
+		sum += sd[i] / 30.0;
     }
     return sum;
 }

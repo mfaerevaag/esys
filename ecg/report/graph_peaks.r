@@ -1,6 +1,6 @@
 data <- read.csv('../output/data.csv', header=T)
 
-time <- as.numeric(data$time) 
+time <- as.numeric(data$time)
 raw <- as.numeric(data$raw) 
 mwi <- as.numeric(data$mwi)
 
@@ -17,7 +17,7 @@ yp <- c(4626,4263,4519,4933,4436,4370,4102,4485,4544,4341,4392,4431,4380,4121,39
 
 points(xp, yp)
 
-title("R-Peaks", xlab = "Time (s)", ylab = "MWI")
+title("R-Peaks", xlab = "Time (samples)", ylab = "MWI")
     
 # add zero-line
 abline(h=0)

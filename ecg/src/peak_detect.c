@@ -27,7 +27,6 @@ peak_update update_peak(int *mwi, int time) {
 			// calculate RR
 			pk.interval = time - r_peaks[0].time;
 
-			
 			// check missed beat
 			if (!(pk.interval > rr_low && pk.interval < rr_high))
 				updt.missed = 1;

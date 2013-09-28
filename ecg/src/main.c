@@ -43,12 +43,9 @@ int main(int argc, char *argv[]) {
 		peak_update pu = update_peak(mwi, idx);
 		update_display(idx * sample_rate, mwi[1], data, pu);
 		update_output(idx * sample_rate, mwi[1], data);
-		
-		if (pu.missed && 0)
-			getchar();
 
-		if (pu.found_r_peak && 0)
-			printf("%i - %i - %i - MWI: %i - Count: %i\n", idx, pu.r_peak.value, pu.num_r_peaks, mwi[0], curr_size);
+		if (pu.found_r_peak)
+			printf("%i - %i - %i - MWI: %i - Count: %i\n", pu.r_peak.time, pu.r_peak.value, pu.num_r_peaks, mwi[0], curr_size);
 	}
 	
 	destroy();

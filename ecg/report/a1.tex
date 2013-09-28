@@ -5,7 +5,6 @@
 \usepackage[danish]{babel}
 \usepackage{listings}
 \usepackage{caption}
-\usepackage{subcaption}
 \usepackage{xcolor}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -33,12 +32,6 @@
   {\doublebox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
 \newcommand{\switch}[1]%
   {\ovalbox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
-
-
-\newcounter{eqn}
-\renewcommand*{\theeqn}{\alph{eqn})}
-\newcommand{\num}{\refstepcounter{eqn}\text{\theeqn}\;}
-
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -171,20 +164,18 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
       Den omtrentlige peak værdi
 \end{description}
 
-
-
 \subsection{Output}
 
 \begin{figure}[H]
   \centering
   \subfigure{\label{fig:raw_good}\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
-  \subfigure{\label{fig:raw_bad}\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
+  \subfigure{\label{fig:mwi_good}\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
   \caption{Normal puls, raw data og det filtrerede MWI}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \subfigure{\label{fig:mwi_good}\includegraphics[width=70mm]{graphs/graph_raw_bad.pdf}}
+  \subfigure{\label{fig:raw_bad}\includegraphics[width=70mm]{graphs/graph_raw_bad.pdf}}
   \subfigure{\label{fig:mwi_bad}\includegraphics[width=70mm]{graphs/graph_mwi_bad.pdf}}
   \caption{Begyndende kritisk puls, raw data og det filtrerede MWI}
 \end{figure}
@@ -193,6 +184,12 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=15cm]{graphs/r_peaks.pdf}
+  \caption{Fundne R-Peaks vist på MWI data}
 \end{figure}
 
 \section{Resultater}

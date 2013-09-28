@@ -66,41 +66,47 @@ Denne opgaver omhandler processering af signaler fra et Elektrokardiogram appara
 
 Data fra ECG hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet end funktionen der henter et nyt sample.
 
-\subsection{Problemstilling}
+\section{Problemstilling}
 Udfordringen i denne opgave er at implementere signalfiltre og detektere egenskaber effektivt og struktureret, samt at præsentere dataen for brugeren på en hensigtsmæssig og brugbar facon.
 
 Da datasættene har op til flere millioner samples, er det vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver acceptabel. 
 
-Det er ydermere afgørende, at algoritmen giver korrekte resultater da diagnosticeringen af en patient i modsat fald kan være forkert og lede til forkerte eller manglende beslutninger.
+Det er ydermere afgørende, at algoritmen giver korrekte resultater, da diagnosticeringen af en patient i modsat fald kan være forkert og lede til forkerte eller manglende beslutninger.
 
-\section{Analyse}
 \subsection{Funktioner}
+Følgende er de overordnede funktioner som programmet skal udføre. Vi kigger her på hvad de hver især skal udføre og hvad der er vigtigt at fokusere på.
+
 \subsubsection{Sensor}
+Sensor funktionen læser en linie fra en fil ved hvert \code{get\_next\_data} kald. Dette er simuleringen af hardwaren, og derfor bør denne funktion også have en forsinkelses mekanisme for at emulere det rigtige tidsinterval mellem samples (4ms mellemrum). Funktionen skal hente data on-the-fly og altså ikke indlæse alt i memory, da det vil være uhensigtsmæssigt for store datasæt, og det ydermere er et krav i den stillede opgave.
 
 \subsubsection{Filtre}
-Filter funktionerne
-\subsubsection{Peak detektion}
-\subsubsection{Output}
+Der er en række af filtre, som hver skal udføre én bestemt filtrering, eller transformation, af dataen. De er linært afhængige af hinanden, hvilket vil sige at de skal udføres i en bestemt rækkefølge og den næste afhænger af den forrige. Filtrene skal bruge tidligere målte samples og tidligere filtreret data, hvilket vil sige at der skal gemmes data. Da det er uhensigtsmæssigt, både hukommelses- og ydelsesvis, skal der udvikles en datastruktur som holder forbruget til et minimum.
 
+\subsubsection{Peak detektion}
+Detektion af peaks er en kompliceret algoritme, som bruger det filtrede data til at måle amplitude og og frekvens af patientens puls. Funktionen skal videregive dens resultater til display og output funktionerne, så det er vigtigt at denne data er tilgængelig på en brugbar facon.
+
+\subsubsection{Display}
+Vi har valgt at implementere en display feature som efterligner en rigtig ECG maskines output. Dataen behandles i realtid, med mulighed for at skalere tiden op og ned, og der vises essentielle data såsom puls (BPM), R-peak værdier, antal missede peaks osv. Ydermere vil vi vise en graf af den rå data fra hardwaren i form af en simpel graf, sådan at pulsslagene kan ses visuelt.
+
+\subsubsection{Output}
+Det skal være muligt at outputte den resulterende data til en ekstern data fil, til brug for analyse, f.eks. i form af plots og grafer.
 
 \section{Design}
 Programmet tager en række options som styrer output, display og data. De er som følger:
 
 \begin{description}[labelindent=1cm, labelwidth=1.5cm]
-  \item[-f $file$] Angiv hvilken fil der skal bruges som testdata input
-  \item[-o $file$] Angiv at data ønskes gemt som csv, argumentet er filen
-  \item[-l $uint$] Angiver antal samples der skal køres, sættes normalt til antal linier i testdata filen
-  \item[-d] Angiver at der ønskes visuel repræsentation af programmets kørsel
-  \item[-t $float$] Tidsskalering, f.eks. 2 for at simulere data ved dobbelt hastighed og 0.5 for halv hastighed. Har ingen indflydelse hvis \code{-d} ikke er sat.
+  \item[\code{-f $file$}] Angiv hvilken fil der skal bruges som testdata input
+  \item[\code{-o $file$}] Angiv at data ønskes gemt som csv, argumentet er filen
+  \item[\code{-l $uint$}] Angiver antal samples der skal køres, sættes normalt til antal linier i testdata filen
+  \item[\code{-d}] Angiver at der ønskes visuel repræsentation af programmets kørsel
+  \item[\code{-t $float$}] Tidsskalering, 2 = dobbelt hastighed, 0.5 = halv hastighed osv.
 \end{description}
 
 \subsection{Arkitektur}
 \begin{figure}[H]
 \xymatrix{
-  \ar@{->}[r]_{raw} \switch{sensor} & 
-  \ar@{->}[r]_{mwi} \switch{filter} & 
-  \ar@{->}[r]_{peaks} \switch{peak detektion} & 
-  \switch{output} &
+  \ar@{->}[r]_{raw} \switch{sensor} & \ar@{->}[r]_{mwi} \switch{filter} & \ar@{->}[r]_{data} \ar@{->}[rd]_{data} \switch{peak detektion} & \switch{output} \\
+  & & & \switch{display}
 }
 
 \label{fig_flow}
@@ -109,7 +115,7 @@ Programmet tager en række options som styrer output, display og data. De er som 
 
 Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med indlæsning af raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
 
-Vi mener dette gir en oversiktelig inndeling av programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
+Vi mener dette giver en oversiktelig inddeling af programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
 
 \subsection{Sensor}
 Innlesningen av bildet skjer paa den maate at den best skal simulere signalet fra en ECG maskin. Derfor leses test dataen inn og behandles linje for linje, i motsetning til aa lese inn hele filen. Dette ville konsumere meget hukommelse, i tillegg ikke viser en god simulering av hvordan det faktisk fungerer.

@@ -15,6 +15,7 @@ void destroy_sensor() {
 }
 
 int get_next_data() {
+	double sample_rate = 1.0 / 250.0;
 	if (opts.time_scale > 0)
 		usleep(sample_rate * 1000000.0 * (1 / opts.time_scale));
 

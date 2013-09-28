@@ -75,12 +75,16 @@ void update_display(float time, int mwi, int raw, peak_update pu) {
 		attroff(COLOR_PAIR(1));
 
 	mvhline(y_base, 1, '-', 20);
+
 	
 	// graph
-    attron(COLOR_PAIR(2));
 	// top right bottom left
 	int xs = 100;
 	int box[4] = {1, xs, 20, 20};
+
+	mvhline(y_base + box[0] + box[2], box[3] + 1, '-', 100);
+
+    attron(COLOR_PAIR(2));
 	int last = 0;
 	for (int i = 0; i < xs; i++) {
 		int curr = raw_buffer[i];

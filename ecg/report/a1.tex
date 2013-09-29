@@ -95,6 +95,7 @@ Måden dataen bliver præsenteret er en afgørende faktor for brugervenligheden af 
 
 
 \section{Design}
+\label{sec:design}
 Programmet tager en række options som styrer output, display og data. De er som følger:
 
 \begin{description}[labelindent=1cm, labelwidth=1.5cm]
@@ -236,11 +237,31 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
+\section{Performance}
+\subsection{Kodestørrelse}
+Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
+
+Én måde at se på kodestørrelsen er ved simpelthen at se på hvor stor den resulterende binary er. For vores vedkommende er resultatet følgende:
+1
 
 \section{Diskussion}
 
 
 \section{Konklusion}
 
+\section{Kørsel af programmet}
+En optimeret binary kan bygges ved at køre \code{make ecgo} og derefter eksekvere programmet med de ønskede argumenter. F.eks. for at bruge ``ECG.txt'' og se den visuelle repræsentation af programmet i normal tid, kan det køres således: \code{ecgo -f ECG.txt -d -t 1}. Se \ref{sec:design} for detaljer vedr. argumenter.
+
+size til .text
+nm til update_peak
+
+\begin{table}[h]
+  \begin{tabular}{llllll}
+                 & -O0   & -O1   & -O2   & -O3   & -Os   \\
+    bin size     & 20380 & 19799 & 19799 & 19847 & 19794 \\
+    .text        & 6072  & 4552  & 4776  & 4808  & 3976  \\
+    update\_peak & 1669  & 1296  & 1258  & 1258  & 1130 
+  \end{tabular}
+\end{table}
 
 \end{document}

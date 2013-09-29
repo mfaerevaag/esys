@@ -80,7 +80,7 @@ Det er ydermere afgørende, at algoritmen giver korrekte resultater, da diagnosti
 Følgende er de overordnede funktioner som programmet skal udføre. Vi kigger her på hvad de hver især skal udføre og hvad der er vigtigt at fokusere på.
 
 \subsubsection{Sensor}
-Sensoren kobles til pasienten og laver et digitalt signal utifra den elektriske aktiviteten til hans/hennes hjerte. Dette simulerer vi ved aa lese linje for linje av en fil inneholdene forskjellige test data. Dette er simuleringen af hardwaren, og derfor bør denne funktion også have en forsinkelses mekanisme for at emulere det rigtige tidsinterval mellem samples (4ms mellemrum). Funktionen skal hente data on-the-fly og altså ikke indlæse alt i memory, da det vil være uhensigtsmæssigt for store datasæt, og det ydermere er et krav i den stillede opgave. % Norsk
+Sensoren kobles til patienten og laver et digitalt signal udfra den elektriske aktivitet fra hjertet. Dette simulerer vi ved at læse linje for linje af en fil indeholdende forskellige test data. Dette er simuleringen af hardwaren, og derfor bør denne funktion også have en forsinkelses mekanisme for at emulere det rigtige tidsinterval mellem samples (4ms mellemrum). Funktionen skal hente data on-the-fly og altså ikke indlæse alt i memory, da det vil være uhensigtsmæssigt for store datasæt, og det ydermere er et krav i den stillede opgave.
 
 \subsubsection{Filtre}
 Der er en række af filtre, som hver skal udføre én bestemt filtrering, eller transformation, af dataen. De er linært afhængige af hinanden, hvilket vil sige at de skal udføres i en bestemt rækkefølge og den næste afhænger af den forrige. Filtrene skal bruge tidligere målte samples og tidligere filtreret data, hvilket vil sige at der skal gemmes data. Da det er uhensigtsmæssigt, både hukommelses- og ydelsesvis, skal der udvikles en datastruktur som holder forbruget til et minimum.
@@ -238,7 +238,10 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
-\section{Performance}
+\section{Profiling}
+\subsection{Flaskehalse}
+%TODO gprof til at finde flaskehalse
+
 \subsection{Kodestørrelse}
 Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
 
@@ -260,8 +263,8 @@ Tabel \ref{tbl:codesize} viser de målinger vi er kommet frem til, og hvor stort 
 
 Det er interessant at den samlede binarys størrelse kun variere med \~500 bytes, selv i Os buildet. Det skyldes formodentlig at der ikke er specielt meget kode samlet set, hvilket bekræftes af at instruktionssættet udgør \~20\% af de totale bytes. I O3 buildet er koden generelt større end i O1 og O2, hvilket ikke er bemærkelsesværdigt, men det er interessant at \code{update\_peak} funktionen fylder mindre, og et tegn på at compileren er i stand til optimere kompakt og indviklet kode til noget langt mere optimalt.
 
-\section{Køretid}
-Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner, blot flere gange ved større input. Derfor forventer vi en køretid på $O(n)$. Vi har dog alligevel foretaget en måling og resultatet ses i figur \ref{fig:runtime}. Det ses at køretiden meget præcist er linær.
+\subsection{Køretid}
+Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bortset fra init og destroy funktionerne), blot flere gange ved større input. Derfor forventer vi en køretid på $O(n)$. Vi har dog alligevel foretaget en måling og resultatet ses i figur \ref{fig:runtime}. Det ses at køretiden meget præcist er linær.
 
 \begin{figure}[H]
   \centering

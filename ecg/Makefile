@@ -20,7 +20,7 @@ ecgd:
 	$(COMP) $(COMMON) -g -o bin/ecgd
 
 ecgp:
-	$(COMP) $(COMMON) $(OPT) -pg -o bin/ecgp 
+	$(COMP) $(COMMON) -pg -o bin/ecgp 
 
 prof: ecgp
 	bin/ecgp -f test_data/ECG10800K.txt -l 10800000

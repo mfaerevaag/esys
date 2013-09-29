@@ -10,7 +10,7 @@
 \usepackage{amsmath}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
-\usepackage{hyperref}
+%\usepackage{hyperref}
 \usepackage{parskip}
 \usepackage{abstract}
 \usepackage{url}
@@ -27,11 +27,10 @@
 \newcommand{\code}[1]{\texttt{#1}}
 
 % diagrams
-\newcommand{\boxsize}{1.2in}
-\newcommand{\state}[1]%
-  {\doublebox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
 \newcommand{\switch}[1]%
-  {\ovalbox{\text{\begin{minipage}{\boxsize}\centering #1\end{minipage}}}}
+  {\ovalbox{\text{\begin{minipage}{1.2in}\centering #1\end{minipage}}}}
+\newcommand{\minibox}[1]%
+  {\ovalbox{\text{\begin{minipage}{0.85in}\centering #1\end{minipage}}}}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -85,11 +84,11 @@ Der er en række af filtre, som hver skal udføre én bestemt filtrering, eller tra
 \subsubsection{Peak detektion}
 Detektion af peaks er en kompliceret algoritme, som bruger det filtrede data til at måle amplitude og og frekvens af patientens puls. Funktionen skal videregive dens resultater til display og output funktionerne, så det er vigtigt at denne data er tilgængelig på en brugbar facon.
 
-\subsubsection{Display}
-Vi har valgt at implementere en display feature som efterligner en rigtig ECG maskines output. Dataen behandles i realtid, med mulighed for at skalere tiden op og ned, og der vises essentielle data såsom puls (BPM), R-peak værdier, antal missede peaks osv. Ydermere vil vi vise en graf af den rå data fra hardwaren i form af en simpel graf, sådan at pulsslagene kan ses visuelt.
-
 \subsubsection{Output}
-Det skal være muligt at outputte den resulterende data til en ekstern data fil, til brug for analyse, f.eks. i form af plots og grafer.
+Det skal være muligt at skrive den resulterende data til en ekstern data fil, til brug for analyse, f.eks. i form af plots og grafer.
+
+\subsubsection{Display}
+Måden dataen bliver præsenteret er en afgørende faktor for brugervenligheden af programmet. Derfor har vi i tillæg til output til en fil, valgt at implementere en display feature som efterligner en rigtig ECG maskines output. Dataen behandles i realtid, med mulighed for at skalere tiden op og ned, og der vises essentielle data såsom puls (BPM), R-peak værdier, antal missede peaks osv. Ydermere vil vi vise en graf af den rå data fra hardwaren i form af en simpel graf, sådan at pulsslagene kan ses visuelt.
 
 \section{Design}
 Programmet tager en række options som styrer output, display og data. De er som følger:
@@ -102,53 +101,71 @@ Programmet tager en række options som styrer output, display og data. De er som 
   \item[\code{-t $float$}] Tidsskalering, 2 = dobbelt hastighed, 0.5 = halv hastighed osv.
 \end{description}
 
+De forskellige dele af programmet skal hver især initialiseres og destrueres ved programstart og -slut. Derfor har de fleste features en \code{init} og \code{destroy} funktion, i hvilken de udføre de relevante operationer, hvad enten det være at initialisere et array eller åbne en fil. Dette hjælper på isolering af ansvar, og er med til at holde \code{main} funktionen clean.
+
 \subsection{Arkitektur}
+
 \begin{figure}[H]
+\label{fig:flow}
 \xymatrix{
-  \ar@{->}[r]_{raw} \switch{sensor} & \ar@{->}[r]_{mwi} \switch{filter} & \ar@{->}[r]_{data} \ar@{->}[rd]_{data} \switch{peak detektion} & \switch{output} \\
+  \ar@{->}[r]_{raw} \switch{sensor} & \ar@{->}[r]_{mwi} \switch{filter} & \ar@{.>}[r]_{data} \ar@{.>}[rd]_{data} \switch{peak detektion} & \switch{output} \\
   & & & \switch{display}
 }
-
-\label{fig_flow}
-\caption{Overordnet program flow}
+\caption{Overordnet program flow (stiplede linjer markere valgfri eksekvering)}
 \end{figure}
 
-Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, som svarer direkte overens med de ovenfor beskrevne funktioner. I \code{sensor.c} ligger alt som har med indlæsning af raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
+Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, som svarer direkte overens med de ovenfor beskrevne funktioner. Figur \ref{fig:flow} viser hvordan dataen går gennem rækken af komponenter, fra det rå data til det processerede resulterende data.
 
-Vi mener dette giver en oversiktelig inddeling af programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
+Dette flow giver en overskuelig inddeling af programmet da hver fil, i henhold med navnet, er ansvarlig for en isoleret og veldefineret opgave. Det er også med til at simulere en realistisk hardware struktur hvor komponenterne ville være implementeret hver for sig og videregive information på lignende vis.
+
+Følgende er kort om hvordan arkitekturen indenfor hvert komponent er designet.
 
 \subsection{Sensor}
 Innlesningen av bildet skjer paa den maate at den best skal simulere signalet fra en ECG maskin. Derfor leses test dataen inn og behandles linje for linje, i motsetning til aa lese inn hele filen. Dette ville konsumere meget hukommelse, i tillegg ikke viser en god simulering av hvordan det faktisk fungerer.
 
 \subsection{Filtre}
-Filtrene er implemetert for seg, altaa hvert filter har hver sin funksjon. Faar aa nemt kunne anvende disse funksjoner har vi saa samlet de i en funksjon kalt \code{apply\_all\_filters}. Denne tar en raw verdi fra sensoren, filtrerer denne med \code{low\_pass}, \code{high\_pass}, \code{derivate}, \code{squaring} og \code{moving\_window\_integration}, for saa aa returnere samme verdien.
-
-Filter dataen blir saa pushet til starten av en koe, der de verdier som overskyter lengde 32 blir slettet. Dette gjoer at vi ikke gemmer unoedvendig informasjon og dermed ikke kaster bort hukommelse plass.
+Filtrene er implementeret hver for sig, således at hvert filter er en separat funktion. For nemt at kunne anvende disse funktioner har vi samlet dem i en funktion kaldet \code{apply\_all\_filters}. Denne tager en rå værdi fra sensoren, filtrerer denne med \code{low\_pass}, \code{high\_pass}, \code{derivate}, \code{squaring} og \code{moving\_window\_integration}, for så at returnere \code{mwi} køen. På denne måde er de specifikke filtreringsfunktioner abstraheret væk.
 
 \subsection{Peak detektion}
-Vaares peak detektion er implementert i en forholdsvis kompleks algoritme der bruker de seneste filtrerte verdier. Her gemmer vi heller ikke for mange verdier for aa spare hukommelse plass. Algoritmen returnerer en \code{peak\_update} struct, der beskriver algoritmens resultater, og som danner grundlag for det den endelige repræsentation til brugeren.
+Vores peak detektion er en forholdsvis kompleks algoritme der bruker de senest filtrerede værdier. Der eksponeres én funktion, \code{update\_peak} som bruger MWI dataen og den nuværende tid. Algoritmen returnerer en \code{peak\_update} struct, der beskriver algoritmens resultater, og som danner grundlag for det den endelige repræsentation til brugeren.
 
 \subsection{Output}
-Måden dataen bliver præsenteret er en afgørende faktor for brukervennligheten av programmet. Derfor har vi, i tillegg til normalt output til konsollen/fil, implemtert et tekst basert grensesnitt med et biblotek kalt \code{ncurses}. Dette gør at vi kan fremstille en realtids-kurve af raw dataen, der fuldstændig (om end dårlig oplæsning) efterligner en rigtig ECG maskines kurve display.
+Skrivning til en fil gøres med \code{update\_output} funktionen, som tager en \code{peak\_update} struct. Der skrives til den angivne fil én linie per data cyklus. På denne måde kan vi meget let inkludere eller eksludere data til outputtet. Filen skrives i formattet CSV da det er meget simpelt og let at håndtere.
 
-Vi har ogsaa med muligheten til aa kjoere programmet således at den outputter data til en \code{csv}-fil som saa kan plottes til en graf med for eksempel programmerings sproget \code{R}. Eksempel paa vores output fra filen \code{ECG.txt}:
+\subsection{Display}
+Ligesom output håndteres visuel præsentation af data ved kald til \code{update\_display}, som også tager en \code{peak\_update} struct. Her opdateres skærmen med den ny data og grafen tegnes på ny. Når visuel præsentation er slået til (med \code{-d}) pauser programmet og afventer et keyboard input, før det afslutter, så man kan nå at se de sidst målte data.
 
 \section{Implementering}
-Under implemetasjonen av oppgaven har vi holdt fokus paa god programmerings praksis. Vi vil holde logikk som har med en av ECG maskinens funksjoner isolert og nemt aa anvende av en bruker. Paa denne maaten holder man god oversikt hvordan maskinens funksjoner er knyttet sammen og gjoer det nemmer aa debugge eventuelle feil.
+\subsection{Hjælpefunktioner}
+Udover de benævnte komponenter, som hver har sin egen fil, har vi skrevet nogle hjælpefunktioner til array (\code{array\_utils}) og matematiske operationer (\code{math\_utils}). De matematiske operationer afgrænser sig til \code{min} og \code{max} funktioner. Array funktionerne abstraherer opgaven at prepende et element til et array, samt eksponerer en \code{array\_average}, der som navnet hentyder udregner et gennemsnit af værdierne i et array.
+
+\subsection{Datastrukture}
+De fleste af programmets interne dele benytter fixed-size FIFO\footnote{First In - First Out} køer. Vi prepender, altså sætter ind i arrayets første position, da dette gør det meget nemmere at bruge tidligere målt data. Hvis man eksempelvis skal bruge $X_{n-7}$ fra MWI skrives \code{mwi[7]}, hvilket er pænere, nemmere og mere overskueligt end at skulle holde styr på arrayets længde. 
+
+Køerne er implementeret med arrays, og når der prependes shiftes alle elementer i arrayet én plads til højre, og efterfølgende sættes element på position 0 til den nye værdi. På den måde bliver sidste element overskrevet af det næstsidste og vi undgår hukommelses leaks.
 
 \subsection{Sensor}
-Sensoren implementeres i tre deler. Foerste del inneholder initialiseringen av sensoren, \code{init\_sensor}. Dette gjoeres med en fil, som saa aapnes for lesing.
+Sensoren implementeres i tre dele. Første del initialiserer sensoren, \code{init\_sensor}. Der gives et filnavn som argument, og denne fil åbnes, med read permissions. 
 
-Derefter kan man kalle funksjonen \code{get\_next\_data} som saa leser linje for linje, altsaa verdi for verdi, ut av filen. Ingen av denne dataen blir gemt av denne modulen, det anser vi ikke som dens ansvar.
+Derefter kan man kalde funktionen \code{get\_next\_data}, som læser én linie i filen som en integer og returnere denne. Sensoren gemmer intet data, det overlades til de andre komponenter som skal bruge det.
 
-Til sidst saa kan man kalle \code{destroy\_sensor} for aa lukke filen.
+Ved programmets exit kaldes \code{destroy\_sensor}, som lukker input filen.
 
 \subsection{Filtre}
-For hver av filtrene har vi en metode som heter for eksempel \code{apply\_low\_pass}. Disse funksjonene tar kun signalets data og den data filtrene tidligere har filtrert. Selve filter algoritmene er implementert i foelge formlene oppgaven. % TODO ?
+Hver af de fem filtre er implementeret i deres egen funktion, som tager data fra den forrige filterfunktion og returnerer ny filtreret data. Selve filter algoritmene er implementert i følge formlene givet opgaven.
 
-Da det vil ta meget kode aa selv kjoere alle disse algoritmene. Under denne prosessen skal man lave et array for hvert filter som dens resultater blir gemt, men passe paa at man ikke gemmer unoedvendig informasjon. I tillegg skal man tenke paa hvilken rekkefoelge de skal kjoeres i og hvilken verdier man gir dem. Alt dette blir meget komplisert og tar meget kode. Derfor har vi lavet to funksjoner der skal abstrahere all denne kompleksitet inn i \code{filters} modulen og gjoere den nemmer og mer oversiktlig aa bruke.
+\begin{figure}[H]
+\centering
+\label{fig:filters}
+\xymatrix{
+  \ar@{->}[r] \minibox{low\_pass} & \ar@{->}[r] \minibox{high\_pass} & \ar@{->}[r] \minibox{derivative} & \ar@{->}[r] \minibox{square} & \minibox{mwi} &  \\
+}
+\caption{Respektive filterfunktioner}
+\end{figure}
+% TODO
+Under denne prosessen skal man lave et array for hvert filter som dens resultater blir gemt, men passe paa at man ikke gemmer unoedvendig informasjon. I tillegg skal man tenke paa hvilken rekkefoelge de skal kjoeres i og hvilken verdier man gir dem. Alt dette blir meget komplisert og tar meget kode. Derfor har vi lavet to funksjoner der skal abstrahere all denne kompleksitet inn i \code{filters} modulen og gjoere den nemmer og mer oversiktlig aa bruke.
 
-Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, og samtidig holde den nuværende værdi. Når vi så skal tilføre værdier til de arrays bruger vi vores egen \code{prepend\_array\_int} metode. Denne tager et array, dens længde og værdien som skal lægges til først i arrayet. Når længden overstiger vores definerede størrelse bliver de fjernet. %TODO hmm?
+Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, og samtidig holde den nuværende værdi. Når vi så skal tilføre værdier til de arrays bruger vi vores egen \code{prepend\_array\_int} metode. Denne tager et array, dens længde og værdien som skal lægges til først i arrayet. Når længden overstiger vores definerede størrelse bliver de fjernet. %TODO hmm
 
 Den anden funktion hedder \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
 
@@ -166,13 +183,16 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
       Den omtrentlige gennemsnitlige peak værdi
 \end{description}
 
-For at fundne peaks og anden relevant data nemt kan videregives til næste del af programmet
+For at fundne peaks og anden relevant data nemt kan videregives til næste del af programmet, har vi lavet en struct \code{peak\_update}, som indeholder det relevante data, såsom den seneste R-peak værdi, puls (\code{average1}), tid, seneste MWI værdi, etc. Denne struct videregives til både output, og display delene af programmet, som så kan bruge det data de har brug for.
+
+\subsection{Display}
+Det visuelle interface er udviklet ved brug af biblioteket \code{ncurses}\footnote{\url{http://www.gnu.org/software/ncurses}}. Det tager en \code{peak\_update} og viser essentielt set blot dens indhold. For at tegne puls grafen har \code{display} funktionen sin egen kø, for at den kan gemme de sidste 100 data punkter. Disse tegnes med en simpel algoritme der udregner række og kolonne position for et data punkt. Den er meget simpel og efterlader mulighed for megen forbedring, men den er stadig et fint proof of concept.
 
 \subsection{Output}
-Programmet kan skrive data til en given fil i CSV formattet. 
+Programmet kan skrive data til en given fil i CSV formattet. Dette kan så kan plottes til en graf med for eksempel programmeringssproget \code{R} (hvilket vi har gjort). Ligesom \code{sensor} funktionen, åbner \code{output} filen, der skal skrives til i \code{init\_output} funktionen. I \code{destroy\_output} lukkes filen igen.
 
 \section{Resultater}
-
+Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-peaks. 
 \begin{figure}[H]
   \centering
   \subfigure{\label{fig:raw_good}\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
@@ -190,14 +210,14 @@ Programmet kan skrive data til en given fil i CSV formattet.
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
-  \label{fig_screenshot}
+  \label{fig:screenshot}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/r_peaks.pdf}
-  \label{fig_peaks}
+  \label{fig:peaks}
   \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 

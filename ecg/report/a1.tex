@@ -10,7 +10,7 @@
 \usepackage{amsmath}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
-%\usepackage{hyperref}
+\usepackage{hyperref}
 \usepackage{parskip}
 \usepackage{abstract}
 \usepackage{url}
@@ -22,6 +22,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subfigure}
+\usepackage[bottom]{footmisc}
 
 % styling
 \newcommand{\code}[1]{\texttt{#1}}
@@ -241,8 +242,33 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
 \subsection{Kodestørrelse}
 Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
 
-Én måde at se på kodestørrelsen er ved simpelthen at se på hvor stor den resulterende binary er. For vores vedkommende er resultatet følgende:
-1
+\begin{table}[h]
+  \label{tbl:codesize}
+  \centering
+  \begin{tabular}{l|l|l|l|l|l}
+                 & -O0   & -O1             & -O2             & -O3             & -Os             \\ \hline
+    bin          & 20380 & 19799 (97.15\%) & 19799 (97.15\%) & 19847 (97.38\%) & 19794 (97.12\%) \\ \hline
+    .text        & 6072  & 4552  (74.97\%) & 4776  (78.66\%) & 4808  (79.18\%) & 3976  (65.48\%) \\ \hline
+    update\_peak & 1669  & 1296  (77.65\%) & 1258  (75.37\%) & 1258  (75.37\%) & 1130  (67.71\%) \\
+  \end{tabular}
+  \caption{Kodestørrelse (bytes) af forskellige aspekter og optimeringer}
+\end{table}
+
+Vi har målt kodestørrelse på 5 forskellige builds, med compiler flags O0-O3 og Os. O0-O3 optimerer for køretid og vi forventer dermed ikke at kodestørrelsen nødvendigvis er lavere. Derimod optimerer Os netop for størrelse så her burde vi kunne se tydelig forskel. 
+
+Tabel \ref{tbl:codesize} viser de målinger vi er kommet frem til, og hvor stort det er i forhold til O0 buildet. ``bin'' er simpelthen størrelsen på den binary der bliver kompileret. ``.text'' er målt vha. unix programmet \code{size}\footnote{\url{http://unixhelp.ed.ac.uk/CGI/man-cgi?size}} og måler størrelsen af instruktionssektoren af en binary, som er der hvor de egentlige instruktioner som CPU'en vil udføre ligger. ``update\_peak'' er størrelsen af \code{update\_peak} funktionen og er målt vha. unix programmet \code{nm}\footnote{\url{http://unixhelp.ed.ac.uk/CGI/man-cgi?nm}}, som viser information om forskellige symboler i en object fil (binary). Vi målte størrelsen af \code{update\_peak} funktionen fordi det er den største og derfor kan give den bedste sammenligning.
+
+Det er interessant at den samlede binarys størrelse kun variere med \~500 bytes, selv i Os buildet. Det skyldes formodentlig at der ikke er specielt meget kode samlet set, hvilket bekræftes af at instruktionssættet udgør \~20\% af de totale bytes. I O3 buildet er koden generelt større end i O1 og O2, hvilket ikke er bemærkelsesværdigt, men det er interessant at \code{update\_peak} funktionen fylder mindre, og et tegn på at compileren er i stand til optimere kompakt og indviklet kode til noget langt mere optimalt.
+
+\section{Køretid}
+Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner, blot flere gange ved større input. Derfor forventer vi en køretid på $O(n)$. Vi har dog alligevel foretaget en måling og resultatet ses i figur \ref{fig:runtime}. Det ses at køretiden meget præcist er linær.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{graphs/running_time.pdf}
+  \label{fig:runtime}
+  \caption{Fundne R-Peaks vist som cirkler på MWI data}
+\end{figure}
 
 \section{Diskussion}
 
@@ -250,18 +276,6 @@ Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignor
 \section{Konklusion}
 
 \section{Kørsel af programmet}
-En optimeret binary kan bygges ved at køre \code{make ecgo} og derefter eksekvere programmet med de ønskede argumenter. F.eks. for at bruge ``ECG.txt'' og se den visuelle repræsentation af programmet i normal tid, kan det køres således: \code{ecgo -f ECG.txt -d -t 1}. Se \ref{sec:design} for detaljer vedr. argumenter.
-
-size til .text
-nm til update_peak
-
-\begin{table}[h]
-  \begin{tabular}{llllll}
-                 & -O0   & -O1   & -O2   & -O3   & -Os   \\
-    bin size     & 20380 & 19799 & 19799 & 19847 & 19794 \\
-    .text        & 6072  & 4552  & 4776  & 4808  & 3976  \\
-    update\_peak & 1669  & 1296  & 1258  & 1258  & 1130 
-  \end{tabular}
-\end{table}
+En optimeret binary kan bygges ved at køre \code{make ecgo3} og derefter eksekvere programmet med de ønskede argumenter. F.eks. for at bruge ``ECG.txt'' og se den visuelle repræsentation af programmet i normal tid, kan det køres således: \code{ecgo3 -f ECG.txt -d -t 1}. Se \ref{sec:design} for detaljer vedr. argumenter.
 
 \end{document}

@@ -1,0 +1,5 @@
+Running time
+for ((i = 0; i < 10000000; i = i + 1000000)); do time bin/ecgo3 -f test_data/ECG10800K.txt -l $i; done;
+
+Code size
+for x (0 1 2 3 s); do size -A bin/ecgo$x | grep .text; done   

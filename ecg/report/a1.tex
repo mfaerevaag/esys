@@ -60,23 +60,26 @@
 \tableofcontents
 \clearpage
 
+
 \section{Introduktion}
 Denne opgaver omhandler processering af signaler fra et Elektrokardiogram apparat (herefter ECG). Formålet er omdanne de rå signaler til filtreret og fortolket data, som kan bruges til at måle puls og spænding, og advare om forestående problemer hos patienten.
 
 Data fra ECG hardwaren er simuleret ved at læse linier af tal fra en tekstfil, således at rigtig data i princippet kunne bruges uden at ændre andet end funktionen der henter et nyt sample.
 
+
 \section{Problemstilling}
 Udfordringen i denne opgave er at implementere signalfiltre og detektere egenskaber effektivt og struktureret, samt at præsentere dataen for brugeren på en hensigtsmæssig og brugbar facon.
 
-Da datasættene har op til flere millioner samples, er det vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver acceptabel. 
+Da datasættene har op til flere millioner samples, er det vigtigt at implementere datastrukturer og algoritmer på en måde som kan håndtere arbitræt store datasæt, mens ydeevnen forbliver acceptabel.
 
 Det er ydermere afgørende, at algoritmen giver korrekte resultater, da diagnosticeringen af en patient i modsat fald kan være forkert og lede til forkerte eller manglende beslutninger.
+
 
 \subsection{Funktioner}
 Følgende er de overordnede funktioner som programmet skal udføre. Vi kigger her på hvad de hver især skal udføre og hvad der er vigtigt at fokusere på.
 
 \subsubsection{Sensor}
-Sensor funktionen læser en linie fra en fil ved hvert \code{get\_next\_data} kald. Dette er simuleringen af hardwaren, og derfor bør denne funktion også have en forsinkelses mekanisme for at emulere det rigtige tidsinterval mellem samples (4ms mellemrum). Funktionen skal hente data on-the-fly og altså ikke indlæse alt i memory, da det vil være uhensigtsmæssigt for store datasæt, og det ydermere er et krav i den stillede opgave.
+Sensoren kobles til pasienten og laver et digitalt signal utifra den elektriske aktiviteten til hans/hennes hjerte. Dette simulerer vi ved aa lese linje for linje av en fil inneholdene forskjellige test data. Dette er simuleringen af hardwaren, og derfor bør denne funktion også have en forsinkelses mekanisme for at emulere det rigtige tidsinterval mellem samples (4ms mellemrum). Funktionen skal hente data on-the-fly og altså ikke indlæse alt i memory, da det vil være uhensigtsmæssigt for store datasæt, og det ydermere er et krav i den stillede opgave. % Norsk
 
 \subsubsection{Filtre}
 Der er en række af filtre, som hver skal udføre én bestemt filtrering, eller transformation, af dataen. De er linært afhængige af hinanden, hvilket vil sige at de skal udføres i en bestemt rækkefølge og den næste afhænger af den forrige. Filtrene skal bruge tidligere målte samples og tidligere filtreret data, hvilket vil sige at der skal gemmes data. Da det er uhensigtsmæssigt, både hukommelses- og ydelsesvis, skal der udvikles en datastruktur som holder forbruget til et minimum.
@@ -88,7 +91,8 @@ Detektion af peaks er en kompliceret algoritme, som bruger det filtrede data til
 Det skal være muligt at skrive den resulterende data til en ekstern data fil, til brug for analyse, f.eks. i form af plots og grafer.
 
 \subsubsection{Display}
-Måden dataen bliver præsenteret er en afgørende faktor for brugervenligheden af programmet. Derfor har vi i tillæg til output til en fil, valgt at implementere en display feature som efterligner en rigtig ECG maskines output. Dataen behandles i realtid, med mulighed for at skalere tiden op og ned, og der vises essentielle data såsom puls (BPM), R-peak værdier, antal missede peaks osv. Ydermere vil vi vise en graf af den rå data fra hardwaren i form af en simpel graf, sådan at pulsslagene kan ses visuelt.
+Måden dataen bliver præsenteret er en afgørende faktor for brugervenligheden af programmet. Derfor har vi i tillæg til output til en fil, valgt at implementere en display feature som efterligner en rigtig ECG maskines output. Dataen behandles i realtid, med mulighed for at skalere tiden op og ned, og der vises essentielle data såsom puls (BPM), R-peak værdier, antal missede peaks, osv. Ydermere vil vi vise en graf af den rå data fra hardwaren i form af en simpel graf, sådan at pulsslagene kan ses visuelt.
+
 
 \section{Design}
 Programmet tager en række options som styrer output, display og data. De er som følger:
@@ -135,17 +139,18 @@ Skrivning til en fil gøres med \code{update\_output} funktionen, som tager en \c
 \subsection{Display}
 Ligesom output håndteres visuel præsentation af data ved kald til \code{update\_display}, som også tager en \code{peak\_update} struct. Her opdateres skærmen med den ny data og grafen tegnes på ny. Når visuel præsentation er slået til (med \code{-d}) pauser programmet og afventer et keyboard input, før det afslutter, så man kan nå at se de sidst målte data.
 
+
 \section{Implementering}
 \subsection{Hjælpefunktioner}
 Udover de benævnte komponenter, som hver har sin egen fil, har vi skrevet nogle hjælpefunktioner til array (\code{array\_utils}) og matematiske operationer (\code{math\_utils}). De matematiske operationer afgrænser sig til \code{min} og \code{max} funktioner. Array funktionerne abstraherer opgaven at prepende et element til et array, samt eksponerer en \code{array\_average}, der som navnet hentyder udregner et gennemsnit af værdierne i et array.
 
 \subsection{Datastrukture}
-De fleste af programmets interne dele benytter fixed-size FIFO\footnote{First In - First Out} køer. Vi prepender, altså sætter ind i arrayets første position, da dette gør det meget nemmere at bruge tidligere målt data. Hvis man eksempelvis skal bruge $X_{n-7}$ fra MWI skrives \code{mwi[7]}, hvilket er pænere, nemmere og mere overskueligt end at skulle holde styr på arrayets længde. 
+De fleste af programmets interne dele benytter fixed-size FIFO\footnote{First In - First Out} køer. Vi prepender, altså sætter ind i arrayets første position, da dette gør det meget nemmere at bruge tidligere målt data. Hvis man eksempelvis skal bruge $X_{n-7}$ fra MWI skrives \code{mwi[7]}, hvilket er pænere, nemmere og mere overskueligt end at skulle holde styr på arrayets længde.
 
 Køerne er implementeret med arrays, og når der prependes shiftes alle elementer i arrayet én plads til højre, og efterfølgende sættes element på position 0 til den nye værdi. På den måde bliver sidste element overskrevet af det næstsidste og vi undgår hukommelses leaks.
 
 \subsection{Sensor}
-Sensoren implementeres i tre dele. Første del initialiserer sensoren, \code{init\_sensor}. Der gives et filnavn som argument, og denne fil åbnes, med read permissions. 
+Sensoren implementeres i tre dele. Første del initialiserer sensoren, \code{init\_sensor}. Der gives et filnavn som argument, og denne fil åbnes, med read permissions.
 
 Derefter kan man kalde funktionen \code{get\_next\_data}, som læser én linie i filen som en integer og returnere denne. Sensoren gemmer intet data, det overlades til de andre komponenter som skal bruge det.
 
@@ -176,7 +181,7 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
 
 \begin{description}[labelindent=1cm, labelwidth=3.5cm]
 	\item[threshold1 = 2500]
-      Den omtrentlige grænse for hvad der kan klasificeres som en R-peak 
+      Den omtrentlige grænse for hvad der kan klasificeres som en R-peak
 	\item[rr\_high = max]
       Max (sat til 99999), da første peak skal falde inden for high og low
 	\item[spkf = 5000]
@@ -193,9 +198,9 @@ Det visuelle interface er udviklet ved brug af biblioteket \code{ncurses}\footno
 \subsection{Output}
 Programmet kan skrive data til en given fil i CSV formattet. Dette kan så kan plottes til en graf med for eksempel programmeringssproget \code{R} (hvilket vi har gjort). Ligesom \code{sensor} funktionen, åbner \code{output} filen, der skal skrives til i \code{init\_output} funktionen. I \code{destroy\_output} lukkes filen igen.
 
+
 \section{Resultater}
 Nedenfor i figur \ref{fig:graph_good} vises den rå data og den relaterede filtrede (mwi) data. Det ses tydeligt hvordan algoritmen gør det utroligt meget nemmere at detektere amplitude og frekvens, da kurverne er blødere og næsten intet ``flimmer'' har.
-
 \begin{figure}[H]
   \label{fig:graph_good}
   \centering
@@ -230,6 +235,7 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
   \label{fig:screenshot}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
+
 
 \section{Diskussion}
 

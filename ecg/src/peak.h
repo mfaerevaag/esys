@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-
 #ifndef _PEAK_H_
 #define _PEAK_H_
 

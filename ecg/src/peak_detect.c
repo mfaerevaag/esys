@@ -19,7 +19,7 @@ peak_update update_peak(int *mwi, int time) {
 		pk.time = time;
 		
 		// store peak
-		prepend_array_peak(peaks, PEAK_BUFFER_SIZE2, pk);
+		prepend_array_peak(peaks, PEAK_BUFFER_SIZE, pk);
 		
 		// check if peak is noise or r-peak
 		if (pk.value > threshold1) {
@@ -44,14 +44,14 @@ peak_update update_peak(int *mwi, int time) {
 				rr_ok_count++;
 
 				// store peak as r-peak
-				prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, pk);
+				prepend_array_peak(r_peaks, R_PEAK_BUFFER_SIZE, pk);
 				
 				// store rr in all and ok
-				prepend_array_float(rr_ok, PEAK_BUFFER_SIZE, pk.interval);
-				prepend_array_float(rr, PEAK_BUFFER_SIZE, pk.interval);
+				prepend_array_float(rr_ok, R_PEAK_BUFFER_SIZE, pk.interval);
+				prepend_array_float(rr, R_PEAK_BUFFER_SIZE, pk.interval);
 
-				rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
-				rr_average2 = array_average_float(rr_ok, min_int(rr_ok_count, PEAK_BUFFER_SIZE));
+				rr_average1 = array_average_float(rr, min_int(rr_count, R_PEAK_BUFFER_SIZE));
+				rr_average2 = array_average_float(rr_ok, min_int(rr_ok_count, R_PEAK_BUFFER_SIZE));
 
 				rr_low = 0.92 * rr_average2;
 				rr_high = 1.16 * rr_average2;
@@ -71,13 +71,13 @@ peak_update update_peak(int *mwi, int time) {
 						updt.found_r_peak = 1;
 
 						// store peak in r-peaks
-						prepend_array_peak(r_peaks, PEAK_BUFFER_SIZE, peak2);
+						prepend_array_peak(r_peaks, R_PEAK_BUFFER_SIZE, peak2);
 
 						// store rr in rr
 						rr_count++;
-						prepend_array_float(rr, PEAK_BUFFER_SIZE, pk.interval);
+						prepend_array_float(rr, R_PEAK_BUFFER_SIZE, pk.interval);
 
-						rr_average1 = array_average_float(rr, min_int(rr_count, PEAK_BUFFER_SIZE));
+						rr_average1 = array_average_float(rr, min_int(rr_count, R_PEAK_BUFFER_SIZE));
 						
 						rr_low = 0.92 * rr_average1;
 						rr_high = 1.16 * rr_average1;

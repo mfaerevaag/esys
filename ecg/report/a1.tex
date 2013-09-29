@@ -163,11 +163,13 @@ Hver af de fem filtre er implementeret i deres egen funktion, som tager data fra
 \caption{Respektive filterfunktioner}
 \end{figure}
 % TODO
-Under denne prosessen skal man lave et array for hvert filter som dens resultater blir gemt, men passe paa at man ikke gemmer unoedvendig informasjon. I tillegg skal man tenke paa hvilken rekkefoelge de skal kjoeres i og hvilken verdier man gir dem. Alt dette blir meget komplisert og tar meget kode. Derfor har vi lavet to funksjoner der skal abstrahere all denne kompleksitet inn i \code{filters} modulen og gjoere den nemmer og mer oversiktlig aa bruke.
+Ved filtrering af dataen skal der bruges et array for hvert filter i hvilket resultaterne af det respektive filter bliver gemt. Ydermere skal man være omhyggelig med i hvilken rækkefølge de eksekveres, da de afhænger af hinanden. Dette bliver hurtigt kompliceret, og derfor har vi ligesom i de andre komponenter implementeret en \code{init\_filters} metode som initialisere de forskellige arrays. Vi har \code{typedef}'et et array med buffer størrelsen (til navnet \code{list}) for at gøre det mere overskueligt hvad de forskellige arrays er. 
 
-Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer et array for hvert filter. Stoerrelsen paa disse filtrene settes til 33. Det er fordi filtrene skal maks trenge 32 verdier tilbake, og samtidig holde den nuværende værdi. Når vi så skal tilføre værdier til de arrays bruger vi vores egen \code{prepend\_array\_int} metode. Denne tager et array, dens længde og værdien som skal lægges til først i arrayet. Når længden overstiger vores definerede størrelse bliver de fjernet. %TODO hmm
+Længden på disse lister er 33, da visse filtre skal bruge data fra 32 samples tilbage, plus de skal holde det nuværende sample.
 
-Den anden funktion hedder \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
+Selve filtreringen foregår ved at kalde \code{apply\_all\_filters} med den rå data som argument, og denne funktion sørger for at kalde filtrene i korrekt rækkefølge og returnerer \code{mwi} listen.
+
+De specifikke filterfunktioner er deklareret \code{static} da de ikke har nogen værdi udenfor \code{filters.c} filen.
 
 \subsection{Peak detektion}
 Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgende start værdier for variabler nødvendigvis må initialiseres før algoritmen kan fungere:
@@ -192,13 +194,17 @@ Det visuelle interface er udviklet ved brug af biblioteket \code{ncurses}\footno
 Programmet kan skrive data til en given fil i CSV formattet. Dette kan så kan plottes til en graf med for eksempel programmeringssproget \code{R} (hvilket vi har gjort). Ligesom \code{sensor} funktionen, åbner \code{output} filen, der skal skrives til i \code{init\_output} funktionen. I \code{destroy\_output} lukkes filen igen.
 
 \section{Resultater}
-Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-peaks. 
+Nedenfor i figur \ref{fig:graph_good} vises den rå data og den relaterede filtrede (mwi) data. Det ses tydeligt hvordan algoritmen gør det utroligt meget nemmere at detektere amplitude og frekvens, da kurverne er blødere og næsten intet ``flimmer'' har.
+
 \begin{figure}[H]
+  \label{fig:graph_good}
   \centering
-  \subfigure{\label{fig:raw_good}\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
-  \subfigure{\label{fig:mwi_good}\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
+  \subfigure{\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
+  \subfigure{\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
   \caption{Normal puls, raw data og det filtrerede MWI}
 \end{figure}
+
+I figur \ref{fig:graph_bad} ses hvad der sker nå patientens tilstand bliver kritisk. Pulsen stiger og slagkraften falder drastisk. Dette detekteres omgående i \code{peak\_detect} og der kan vises advarsler.
 
 \begin{figure}[H]
   \centering
@@ -207,18 +213,22 @@ Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-pea
   \caption{Begyndende kritisk puls, raw data og det filtrerede MWI}
 \end{figure}
 
+Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-peaks korrekt. Den egentlige værdi af de funde peaks ligger en smule, dog konsistent, under toppunkterne på \code{mwi} dataen. Dette er vist i figur \ref{fig:peaks}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{graphs/r_peaks.pdf}
+  \label{fig:peaks}
+  \caption{Fundne R-Peaks vist som cirkler på MWI data}
+\end{figure}
+
+Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:screenshot}. Det ses hvordan rød farve er brugt til at markere alarmerende omstændigheder. 
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
   \label{fig:screenshot}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=15cm]{graphs/r_peaks.pdf}
-  \label{fig:peaks}
-  \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 
 \section{Diskussion}

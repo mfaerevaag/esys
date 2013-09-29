@@ -113,7 +113,7 @@ Programmet tager en række options som styrer output, display og data. De er som 
 \caption{Overordnet program flow}
 \end{figure}
 
-Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, samt deres tilhoerende header-filer. I \code{sensor.c} ligger alt som har med indlæsning af raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
+Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, som svarer direkte overens med de ovenfor beskrevne funktioner. I \code{sensor.c} ligger alt som har med indlæsning af raw data fra en simulert ECG maskin. \code{filter.c} filtrerer så denne dataen vha. de filtre der er beskrevet under Funktioner. Der efter blir dataen gitt over til \code{peak\_detect.c} som ser efter peaks, puls og eventuelle abnormaliteter i hjerterytmen. Denne informasjonen, i tillegg til den filtrerede data, blir saa outputtet eller displayed med enten \code{output.c} eller \code{display.c}.
 
 Vi mener dette giver en oversiktelig inddeling af programmet da hver fil, i henhold med navnet, er oppdelt ut i fra selve harware strukturen til en ECG maskin. Man kan derfor nemt foelge prosessen, helt fra signalet blir avlest, filtrert, behandlet og til slutt vist til brukeren.
 
@@ -153,20 +153,25 @@ Den foerste av disse to funksjoner heter \code{init\_filters}. Denne deklarerer 
 Den anden funktion hedder \code{apply\_all\_filters}. Denne er funksjonen som kaller selve filtrene med signal dataen som argument og returnerer den filtrerte data. Nemt!
 
 \subsection{Peak detektion}
-Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgende start værdier for variabler nødvendigvis må initialiseres:
+Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgende start værdier for variabler nødvendigvis må initialiseres før algoritmen kan fungere:
 
 \begin{description}[labelindent=1cm, labelwidth=3.5cm]
 	\item[threshold1 = 2500]
       Den omtrentlige grænse for hvad der kan klasificeres som en R-peak 
 	\item[rr\_high = max]
-      Max da første peak skal falde inden for high og low
+      Max (sat til 99999), da første peak skal falde inden for high og low
 	\item[spkf = 5000]
       Den omtrentlige R-peak værdi
 	\item[npkf = 1000]
-      Den omtrentlige peak værdi
+      Den omtrentlige gennemsnitlige peak værdi
 \end{description}
 
+For at fundne peaks og anden relevant data nemt kan videregives til næste del af programmet
+
 \subsection{Output}
+Programmet kan skrive data til en given fil i CSV formattet. 
+
+\section{Resultater}
 
 \begin{figure}[H]
   \centering
@@ -185,17 +190,16 @@ Peak detektion er implemeneret efter de givne instruktioner. Vi har brugt følgen
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
+  \label{fig_screenshot}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/r_peaks.pdf}
-  \caption{Fundne R-Peaks vist på MWI data}
+  \label{fig_peaks}
+  \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
-
-\section{Resultater}
-
 
 \section{Diskussion}
 

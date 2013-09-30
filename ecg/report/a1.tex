@@ -294,8 +294,28 @@ Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bor
   \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 
+
+\subsection{Metode til målinger}
+Vi har skrevet to \code{zsh}\footnote{\url{http://www.zsh.org}} scripts til at hjælpe med målingen af performance. Disse er inkluderet her, men af relevanshensyn ikke forklaret nærmere
+
+Til måling af køretider
+\begin{lstlisting}
+for ((i = 0; i < 10000000; i = i + 1000000)); do 
+    time bin/ecgo3 -f test_data/ECG10800K.txt -l $i; 
+done;
+\end{lstlisting}
+
+Til måling af kodestørrelser
+\begin{lstlisting}
+for x (0 1 2 3 s); do 
+    size -A bin/ecgo$x | grep .text; 
+done;
+\end{lstlisting}
+
+
+
 \section{Diskussion}
-%TODO indsæt zsh scripts
+
 
 \section{Konklusion}
 

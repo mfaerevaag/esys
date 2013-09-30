@@ -169,7 +169,6 @@ Hver af de fem filtre er implementeret i deres egen funktion, som tager data fra
 }
 \caption{Respektive filterfunktioner}
 \end{figure}
-% TODO
 Ved filtrering af dataen skal der bruges et array for hvert filter i hvilket resultaterne af det respektive filter bliver gemt. Ydermere skal man være omhyggelig med i hvilken rækkefølge de eksekveres, da de afhænger af hinanden. Dette bliver hurtigt kompliceret, og derfor har vi ligesom i de andre komponenter implementeret en \code{init\_filters} metode som initialisere de forskellige arrays. Vi har \code{typedef}'et et array med buffer størrelsen (til navnet \code{list}) for at gøre det mere overskueligt hvad de forskellige arrays er.
 
 Længden på disse lister er 33, da visse filtre skal bruge data fra 32 samples tilbage, plus de skal holde det nuværende sample.
@@ -239,6 +238,8 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
 \end{figure}
 
 \section{Profiling}
+I det følgende er der lagt vægt på selve QRS algoritmen og ikke output. Derfor er programmet kørt uden nogen form for output, hverken til fil eller visuelt, da vi mener at det er irrelevant for måling ydeevnen.
+
 \subsection{Flaskehalse}
 Vi har profilet programmet med \code{gprof} og har observeret at det er array operationerne som udgør den klart dominerende del af køretiden. I et uoptimeret build udgør funktionen \code{prepend\_array\_int} næsten $60.5\%$ af CPU tiden, hvor den i et optimeret build udgør omkring $30.5\%$. Med denne information kunne man skære utrolig meget af køretiden ved at omskrive array operationerne til en hurtigere metode.
 
@@ -332,17 +333,16 @@ Energi_{100K} &= 0.7452Ws = 2.07 \cdot 10^{-7} kWh \\
 Pris_{100K} &= Energi_{100K} * Pris_{kWh} = 4 \cdot 10^{-5} øre
 \end{align}
 
-Det koster altså $0.00004 øre$ at processere $100.000$ samples.
+Det koster altså $0.00004$ øre at processere $100.000$ samples.
 
-\section{Diskussion}
+\section{Konklusion}
+I dette projekt har vi arbejdet med et indlejret system i form af en ECG maskine. Vi har simuleret input fra en sensor, filtreret og behandlet denne data, for så at præsentere det til brugeren eller gemt den sådan at den kan blive videre analyseret.
 
+Vi har bl.a. lagt vægt på presentationen af dataen. En faktisk ECG maskine har en skærm, hvorpå den præsenterer den resulterende data. Hvis den eneste mulighed for at vise informationen som bliver behandlet er at skrive den til konsollen, giver det et meget ubrugervenligt interface. Informationen ændrer sig meget hurtigt, så for at skabe et komplet og brugbart system har vi gjort et forsøg på at lave en mere realistisk løsning, vha. bibloteket \code{ncurses}. Med dette har vi været i stand til at udvikle et overskuelig og informationsrigt interface.
 
-\section{Konklusion} % Norsk
-I dette projektet har vi arbeidet med et indlejret system til en ECG maskin. Her har vi simulert input fra en sensor, filtrert og behandlet denne data, for saa aa presentert den til brukeren eller gemt den slik at den kan bli videre analysert.
+Vi har fået god træning i at strukturere \code{C} kode, og har i den forbindelse udviklet systemet modulært og enkapsuleret. Vi har lært hvordan forskellige scoping teknikker (såsom static, extern) kan udnyttes til dette formål.
 
-Vi har lagt vekt paa presentasjonen av dataen. En faktisk ECG maskin har en skjerm der den presenterer dataen der blir behandlet. Hvis den eneste muligheten for aa displaye informasjonen som blir behandlet er aa skrive den til konsollen, laver dette er meget lite brukervenlig grensesnitt. Informasjonen endrer seg meget hurtig, samtidig som den er liten og daarlig organsiert. For aa skape et komplett system har vi gjort et forsoek paa aa lave et mer realistisk loesning. I forsoeket valgte vi aa bruke et biblotek kalt \code{ncurses} der er et enkelt og kompakt bibliotek der kan lage mer komplekse grensesnitt i en terminal. Den krevet lite ressurser, noe som egnet seg godt for et indlejret system som har begrenset med hukommelse/lagring. Ved hjelp av \code{ncurses} har vi lavet et oversiktelig grensesnitt, tilogmed med grafer der gir et uvuderlig visuelt hjelpemiddel. Dette gjoer at personen som administrer maskinen vil hurtig danne seg oversikt over pasientens tilstand og derfor kunne lave bedre vurderinger.
-
-Ytligere har vi gjort utdypende testing og analyse av programmets ydeevne. Kjoeretiden er akseptabel og sammen med at programmet bruket generelt lite ressurser, saa vil si at den er kompatibel med en eventuell hardware loesning i et slikt projekt. Programmet kjoerer fejlfritt og giver de korrekte resultater i foelge vaares fasit. Med det sier vi oss godt tilfredse med vores produkt.
+Vi har set hvordan kompilere kan udnyttes til at optimere til specifikke formål. Yderligere har vi lavet uddybende analyse af programmets ydeevne. Køretiden er acceptabel og programmet bruger forholdsvist få ressoucer, hvilket betyder at det er egnet til en eventuel microprocessor løsning eller decideret hardware implementation. Programmet kører fejlfrit og giver de korrekte resultater i følge de givne facit. Med det ser vi os godt tilfredse med resultatet.
 
 
 \section{Kørsel af programmet}

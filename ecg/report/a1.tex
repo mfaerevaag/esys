@@ -112,12 +112,12 @@ De forskellige dele af programmet skal hver især initialiseres og destrueres ved
 \subsection{Arkitektur}
 
 \begin{figure}[H]
-\label{fig:flow}
+
 \xymatrix{
   \ar@{->}[r]_{raw} \switch{sensor} & \ar@{->}[r]_{mwi} \switch{filter} & \ar@{.>}[r]_{data} \ar@{.>}[rd]_{data} \switch{peak detektion} & \switch{output} \\
   & & & \switch{display}
 }
-\caption{Overordnet program flow (stiplede linjer markere valgfri eksekvering)}
+\caption{Overordnet program flow (stiplede linjer markere valgfri eksekvering)\label{fig:flow}}
 \end{figure}
 
 Programmet er hovedsageligt opdelt i filerne \code{sensor.c}, \code{filter.c}, \code{peak\_detect.c}, \code{output.c} og \code{display.c}, som svarer direkte overens med de ovenfor beskrevne funktioner. Figur \ref{fig:flow} viser hvordan dataen går gennem rækken af komponenter, fra det rå data til det processerede resulterende data.
@@ -163,11 +163,11 @@ Hver af de fem filtre er implementeret i deres egen funktion, som tager data fra
 
 \begin{figure}[H]
 \centering
-\label{fig:filters}
+
 \xymatrix{
   \ar@{->}[r] \minibox{low\_pass} & \ar@{->}[r] \minibox{high\_pass} & \ar@{->}[r] \minibox{derivative} & \ar@{->}[r] \minibox{square} & \minibox{mwi} &  \\
 }
-\caption{Respektive filterfunktioner}
+\caption{Respektive filterfunktioner\label{fig:filters}}
 \end{figure}
 Ved filtrering af dataen skal der bruges et array for hvert filter i hvilket resultaterne af det respektive filter bliver gemt. Ydermere skal man være omhyggelig med i hvilken rækkefølge de eksekveres, da de afhænger af hinanden. Dette bliver hurtigt kompliceret, og derfor har vi ligesom i de andre komponenter implementeret en \code{init\_filters} metode som initialisere de forskellige arrays. Vi har \code{typedef}'et et array med buffer størrelsen (til navnet \code{list}) for at gøre det mere overskueligt hvad de forskellige arrays er.
 
@@ -203,11 +203,11 @@ Programmet kan skrive data til en given fil i CSV formattet. Dette kan så kan pl
 \section{Resultater}
 Nedenfor i figur \ref{fig:graph_good} vises den rå data og den relaterede filtrede (mwi) data. Det ses tydeligt hvordan algoritmen gør det utroligt meget nemmere at detektere amplitude og frekvens, da kurverne er blødere og næsten intet ``flimmer'' har.
 \begin{figure}[H]
-\label{fig:graph_good}
+
   \centering
   \subfigure{\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
   \subfigure{\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
-  \caption{Normal puls, raw data og det filtrerede MWI}
+  \caption{Normal puls, raw data og det filtrerede MWI\label{fig:graph_good}}
 \end{figure}
 
 I figur \ref{fig:graph_bad} ses hvad der sker når patientens tilstand bliver kritisk. Pulsen stiger og slagkraften falder drastisk. Dette detekteres omgående i \code{peak\_detect} og der kan vises advarsler.
@@ -224,8 +224,7 @@ Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-pea
 \begin{figure}[H]
   \centering
   \includegraphics[width=10cm]{graphs/r_peaks.pdf}
-\label{fig:peaks}
-  \caption{Fundne R-Peaks vist som cirkler på MWI data}
+  \caption{Fundne R-Peaks vist som cirkler på MWI data\label{fig:peaks}}
 \end{figure}
 
 Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:screenshot}. Det ses hvordan rød farve er brugt til at markere alarmerende omstændigheder.
@@ -233,8 +232,7 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
-\label{fig:screenshot}
-  \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
+  \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres\label{fig:screenshot}}
 \end{figure}
 
 \section{Profiling}
@@ -268,7 +266,6 @@ Nedenfor ses det dominerende \code{gprof} output af det \code{O3} optimerede bui
 Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
 
 \begin{table}[h]
-\label{tbl:codesize}
   \centering
   \begin{tabular}{l|l|l|l|l|l}
                  & -O0   & -O1             & -O2             & -O3             & -Os             \\ \hline
@@ -276,7 +273,7 @@ Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignor
     .text        & 6072  & 4552  (74.97\%) & 4776  (78.66\%) & 4808  (79.18\%) & 3976  (65.48\%) \\ \hline
     update\_peak & 1669  & 1296  (77.65\%) & 1258  (75.37\%) & 1258  (75.37\%) & 1130  (67.71\%) \\
   \end{tabular}
-  \caption{Kodestørrelse (bytes) af forskellige aspekter og optimeringer}
+  \caption{Kodestørrelse (bytes) af forskellige aspekter og optimeringer\label{tbl:codesize}}
 \end{table}
 
 Vi har målt kodestørrelse på 5 forskellige builds, med compiler flags O0-O3 og Os. O0-O3 optimerer for køretid og vi forventer dermed ikke at kodestørrelsen nødvendigvis er lavere. Derimod optimerer Os netop for størrelse så her burde vi kunne se tydelig forskel.
@@ -289,10 +286,9 @@ Det er interessant at den samlede binarys størrelse kun variere med \~500 bytes,
 Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bortset fra init og destroy funktionerne), blot flere gange ved større input. Derfor forventer vi en køretid på $O(n)$. Vi har dog alligevel foretaget en måling og resultatet ses i figur \ref{fig:runtime}. Det ses at køretiden meget præcist er linær.
 
 \begin{figure}[H]
-\label{fig:runtime}
   \centering
   \includegraphics[width=10cm]{graphs/running_time.pdf}
-  \caption{Fundne R-Peaks vist som cirkler på MWI data}
+  \caption{Fundne R-Peaks vist som cirkler på MWI data\label{fig:runtime}}
 \end{figure}
 
 

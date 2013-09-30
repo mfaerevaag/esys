@@ -10,7 +10,6 @@
 \usepackage{amsmath}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
-\usepackage{hyperref}
 \usepackage{parskip}
 \usepackage{abstract}
 \usepackage{url}
@@ -23,6 +22,7 @@
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage[bottom]{footmisc}
+\usepackage{hyperref}
 
 % styling
 \newcommand{\code}[1]{\texttt{#1}}
@@ -203,7 +203,7 @@ Programmet kan skrive data til en given fil i CSV formattet. Dette kan så kan pl
 \section{Resultater}
 Nedenfor i figur \ref{fig:graph_good} vises den rå data og den relaterede filtrede (mwi) data. Det ses tydeligt hvordan algoritmen gør det utroligt meget nemmere at detektere amplitude og frekvens, da kurverne er blødere og næsten intet ``flimmer'' har.
 \begin{figure}[H]
-  \label{fig:graph_good}
+\label{fig:graph_good}
   \centering
   \subfigure{\includegraphics[width=70mm]{graphs/graph_raw_good.pdf}}
   \subfigure{\includegraphics[width=70mm]{graphs/graph_mwi_good.pdf}}
@@ -224,7 +224,7 @@ Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-pea
 \begin{figure}[H]
   \centering
   \includegraphics[width=10cm]{graphs/r_peaks.pdf}
-  \label{fig:peaks}
+\label{fig:peaks}
   \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 
@@ -233,7 +233,7 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
 \begin{figure}[H]
   \centering
   \includegraphics[width=15cm]{graphs/gui.png}
-  \label{fig:screenshot}
+\label{fig:screenshot}
   \caption{Visuelt output fra programmet, hvor det ses ud for ``Misses'' hvordan advarsler markeres}
 \end{figure}
 
@@ -268,7 +268,7 @@ Nedenfor ses det dominerende \code{gprof} output af det \code{O3} optimerede bui
 Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
 
 \begin{table}[h]
-  \label{tbl:codesize}
+\label{tbl:codesize}
   \centering
   \begin{tabular}{l|l|l|l|l|l}
                  & -O0   & -O1             & -O2             & -O3             & -Os             \\ \hline
@@ -289,9 +289,9 @@ Det er interessant at den samlede binarys størrelse kun variere med \~500 bytes,
 Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bortset fra init og destroy funktionerne), blot flere gange ved større input. Derfor forventer vi en køretid på $O(n)$. Vi har dog alligevel foretaget en måling og resultatet ses i figur \ref{fig:runtime}. Det ses at køretiden meget præcist er linær.
 
 \begin{figure}[H]
+\label{fig:runtime}
   \centering
   \includegraphics[width=10cm]{graphs/running_time.pdf}
-  \label{fig:runtime}
   \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 

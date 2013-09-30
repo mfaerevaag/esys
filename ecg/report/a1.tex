@@ -211,7 +211,7 @@ Nedenfor i figur \ref{fig:graph_good} vises den rå data og den relaterede filtre
   \caption{Normal puls, raw data og det filtrerede MWI}
 \end{figure}
 
-I figur \ref{fig:graph_bad} ses hvad der sker nå patientens tilstand bliver kritisk. Pulsen stiger og slagkraften falder drastisk. Dette detekteres omgående i \code{peak\_detect} og der kan vises advarsler.
+I figur \ref{fig:graph_bad} ses hvad der sker når patientens tilstand bliver kritisk. Pulsen stiger og slagkraften falder drastisk. Dette detekteres omgående i \code{peak\_detect} og der kan vises advarsler.
 
 \begin{figure}[H]
   \centering
@@ -240,7 +240,28 @@ Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:scr
 
 \section{Profiling}
 \subsection{Flaskehalse}
-%TODO gprof til at finde flaskehalse
+Vi har profilet programmet med \code{gprof} og har observeret at det er array operationerne som udgør den klart dominerende del af køretiden. I et uoptimeret build udgør funktionen \code{prepend\_array\_int} næsten $60.5\%$ af CPU tiden, hvor den i et optimeret build udgør omkring $30.5\%$. Med denne information kunne man skære utrolig meget af køretiden ved at omskrive array operationerne til en hurtigere metode.
+
+Vi fandt også at \code{apply\_mwi} filteret tager $33.5\%$ af køretiden i det uoptimerede build, og \code{apply\_all\_filters} hele $66\%$ i det optimerede. Det betyder at compileren har inlinet funktionen \code{apply\_mwi} (og formodentlig også alle de andre filter funktioner) i dens optimeringsfase således at filter instruktionerne bliver kørt direkte i \code{apply\_all\_filters}. Det er smart da der elimineres et funktions kald, men det kan i visse situationer øge kodestørrelsen. Det bør nævnes at vi kunne have gjort dette eksplicit ved at benytte keywordet \code{inline} på filter funktionerne, da det i så fald også ville være inlined i det uoptimerede build.
+
+Nedenfor ses det dominerende \code{gprof} output af det uoptimerede build (kørt med datasættet med $10800K$ samples)
+\begin{lstlisting}
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ns/call  ns/call  name    
+ 60.55      5.37     5.37 64800000    82.89    82.89  prepend_array_int
+ 33.52      8.34     2.97 10800000   275.31   275.31  apply_mwi
+  1.58      8.48     0.14 10800000    12.98    13.90  update_peak
+\end{lstlisting}
+
+Nedenfor ses det dominerende \code{gprof} output af det \code{O3} optimerede build (også kørt med datasættet med $10800K$ samples)
+\begin{lstlisting}
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ns/call  ns/call  name    
+ 66.03      2.38     2.38                             apply_all_filters
+ 30.66      3.49     1.11 64800000    17.08    17.08  prepend_array_int
+  1.66      3.55     0.06                             update_peak
+\end{lstlisting}
+
 
 \subsection{Kodestørrelse}
 Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignorerer vi ting som antal linier og karakterer i kildekoden. Det giver ikke mening at se på disse ud fra et hardware mæssigt perspektiv, da stil og præferencer spiller en stor rolle, samt at kildekoden i sig selv er mere eller mindre irrelevant for det endelige resultat efter kompilering.
@@ -274,7 +295,7 @@ Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bor
 \end{figure}
 
 \section{Diskussion}
-
+%TODO indsæt zsh scripts
 
 \section{Konklusion}
 

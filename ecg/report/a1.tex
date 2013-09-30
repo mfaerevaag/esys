@@ -170,7 +170,7 @@ Hver af de fem filtre er implementeret i deres egen funktion, som tager data fra
 \caption{Respektive filterfunktioner}
 \end{figure}
 % TODO
-Ved filtrering af dataen skal der bruges et array for hvert filter i hvilket resultaterne af det respektive filter bliver gemt. Ydermere skal man være omhyggelig med i hvilken rækkefølge de eksekveres, da de afhænger af hinanden. Dette bliver hurtigt kompliceret, og derfor har vi ligesom i de andre komponenter implementeret en \code{init\_filters} metode som initialisere de forskellige arrays. Vi har \code{typedef}'et et array med buffer størrelsen (til navnet \code{list}) for at gøre det mere overskueligt hvad de forskellige arrays er. 
+Ved filtrering af dataen skal der bruges et array for hvert filter i hvilket resultaterne af det respektive filter bliver gemt. Ydermere skal man være omhyggelig med i hvilken rækkefølge de eksekveres, da de afhænger af hinanden. Dette bliver hurtigt kompliceret, og derfor har vi ligesom i de andre komponenter implementeret en \code{init\_filters} metode som initialisere de forskellige arrays. Vi har \code{typedef}'et et array med buffer størrelsen (til navnet \code{list}) for at gøre det mere overskueligt hvad de forskellige arrays er.
 
 Længden på disse lister er 33, da visse filtre skal bruge data fra 32 samples tilbage, plus de skal holde det nuværende sample.
 
@@ -229,7 +229,7 @@ Vi har implementeret algoritmen korrekt, i den forstand at den finder alle R-pea
   \caption{Fundne R-Peaks vist som cirkler på MWI data}
 \end{figure}
 
-Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:screenshot}. Det ses hvordan rød farve er brugt til at markere alarmerende omstændigheder. 
+Det visuelle output som vises når \code{-d} bruges, er vist i figur \ref{fig:screenshot}. Det ses hvordan rød farve er brugt til at markere alarmerende omstændigheder.
 
 \begin{figure}[H]
   \centering
@@ -246,8 +246,8 @@ Vi fandt også at \code{apply\_mwi} filteret tager $33.5\%$ af køretiden i det uo
 
 Nedenfor ses det dominerende \code{gprof} output af det uoptimerede build (kørt med datasættet med $10800K$ samples)
 \begin{lstlisting}
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ns/call  ns/call  name    
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  ns/call  ns/call  name
  60.55      5.37     5.37 64800000    82.89    82.89  prepend_array_int
  33.52      8.34     2.97 10800000   275.31   275.31  apply_mwi
   1.58      8.48     0.14 10800000    12.98    13.90  update_peak
@@ -255,8 +255,8 @@ Nedenfor ses det dominerende \code{gprof} output af det uoptimerede build (kørt 
 
 Nedenfor ses det dominerende \code{gprof} output af det \code{O3} optimerede build (også kørt med datasættet med $10800K$ samples)
 \begin{lstlisting}
-  %   cumulative   self              self     total           
- time   seconds   seconds    calls  ns/call  ns/call  name    
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  ns/call  ns/call  name
  66.03      2.38     2.38                             apply_all_filters
  30.66      3.49     1.11 64800000    17.08    17.08  prepend_array_int
   1.66      3.55     0.06                             update_peak
@@ -278,7 +278,7 @@ Kodestørrelsen varierer afhængig af hvad man undersøger. Først og fremmest ignor
   \caption{Kodestørrelse (bytes) af forskellige aspekter og optimeringer}
 \end{table}
 
-Vi har målt kodestørrelse på 5 forskellige builds, med compiler flags O0-O3 og Os. O0-O3 optimerer for køretid og vi forventer dermed ikke at kodestørrelsen nødvendigvis er lavere. Derimod optimerer Os netop for størrelse så her burde vi kunne se tydelig forskel. 
+Vi har målt kodestørrelse på 5 forskellige builds, med compiler flags O0-O3 og Os. O0-O3 optimerer for køretid og vi forventer dermed ikke at kodestørrelsen nødvendigvis er lavere. Derimod optimerer Os netop for størrelse så her burde vi kunne se tydelig forskel.
 
 Tabel \ref{tbl:codesize} viser de målinger vi er kommet frem til, og hvor stort det er i forhold til O0 buildet. ``bin'' er simpelthen størrelsen på den binary der bliver kompileret. ``.text'' er målt vha. unix programmet \code{size}\footnote{\url{http://unixhelp.ed.ac.uk/CGI/man-cgi?size}} og måler størrelsen af instruktionssektoren af en binary, som er der hvor de egentlige instruktioner som CPU'en vil udføre ligger. ``update\_peak'' er størrelsen af \code{update\_peak} funktionen og er målt vha. unix programmet \code{nm}\footnote{\url{http://unixhelp.ed.ac.uk/CGI/man-cgi?nm}}, som viser information om forskellige symboler i en object fil (binary). Vi målte størrelsen af \code{update\_peak} funktionen fordi det er den største og derfor kan give den bedste sammenligning.
 
@@ -300,15 +300,15 @@ Vi har skrevet to \code{zsh}\footnote{\url{http://www.zsh.org}} scripts til at h
 
 Til måling af køretider
 \begin{lstlisting}
-for ((i = 0; i < 10000000; i = i + 1000000)); do 
-    time bin/ecgo3 -f test_data/ECG10800K.txt -l $i; 
+for ((i = 0; i < 10000000; i = i + 1000000)); do
+    time bin/ecgo3 -f test_data/ECG10800K.txt -l $i;
 done;
 \end{lstlisting}
 
 Til måling af kodestørrelser
 \begin{lstlisting}
-for x (0 1 2 3 s); do 
-    size -A bin/ecgo$x | grep .text; 
+for x (0 1 2 3 s); do
+    size -A bin/ecgo$x | grep .text;
 done;
 \end{lstlisting}
 
@@ -317,7 +317,13 @@ done;
 \section{Diskussion}
 
 
-\section{Konklusion}
+\section{Konklusion} % Norsk
+I dette projektet har vi arbeidet med et indlejret system til en ECG maskin. Her har vi simulert input fra en sensor, filtrert og behandlet denne data, for saa aa presentert den til brukeren eller gemt den slik at den kan bli videre analysert.
+
+Vi har lagt vekt paa presentasjonen av dataen. En faktisk ECG maskin har en skjerm der den presenterer dataen der blir behandlet. Hvis den eneste muligheten for aa displaye informasjonen som blir behandlet er aa skrive den til konsollen, laver dette er meget lite brukervenlig grensesnitt. Informasjonen endrer seg meget hurtig, samtidig som den er liten og daarlig organsiert. For aa skape et komplett system har vi gjort et forsoek paa aa lave et mer realistisk loesning. I forsoeket valgte vi aa bruke et biblotek kalt \code{ncurses} der er et enkelt og kompakt bibliotek der kan lage mer komplekse grensesnitt i en terminal. Den krevet lite ressurser, noe som egnet seg godt for et indlejret system som har begrenset med hukommelse/lagring. Ved hjelp av \code{ncurses} har vi lavet et oversiktelig grensesnitt, tilogmed med grafer der gir et uvuderlig visuelt hjelpemiddel. Dette gjoer at personen som administrer maskinen vil hurtig danne seg oversikt over pasientens tilstand og derfor kunne lave bedre vurderinger.
+
+Ytligere har vi gjort utdypende testing og analyse av programmets ydeevne. Kjoeretiden er akseptabel og sammen med at programmet bruket generelt lite ressurser, saa vil si at den er kompatibel med en eventuell hardware loesning i et slikt projekt. Programmet kjoerer fejlfritt og giver de korrekte resultater i foelge vaares fasit. Med det sier vi oss godt tilfredse med vores produkt.
+
 
 \section{Kørsel af programmet}
 En optimeret binary kan bygges ved at køre \code{make ecgo3} og derefter eksekvere programmet med de ønskede argumenter. F.eks. for at bruge ``ECG.txt'' og se den visuelle repræsentation af programmet i normal tid, kan det køres således: \code{ecgo3 -f ECG.txt -d -t 1}. Se \ref{sec:design} for detaljer vedr. argumenter.

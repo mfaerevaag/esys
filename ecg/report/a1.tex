@@ -295,6 +295,7 @@ Algoritmen er af natur linær, den foretager de nøjagtig samme instruktioner (bor
 \end{figure}
 
 
+
 \subsection{Metode til målinger}
 Vi har skrevet to \code{zsh}\footnote{\url{http://www.zsh.org}} scripts til at hjælpe med målingen af performance. Disse er inkluderet her, men af relevanshensyn ikke forklaret nærmere
 
@@ -312,7 +313,26 @@ for x (0 1 2 3 s); do
 done;
 \end{lstlisting}
 
+\subsection{Energiforbrug}
+Vi vil prøve at måle hvor meget energi der forbruges under kørsel af algoritmen. Vi har brugt en Intel i7 3537U CPU, og den har et energiforbrug på $17W$\footnote{\url{http://www.intel.com/content/www/us/en/processors/core/core-i7-processor/Corei7Specifications.html}}. Den samlede køretid af $10800K$ samples var $4.734 sek$. Dermed får vi følgende forbrug:
 
+\begin{align}
+Energiforbrug_{cpu} &= 17W \\
+Samples &= 10800000 \\
+Tid_{total} &= 4.734s \\
+Tid_{100k} &= \frac{Tid_{total}}{Samples} \cdot 100000 = 0.04383s \\
+Energi_{100K} &= Energiforbrug_{cpu} \cdot Tid_{100k} = 0.7452~watt~sekunder~(Joule) \\
+\end{align}
+
+Der bliver altså brugt $0.7452~Ws$ per $100K$ processerede samples. Hvis vi omregner til pris i Danmark og sætter prisen til $2.1\frac{kr}{kWh}$\footnote{\url{http://www.elpristavlen.dk/Elpristavlen/Soegeresultat.aspx?kwh=2000&postnr=2500&netcompany=DONGnet&customer-group=private&ratetype=FlatRate}} fås:
+
+\begin{align}
+Pris_{kWh} &= 2.1\frac{kr}{kWh} \\
+Energi_{100K} &= 0.7452Ws = 2.07 \cdot 10^{-7} kWh \\
+Pris_{100K} &= Energi_{100K} * Pris_{kWh} = 4 \cdot 10^{-5} øre
+\end{align}
+
+Det koster altså $0.00004 øre$ at processere $100.000$ samples.
 
 \section{Diskussion}
 

@@ -1,0 +1,72 @@
+dp regfile(in asel, bsel  : ns(3);
+       in storeenable : ns(1);
+       in storesel    : ns(3);
+       in storedata   : tc(4);
+       out a, b : tc(4)) {
+
+    reg r1, r2, r3, r4, r5, r6, r7, r8 : tc(4);
+    
+    always {
+        a = (asel == 0b000) ? r1 :
+            (asel == 0b001) ? r2 :
+            (asel == 0b010) ? r3 :
+            (asel == 0b011) ? r4 :
+            (asel == 0b100) ? r5 :
+            (asel == 0b101) ? r6 :
+            (asel == 0b110) ? r7 : r8;
+
+        b = (bsel == 0b000) ? r1 :
+            (bsel == 0b001) ? r2 :
+            (bsel == 0b010) ? r3 :
+            (bsel == 0b011) ? r4 :
+            (bsel == 0b100) ? r5 :
+            (bsel == 0b101) ? r6 :
+            (bsel == 0b110) ? r7 : r8;
+
+        r1 = ((storesel == 0b000) & storeenable) ? storedata : r1;
+        r2 = ((storesel == 0b001) & storeenable) ? storedata : r2;
+        r3 = ((storesel == 0b010) & storeenable) ? storedata : r3;
+        r4 = ((storesel == 0b011) & storeenable) ? storedata : r4;
+        r5 = ((storesel == 0b100) & storeenable) ? storedata : r5;
+        r6 = ((storesel == 0b101) & storeenable) ? storedata : r6;
+        r7 = ((storesel == 0b110) & storeenable) ? storedata : r7;
+        r8 = ((storesel == 0b111) & storeenable) ? storedata : r8;
+    }
+}
+
+dp test_regfile(out asel, bsel  : ns(3);
+            out storeenable : ns(1);
+            out storesel    : ns(3);
+            out storedata   : tc(4);
+            in a, b : tc(4)) {
+    always {
+        $display($dec, 
+                 "cycle: ", $cycle,
+                 " asel: ", asel, 
+                 " bsel: ", bsel, 
+                 " storeenable: ", storeenable, 
+                 " storesel: ", storesel, 
+                 " storedata: ", storedata, 
+                 " a: ", a, 
+                 " b: ", b);
+    }
+    sfg test_0 { asel=0b000; bsel=0b001; storeenable=0b0; storesel=0b001; storedata=0b0011; }
+    sfg test_1 { asel=0b100; bsel=0b011; storeenable=0b0; storesel=0b010; storedata=0b1100; }
+    sfg test_2 { asel=0b101; bsel=0b010; storeenable=0b1; storesel=0b000; storedata=0b0100; }
+    sfg test_3 { asel=0b000; bsel=0b110; storeenable=0b1; storesel=0b111; storedata=0b1100; }
+}
+
+fsm f_testbench(test_regfile) { 
+    initial s0;
+    state s1, s2, s3;    
+    @s0 (test_0) -> s1;
+    @s1 (test_1) -> s2;
+    @s2 (test_2) -> s3;
+    @s3 (test_3) -> s0;
+}
+
+system regfile_sys {
+    regfile(asel, bsel, storeenable, storesel, storedata, a, b);
+    test_regfile(asel, bsel, storeenable, storesel, storedata, a, b);
+}
+

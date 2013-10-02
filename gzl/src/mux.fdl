@@ -1,0 +1,31 @@
+dp mux(in a, b : tc(32);
+       in select : ns(1);
+       out r : tc(32)) {
+    always {
+        r = select ? b : a;
+    }
+}
+
+dp test_mux(out a, b: tc(32);
+            out select : ns(1);
+            in r: tc(32)) {
+    always{
+                 $display($dec, "Cycle:", $cycle, ", A=", a, ", B=", b, ", S=", select, ", R=", r);
+    }
+    sfg test_0 { a=1; b=2; select=1; }
+    sfg test_1 { a=1; b=2; select=0; }
+    sfg test_2 { a=2; b=1; select=1; }
+}
+
+fsm f_testbench(test_mux) { 
+    initial s0;
+    state s1, s2;    
+    @s0 (test_0) -> s1;
+    @s1 (test_1) -> s2;
+    @s2 (test_2) -> s0;
+}
+
+system mux_sys {
+    mux(a, b, s, r);
+    test_mux(a, b, s, r);
+}

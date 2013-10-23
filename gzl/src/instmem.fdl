@@ -5,37 +5,37 @@ ipblock instmem(in address : ns(3);
     iptype "ram";
     ipparm "size=8";
     ipparm "wl=8";
-		ipparm "file=program.txt";
+	ipparm "file=program.txt";
 }
 
 dp instreader {
-		reg a  : ns(3);
-		reg di : ns(8);
-		sig do : ns(8);
-		sig wr, rd : ns(1);
-		use instmem(a, wr, rd, di, do);
+	reg a  : ns(3);
+	reg di : ns(8);
+	sig do : ns(8);
+	sig wr, rd : ns(1);
+	use instmem(a, wr, rd, di, do);
 
-		always {
-				$display($cycle, " a ", a,
-								 " di ", di, " do ", do,
-								 " wr ", wr, " rd ", rd);
-				a = a + 1;
-		}
+	always {
+		$display($cycle, " a ", a,
+				 " di ", di, " do ", do,
+				 " wr ", wr, " rd ", rd);
+		a = a + 1;
+	}
 
-		sfg write { wr = 1; rd = 0; di = di + 1; }
-		sfgread { wr=0; rd=1; }
+	sfg write { wr = 1; rd = 0; di = di + 1; }
+	sfg read { wr=0; rd=1; }
 }
 
 fsm c_instreader(instreader) {
-		initial s0;
-		state s1;
+	initial s0;
+	state s1;
 
-		@s0 if (a == 7) then (read)  -> s1;
-		else (write) -> s0;
-		@s1 if (a == 7) then (write) -> s0;
-		else (read)  -> s1;
+	@s0 if (a == 7) then (read)  -> s1;
+	else (write) -> s0;
+	@s1 if (a == 7) then (write) -> s0;
+	else (read)  -> s1;
 }
 
 system S {
-		instreader;
+	instreader;
 }

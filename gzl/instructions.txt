@@ -1,0 +1,15 @@
+add     0000 r3 r3 r3
+sub     0001 r3 r3 r3
+mul     0010 r3 r3 r3
+div     0011 r3 r3 r3 *
+
+mov     0101 r3 r3 *
+addi    0110 r3 r3 c22
+cmp     0111 r3 r3 *
+
+load    1000 r3 m25
+store   1001 r3 m25
+
+jmp     1100
+jlt     1101
+jgt     1110

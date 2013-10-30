@@ -3,9 +3,9 @@ dp alu(in a, b : tc(32);
        out r : tc(32);
        out neg, zero : ns(1)) {
     always {
-            r = (select == 0b00) ? a - b :
-                (select == 0b01) ? b - a : 
-                (select == 0b10) ? a : b;
+            r = (select == 0b00) ? a + b :
+                (select == 0b01) ? a - b :
+                (select == 0b10) ? a * b : a;
             
             neg  = r < 0;
             zero = r == 0;

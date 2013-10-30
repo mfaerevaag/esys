@@ -1,8 +1,8 @@
 .begin:
-        seti %const, 143165577  # set register to constant
-        seti %lim, 30
-        seti %idx, 0
-	    seti %sum, 0
+        addi %const, 143.165.577  # set register to constant
+        addi %lim, 30
+        addi %idx, 0
+	    addi %sum, 0
         jmp .loop         # unconditional jump
 .loop:
         load %tmp, %idx   # load 

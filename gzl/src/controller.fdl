@@ -27,6 +27,10 @@ dp controller(in opcode    : ns(4);
 	        cmp     = opcode == 0b0110;
             mov     = opcode == 0b0111;
 
-            $display($cycle, " opcode: ", opcode, " | jmp: ", jmp);
+            $display("jmp: ", jmp,
+	                 " | jlt: ", jlt,
+                     " | set: ", set,
+                     " | opcode: ", $bin, opcode,
+                     " | clk: ", $cycle);
         }
 }

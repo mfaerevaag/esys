@@ -14,8 +14,6 @@ dp alu(in a, b       : tc(32);
             res = enable ? r : res;
             neg  = res < 0;
             zero = res == 0;
-
-        $display(a, b);
     }
 }
 

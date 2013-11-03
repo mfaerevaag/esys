@@ -69,4 +69,3 @@ dp regfile(in asel, bsel  : ns(3);
 //     regfile(asel, bsel, storeenable, storesel, storedata, a, b);
 //     test_regfile(asel, bsel, storeenable, storesel, storedata, a, b);
 // }
-

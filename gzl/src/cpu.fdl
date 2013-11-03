@@ -2,18 +2,7 @@
 #include "instmem.fdl"
 #include "alu.fdl"
 #include "reg.fdl"
-
-dp pc(out pc_out : ns(5);
-      in target : ns(5);
-	  in jump   : ns(1)) {
-
-    reg count : ns(5);
-
-    always {
-        count = jump ? target : count + 1;
-        pc_out = count;
-    }
-}
+#include "pc.fdl"
         
 system main {
     pc(pc_out, instr[0:27], jmp);
@@ -22,7 +11,7 @@ system main {
 
 	instreader(pc_out, instr);
 
-    regfile(instr[15:17], instr[12:14], load, instr[18:20], alu_res, reg_a, reg_b);
+    regfile(instr[15:17], instr[12:14], set, instr[18:20], alu_res, reg_a, reg_b);
 
     controller(instr[28:31], jmp, jlt, jgt, alu_op, alu_sel, load, store, set, addi, cmp, mov);
 }

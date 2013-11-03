@@ -1,0 +1,11 @@
+dp pc(out pc_out : ns(5);
+      in target : ns(5);
+	  in jump   : ns(1)) {
+
+    reg count : ns(5);
+
+    always {
+        count = jump ? target : count + 1;
+        pc_out = count;
+    }
+}

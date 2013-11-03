@@ -68,6 +68,7 @@ end
 program = program.gsub(/#.*$/, '')
 
 # fill in zeroes
+ln = 0
 program.each_line do |line|
   line.strip!
   if not line.include? ':' and not line.empty?
@@ -81,6 +82,7 @@ program.each_line do |line|
     else
       line = line + ('0' * n)
     end
-    puts line.gsub(/,|\s+/, '')
+    puts ln.to_s + ' ' + line.gsub(/,|\s+/, '').to_i(2).to_s(16)
+    ln += 1
   end
 end

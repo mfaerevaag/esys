@@ -1,98 +1,28 @@
-/* CONTROLLER */
-dp controller(in opcode    : ns(4);
-              out jmp      : ns(1);
-	          out jlt      : ns(1);
-	          out jgt      : ns(1);
-	          out alu_op   : ns(1);
-	          out alu_sel  : ns(2);
-	          out load     : ns(1);
-	          out store    : ns(1)) {
-        always {
-            jmp     = opcode == 0b1100;
-            jlt     = opcode == 0b1101;
-            jgt     = opcode == 0b1110;
-
-            alu_op  = opcode <  0b0100;
-            alu_sel = opcode[0:1]; 00 = add, 01 = sub, 10 = mul
-
-            load    = opcode == 0b1000;
-	        store   = opcode == 0b1001;
-
-            mov     = opcode == 0b0101;
-	        seti    = opcode == 0b0110;
-	        cmp     = opcode == 0b0111;
-        }
-}
+#include "controller.fdl"
+#include "instmem.fdl"
+#include "alu.fdl"
+#include "reg.fdl"
 
 dp pc(out pc_out : ns(5);
-      int target : ns(5);
-	  int jump   : ns(1)) {
+      in target : ns(5);
+	  in jump   : ns(1)) {
 
     reg count : ns(5);
 
     always {
-        pc_out = jump ? target : count + 1;
+        count = jump ? target : count + 1;
+        pc_out = count;
     }
 }
+        
+system main {
+    pc(pc_out, instr[0:27], jmp);
 
-system pc_system {
-    pc(pc_out);
-}
+    alu(reg_a, reg_b, alu_sel, alu_op, alu_res, alu_neg, alu_zero);
 
-/* DATA MEMORY */
-ipblock datamem(in address : ns(5);
-	            in wr, rd  : ns(1);
-	            in idata   : ns(32);
-	            out odata  : ns(32)) {
-	iptype "ram";	
-	ipparm "size=64";
-	ipparm "wl=32";	
-	ipparm "file=data.txt";
-}
+	instreader(pc_out, instr);
 
-dp datareader {
-	reg a  : ns(3);
-	reg di : ns(32);
-	sig do : ns(32);
-	sig wr, rd : ns(1);
-	use instmem(a, wr, rd, di, do);
-	
-	always {
-		$display($cycle, " a ", a,
-				 " di ", di, " do ", do,
-				 " wr ", wr, " rd ", rd);
-		a = a + 1;
-	}
+    regfile(instr[15:17], instr[12:14], load, instr[18:20], alu_res, reg_a, reg_b);
 
-	sfg write { wr=1; rd=0; di=di + 1; }
-	sfg read { wr=0; rd=1; }
-}
-
-/* INSTRUCTION MEMEORY */
-ipblock instmem(in address : ns(5);
-                in wr, rd  : ns(1);
-                in idata   : ns(32);
-                out odata  : ns(32)) {
-    iptype "ram";	
-	ipparm "size=64";
-    ipparm "wl=32";	
-	ipparm "file=program.txt";
-}
-
-dp instreader {
-	reg a  : ns(3);
-	reg di : ns(32);
-	sig do : ns(32);
-	sig wr, rd : ns(1);
-	use instmem(a, wr, rd, di, do);
-    
-	always {
-		$display($cycle, " a ", a,
-				 " di ", di, " do ", do,
-				 " wr ", wr, " rd ", rd);
-		a = a + 1;
-	}
-
-	sfg write { wr=1; rd=0; di=di + 1; }
-	sfg read { wr=0; rd=1; }
+    controller(instr[28:31], jmp, jlt, jgt, alu_op, alu_sel, load, store, set, addi, cmp, mov);
 }

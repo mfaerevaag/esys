@@ -1,4 +1,4 @@
-ipblock instmem(in address : ns(10);
+ipblock datamem(in address : ns(10);
                 in wr, rd  : ns(1);
                 in idata   : ns(32);
                 out odata  : ns(32)) {
@@ -8,7 +8,7 @@ ipblock instmem(in address : ns(10);
 	ipparm "file=data/mwi.out";
 }
 
-dp instreader(in addr : ns(32);
+dp datareader(in addr : ns(32);
               out data_out : ns(32)) { 
 	reg data_in : ns(32);
 	sig wr, rd : ns(1);
@@ -21,6 +21,3 @@ dp instreader(in addr : ns(32);
 	sfg write { wr=1; rd=0; }
 	sfg read { wr=0; rd=1; }
 }
-
-// always read
-hardwired jump_controller(instreader) { read; }

@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+../assembler.rb ../mwi.asm > data/mwi.out
+cpp -P cpu.fdl > tmp.fdl
+/opt/gezel/bin/fdlsim tmp.fdl 20

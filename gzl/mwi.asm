@@ -23,7 +23,7 @@ inner_loop:
         jlt inner_loop
 
 outer_loop_end:
-        addi %i, %i, !1           # increment data pointer
+        addi %i, %i, !1          # increment data pointer
         div %sum, %sum, %const   # divide the sum total of observed values by
         dis %sum                 # display the computed mwi
         jmp begin_mwi            # start new mwi computation

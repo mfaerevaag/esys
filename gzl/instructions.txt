@@ -10,6 +10,8 @@ cmp     0111 r3 r3 *
 load    1000 r3 m25
 store   1001 r3 m25
 
-jmp     1100
-jlt     1101
-jgt     1110
+set     1001 r3 m25
+
+jmp     1100 m28
+jlt     1101 m28
+jgt     1110 m28

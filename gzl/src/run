@@ -4,5 +4,5 @@
 # process fdl
 cpp -P cpu.fdl > tmp.fdl
 # run
-/opt/gezel/bin/fdlsim tmp.fdl 6
+/opt/gezel/bin/fdlsim tmp.fdl $1
 

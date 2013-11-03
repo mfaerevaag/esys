@@ -18,12 +18,12 @@ i_gt_lim:
 inner_loop:
         load %tmp, %j            # load current data point
         add %sum, %sum, %tmp     # add it to sum
-        addi %j, %j, 1           # increment inner loop
+        addi %j, %j, !1          # increment inner loop
         cmp %i, %lim             # re-run loop if i < lim
         jlt inner_loop
 
 outer_loop_end:
-        addi %i, %i, 1           # increment data pointer
+        addi %i, %i, !1           # increment data pointer
         div %sum, %sum, %const   # divide the sum total of observed values by
         dis %sum                 # display the computed mwi
         jmp begin_mwi            # start new mwi computation

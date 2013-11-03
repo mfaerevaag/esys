@@ -4,8 +4,8 @@ dp regfile(in asel, bsel  : ns(3);
        in storedata   : tc(32);
        out a, b : tc(32)) {
 
-    reg r1, r2, r3, r4, r5, r6, r7, r8 : tc(4);
-    
+    reg r1, r2, r3, r4, r5, r6, r7, r8 : tc(32);
+
     always {
         a = (asel == 0b000) ? r1 :
             (asel == 0b001) ? r2 :
@@ -31,6 +31,14 @@ dp regfile(in asel, bsel  : ns(3);
         r6 = ((storesel == 0b101) & storeenable) ? storedata : r6;
         r7 = ((storesel == 0b110) & storeenable) ? storedata : r7;
         r8 = ((storesel == 0b111) & storeenable) ? storedata : r8;
+
+        $display("asel: ", $bin, asel,
+	             " | bsel: ", $bin, bsel,	
+	             " | storesel: ", $bin, storesel,	
+	             " | storedata: ", $bin, storedata,
+	             " | storeenable: ", storeenable,	
+	             " | clk: ", $cycle);
+        $display("r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3) ;
     }
 }
 

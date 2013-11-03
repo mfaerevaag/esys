@@ -1,4 +1,8 @@
 #!/usr/bin/zsh
+# assemble mach code
 ../assembler.rb ../mwi.asm > data/mwi.out
+# process fdl
 cpp -P cpu.fdl > tmp.fdl
-/opt/gezel/bin/fdlsim tmp.fdl 20
+# run
+/opt/gezel/bin/fdlsim tmp.fdl 6
+

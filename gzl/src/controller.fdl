@@ -29,7 +29,9 @@ dp controller(in opcode    : ns(4);
 
             $display("jmp: ", jmp,
 	                 " | jlt: ", jlt,
-                     " | set: ", set,
+                     " | set: ", set,	
+	                 " | alu_op: ", alu_op,	
+	                 " | alu_sel: ", $bin, alu_sel,
                      " | opcode: ", $bin, opcode,
                      " | clk: ", $cycle);
         }

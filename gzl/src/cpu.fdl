@@ -3,7 +3,7 @@
 #include "alu.fdl"
 #include "reg.fdl"
 #include "pc.fdl"
-        
+
 system main {
     pc(pc_out, instr[0:27], jmp);
 
@@ -11,7 +11,11 @@ system main {
 
 	instreader(pc_out, instr);
 
-    regfile(instr[15:17], instr[12:14], set, instr[18:20], alu_res, reg_a, reg_b);
+    regfile(instr[25:27], instr[22:24], set, instr[22:24], instr[0:24], reg_a, reg_b);
 
-    controller(instr[28:31], jmp, jlt, jgt, alu_op, alu_sel, load, store, set, addi, cmp, mov);
+    controller(instr[28:31],
+        jmp, jlt, jgt,
+        alu_op, alu_sel,
+        load, store,
+        set, addi, cmp, mov);
 }

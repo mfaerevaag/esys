@@ -1,52 +1,30 @@
-#include "controller.fdl"
-#include "instmem.fdl"
+#include "pc.fdl"
+#include "controller.fdl"	
 #include "alu.fdl"
 #include "reg.fdl"
-#include "pc.fdl"
+#include "inst_mem.fdl"	
+#include "inst_parser.fdl"
+#include "jump_handler.fdl"
 
-dp instr_handler (in instr             : ns(32);
-        	      in alu_res           : ns(32);
-                  in set, load, alu_op : ns(1);
-	              out reg_write_addr   : ns(3);
-	              out reg_write_data   : ns(32);
-                  out reg_write_flag   : ns(1);
-	              out imm_val          : ns(24);
-	              out target           : ns(28);
-                  out r1, r2, r3       : ns(3)) { 
-
-        //sig r1, r2, r3 : ns(3);
-        //sig imm        : ns(24);
-        //sig target     : ns(28);
-
-        always {	
-	        // helpers to simplify assignment of instruction parts
-            r1       = instr[25:27];	
-	        r2       = instr[22:24];	
-	        r3       = instr[19:21];
-            imm_val  = instr[0:23];
-            target   = instr[0:27];
-
-	        reg_write_addr = set | load ? r1 :
-                             alu_op ? r3 : 0;
-        
-	        reg_write_data = set ? imm_val :
-	                         alu_op ? alu_res : 0;
-            reg_write_flag = set | alu_op;
-        }
-}
-        
 system main {
-    pc(pc_out, target, jmp);
+    pc(pc_out, target, do_jmp);
 
-    alu(reg_a, reg_b, alu_sel, alu_op, alu_res, alu_neg, alu_zero);
+    jump_handler(alu_neg, alu_zero, jmp, jlt, jgt,
+        do_jmp);
 
-	instreader(pc_out, instr);
+    alu(reg_a, reg_b, alu_sel, alu_op,
+        alu_res, alu_neg, alu_zero);
 
-    instr_handler(instr, alu_res, set, load, alu_op, reg_write_addr, reg_write_data, reg_write_flag, imm_val, target, r1, r2, r3);
+	inst_reader(pc_out,
+        inst);
+
+    inst_parser(inst, alu_res, set, load, alu_op,
+        opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3);
         
-    regfile(r1, r2, reg_write_flag, reg_write_addr, reg_write_data, reg_a, reg_b);
+    regfile(r1, r2, rgw_flag, rgw_addr, rgw_data,
+        reg_a, reg_b);
 
-    controller(instr,
+    controller(opcode,
         jmp, jlt, jgt,
         alu_op, alu_sel,
         load, store,

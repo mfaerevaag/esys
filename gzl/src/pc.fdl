@@ -7,5 +7,7 @@ dp pc(out pc_out : ns(5);
     always {
         count = jump ? target : count + 1;
         pc_out = count;
+
+        $display("jump? ", jump);
     }
 }

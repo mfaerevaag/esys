@@ -1,4 +1,4 @@
-ipblock instmem(in address : ns(10);
+ipblock inst_mem(in address : ns(10);
                 in wr, rd  : ns(1);
                 in idata   : ns(32);
                 out odata  : ns(32)) {
@@ -8,11 +8,11 @@ ipblock instmem(in address : ns(10);
 	ipparm "file=data/mwi.out";
 }
 
-dp instreader(in addr : ns(32);
+dp inst_reader(in addr : ns(32);
               out data_out : ns(32)) { 
 	reg data_in : ns(32);
 	sig wr, rd : ns(1);
-	use instmem(addr, wr, rd, data_in, data_out);
+	use inst_mem(addr, wr, rd, data_in, data_out);
     
 	always {
 		//$display($cycle, " data_out ", data_out);
@@ -23,4 +23,4 @@ dp instreader(in addr : ns(32);
 }
 
 // always read
-hardwired jump_controller(instreader) { read; }
+hardwired jump_controller(inst_reader) { read; }

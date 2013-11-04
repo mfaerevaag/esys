@@ -32,13 +32,13 @@ dp regfile(in asel, bsel  : ns(3);
         r7 = ((storesel == 0b110) & storeenable) ? storedata : r7;
         r8 = ((storesel == 0b111) & storeenable) ? storedata : r8;
 
-        $display("REG --- asel: ", $bin, asel,
-	             " | bsel: ", $bin, bsel,	
-	             " | storesel: ", $bin, storesel,	
-	             " | storedata: ", $bin, storedata,
-	             " | storeenable: ", storeenable,	
-	             " | clk: ", $cycle);
-        $display("    --> r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3) ;
+        //$display("REG --- asel: ", $bin, asel,
+	    //         " | bsel: ", $bin, bsel,	
+	    //         " | storesel: ", $bin, storesel,	
+	    //         " | storedata: ", $bin, storedata,
+	    //         " | storeenable: ", storeenable,	
+	    //         " | clk: ", $cycle);
+        //$display("    --> r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3) ;
     }
 }
 

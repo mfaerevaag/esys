@@ -1,4 +1,4 @@
-dp controller(in instr    : ns(32);
+dp controller(in opcode    : ns(4);
               out jmp      : ns(1);
 	          out jlt      : ns(1);
 	          out jgt      : ns(1);
@@ -10,10 +10,7 @@ dp controller(in instr    : ns(32);
 	          out addi     : ns(1);
 	          out cmp      : ns(1);
 	          out mov      : ns(1)) { 
-        sig opcode : ns(4);
         always {
-            opcode  = instr[28:31] ;
-
             jmp     = opcode == 0b1100;
             jlt     = opcode == 0b1101;
             jgt     = opcode == 0b1110;
@@ -30,14 +27,14 @@ dp controller(in instr    : ns(32);
 	        cmp     = opcode == 0b0110;
             mov     = opcode == 0b0111;
 
-            $display($bin, instr, " - ", $bin, instr[25:27]);
+            //$display($bin, instr, " - ", $bin, instr[25:27]);
         
-            $display("CTL --- jmp: ", jmp,
-	                 " | jlt: ", jlt,
-                     " | set: ", set,	
-	                 " | alu_op: ", alu_op,	
-	                 " | alu_sel: ", $bin, alu_sel,
-                     " | opcode: ", $bin, opcode,
-                     " | clk: ", $cycle);
+            //$display("CTL --- jmp: ", jmp,
+	        //         " | jlt: ", jlt,
+            //         " | set: ", set,	
+	        //         " | alu_op: ", alu_op,	
+	        //         " | alu_sel: ", $bin, alu_sel,
+            //         " | opcode: ", $bin, opcode,
+            //         " | clk: ", $cycle);
         }
 }

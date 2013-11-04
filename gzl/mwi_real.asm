@@ -1,5 +1,5 @@
 begin_mwi:
-        set %const, 14316  # set register to constant
+        set %const, 14316        # set register to constant
         set %max, 30             # the max window size
         set %i, 0                # current number of data points available (simulated)
 

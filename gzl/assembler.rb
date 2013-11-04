@@ -20,33 +20,25 @@ imap = {
   :jgt     => '1110',
 }
 
-def trail(num, len)
+def trail (num, len) 
   " %0#{ len }d" % num.to_i.to_s(2)
 end
 
 program = File.read(ARGV[0])
 
 # process immediate values
-program = program.gsub(/[^!][\s|,]\d+/) { |n|
-  trail(n.delete(','), 25)
-}
+program = program.gsub(/[^!][\s|,]\d+/) { |n| trail(n.delete(','), 25) }
 # hax
-program = program.gsub(/!\d+/) { |n|
-  trail(n, 19)
-}
+program = program.gsub(/!\d+/) { |n| trail(n, 19) }
 
 # process opcodes
-imap.each do |instr, bin|
-  program = program.gsub instr.to_s, bin
-end
+imap.each { |instr, bin| program.gsub! instr.to_s, bin }
 
 # process registers
 regs = program.scan(/%\w+/).uniq
 fail "Too many registers in use (max 8) #{ regs.join("\n") }" if regs.size > 8
 
-regs.each_with_index do |name, n|
-  program = program.gsub name, trail(n, 3)
-end
+regs.each_with_index { |name, n| program = program.gsub name, trail(n, 3) }
 
 # process jumps
 ln = 0

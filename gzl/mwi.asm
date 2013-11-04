@@ -1,6 +1,9 @@
 begin:
-        set %a, 15
-	    set %b, 7
-        mul %a, %b, %c
-        set %a, 2
-        mul %a, %c, %c
+        set %one, 1
+	    set %a, 5
+addit:  
+        sub %a, %one, %a
+        jgt addit
+        set %a, 5
+	    
+        

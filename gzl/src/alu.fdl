@@ -15,7 +15,7 @@ dp alu(in a, b       : tc(32);
             neg  = res < 0;
             zero = res == 0;
         
-            $display("ALU --- a: ", $dec,  a, " b: ", $dec,  b, " alu_res: ", $dec, res, " alu_sel: ", select);
+            $display("ALU --- a: ", $dec,  a, " b: ", $dec,  b, " alu_sel: ", select	, " neg: ", neg	, " zero: ", zero	, " res: ", $dec, res);
     }
 }
 

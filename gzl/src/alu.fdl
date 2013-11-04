@@ -4,7 +4,7 @@ dp alu(in a, b       : tc(32);
        out r         : tc(32);
        out neg, zero : ns(1)) {
 
-    reg res : ns(32);
+    reg res : tc(32);
 
     always {
             res = (select == 0b00 & enable) ? a + b :

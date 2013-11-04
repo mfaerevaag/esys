@@ -1,5 +1,5 @@
 dp inst_parser (in inst              : ns(32);
-        	    in alu_res           : ns(32);
+        	    in alu_res           : tc(32);
                 in set, load         : ns(1);
                 in alu_op, dis       : ns(1);
 	            out opcode           : ns(4);

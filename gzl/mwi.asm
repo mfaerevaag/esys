@@ -1,9 +1,7 @@
 begin:
-        set %sum, 0
-	    set %one, 1
-addit:  
+        set %one, $1
+	    set %sum, $0
+wallah: 
         add %sum, %sum, %one
-        #jlt begin
-        jmp addit
-	    
-        
+        jmp wallah
+

@@ -15,13 +15,14 @@ system main {
     alu(reg_a, reg_b, alu_sel, alu_op,
         alu_res, alu_neg, alu_zero);
 
-	inst_reader(pc_out,
+    inst_reader(pc_out,
         inst);
 
     inst_parser(inst, alu_res, set, load, alu_op, dis,
-        opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3);
-        
-    regfile(r2, r3, rgw_flag, rgw_addr, rgw_data,
+        opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3,
+        reg_asel, reg_bsel);
+    
+    regfile(reg_asel, reg_bsel, rgw_flag, rgw_addr, rgw_data,
         reg_a, reg_b);
 
     controller(opcode,

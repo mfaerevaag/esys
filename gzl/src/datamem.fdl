@@ -1,19 +1,22 @@
-ipblock datamem(in address : ns(10);
-                in wr, rd  : ns(1);
-                in idata   : ns(32);
-                out odata  : ns(32)) {
-    iptype "ram";	
+ipblock datamem (
+	in address : ns(10);
+	in wr      : ns(1);
+	in rd      : ns(1);
+	in idata   : ns(32);
+	out odata  : ns(32)) {
+
+	iptype "ram";	
 	ipparm "size=512";
-    ipparm "wl=32";	
+	ipparm "wl=32";	p
 	ipparm "file=data/mwi.out";
 }
 
 dp datareader(in addr : ns(32);
-              out data_out : ns(32)) { 
+	out data_out : ns(32)) { 
 	reg data_in : ns(32);
 	sig wr, rd : ns(1);
 	use instmem(addr, wr, rd, data_in, data_out);
-    
+
 	always {
 		//$display($cycle, " data_out ", data_out);
 	}

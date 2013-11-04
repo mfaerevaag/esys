@@ -22,35 +22,37 @@ def trail (num, len)
 end
 
 program = File.read(ARGV[0])
+# remove comments
+program.gsub!(/#.*$/, '')
 
+# process jumps
+ln = 0
+jump_map = {}
+prog = ''
+program.each_line do |line|
+  next if line.strip.empty?
+  if /\w+:$/ =~ line.strip
+    jump_map[line.strip[0..-2]] = trail(ln, 28)
+  else
+    prog += line
+    ln += 1
+  end
+end
+#FIXLOL
+program = prog
+#puts jump_map
+jump_map.each { |jump, addr| program.gsub! jump, addr }
 # process immediate values
-program = program.gsub(/[^!][\s|,](\-)?\d+/) { |n| trail(n.delete(','), 25) }
+program = program.gsub(/[\s|,]\$\d+/) { |n| trail(n.delete(',$'), 25) }
 
 # process opcodes
 imap.each { |instr, bin| program.gsub! instr.to_s, bin }
-
 # process registers
 regs = program.scan(/%\w+/).uniq
 fail "Too many registers in use (max 8) #{ regs.join("\n") }" if regs.size > 8
 
 regs.each_with_index { |name, n| program.gsub! name, trail(n, 3) }
 
-# process jumps
-ln = 0
-jump_map = {}
-program.each_line do |line|
-  next if line.strip.empty?
-  if /\w+:$/ =~ line.strip
-    jump_map[line.strip[0..-2]] = trail(ln, 28)
-  else
-    ln += 1
-  end
-end
-
-jump_map.each { |jump, addr| program.gsub! jump, addr }
-
-# remove comments
-program.gsub!(/#.*$/, '')
 
 # fill in zeroes
 ln = 0

@@ -1,26 +1,33 @@
-ipblock inst_mem(in address : ns(10);
-                in wr, rd  : ns(1);
-                in idata   : ns(32);
-                out odata  : ns(32)) {
-    iptype "ram";	
+ipblock inst_mem(
+	in address : ns(10);
+	in wr      : ns(1);
+	in rd      : ns(1);
+	in idata   : ns(32);
+	out odata  : ns(32)) {
+	iptype "ram";	
 	ipparm "size=512";
-    ipparm "wl=32";	
+	ipparm "wl=32";	
 	ipparm "file=data/mwi.out";
 }
 
-dp inst_reader(in addr : ns(32);
-              out data_out : ns(32)) { 
-	reg data_in : ns(32);
-	sig wr, rd : ns(1);
+dp inst_reader(
+	in addr      : ns(32);
+	out data_out : ns(32)) { 
+	reg data_in  : ns(32);
+	sig wr       : ns(1);
+	sig rd       : ns(1);
+
 	use inst_mem(addr, wr, rd, data_in, data_out);
-    
+
 	always {
+		wr = 0;
+		rd = 1;
 		//$display($cycle, " data_out ", data_out);
 	}
 
-	sfg write { wr=1; rd=0; }
-	sfg read { wr=0; rd=1; }
+	sfg read {
+	}
 }
 
 // always read
-hardwired jump_controller(inst_reader) { read; }
+//hardwired jump_controller(inst_reader) { read; }

@@ -1,8 +1,9 @@
-dp regfile(in asel, bsel  : ns(3);
-       in storeenable : ns(1);
-       in storesel    : ns(3);
-       in storedata   : tc(32);
-       out a, b : tc(32)) {
+dp regfile(
+    in asel, bsel : ns(3);
+    in write_enable   : ns(1);
+    in write_addr     : ns(3);
+    in write_data     : tc(32);
+    out a, b : tc(32)) {
 
     reg r1, r2, r3, r4, r5, r6, r7, r8 : tc(32);
 
@@ -23,57 +24,59 @@ dp regfile(in asel, bsel  : ns(3);
             (bsel == 0b101) ? r6 :
             (bsel == 0b110) ? r7 : r8;
 
-        r1 = ((storesel == 0b000) & storeenable) ? storedata : r1;
-        r2 = ((storesel == 0b001) & storeenable) ? storedata : r2;
-        r3 = ((storesel == 0b010) & storeenable) ? storedata : r3;
-        r4 = ((storesel == 0b011) & storeenable) ? storedata : r4;
-        r5 = ((storesel == 0b100) & storeenable) ? storedata : r5;
-        r6 = ((storesel == 0b101) & storeenable) ? storedata : r6;
-        r7 = ((storesel == 0b110) & storeenable) ? storedata : r7;
-        r8 = ((storesel == 0b111) & storeenable) ? storedata : r8;
+        r1 = ((write_addr == 0b000) & write_enable) ? write_data : r1;
+        r2 = ((write_addr == 0b001) & write_enable) ? write_data : r2;
+        r3 = ((write_addr == 0b010) & write_enable) ? write_data : r3;
+        r4 = ((write_addr == 0b011) & write_enable) ? write_data : r4;
+        r5 = ((write_addr == 0b100) & write_enable) ? write_data : r5;
+        r6 = ((write_addr == 0b101) & write_enable) ? write_data : r6;
+        r7 = ((write_addr == 0b110) & write_enable) ? write_data : r7;
+        r8 = ((write_addr == 0b111) & write_enable) ? write_data : r8;
 
         //$display("REG --- asel: ", $bin, asel,
-	    //         " | bsel: ", $bin, bsel,	
-	    //         " | storesel: ", $bin, storesel,	
-	    //         " | storedata: ", $bin, storedata,
-	    //         " | storeenable: ", storeenable,	
-	    //         " | clk: ", $cycle);
-        //$display("    --> r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3) ;
+           //         " | bsel: ", $bin, bsel,	
+           //         " | write_addr: ", $bin, write_addr,	
+           //         " | write_data: ", $bin, write_data,
+           //         " | write_enable: ", write_enable,	
+           //         " | clk: ", $cycle);	
+	        //$display("reg_a: ", asel, " reg_b: ", bsel);
+        //	, " write_addr: ", write_addr, " wirte_enable: ", 	write_enable, " write_data: ", write_data
+        $display("r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3);
     }
 }
 
 // dp test_regfile(out asel, bsel  : ns(3);
-//             out storeenable : ns(1);
-//             out storesel    : ns(3);
-//             out storedata   : tc(4);
-//             in a, b : tc(4)) {
-//     always {
-//         $display($dec, 
-//                  "cycle: ", $cycle,
-//                  " asel: ", asel, 
-//                  " bsel: ", bsel, 
-//                  " storeenable: ", storeenable, 
-//                  " storesel: ", storesel, 
-//                  " storedata: ", storedata, 
-//                  " a: ", a, 
-//                  " b: ", b);
+    //             out write_enable : ns(1);
+    //             out write_addr    : ns(3);
+    //             out write_data   : tc(4);
+    //             in a, b : tc(4)) {
+    //     always {
+        //         $display($dec, 
+            //                  "cycle: ", $cycle,
+            //                  " asel: ", asel, 
+            //                  " bsel: ", bsel, 
+            //                  " write_enable: ", write_enable, 
+            //                  " write_addr: ", write_addr, 
+            //                  " write_data: ", write_data, 
+            //                  " a: ", a, 
+            //                  " b: ", b);
 //     }
-//     sfg test_0 { asel=0b000; bsel=0b001; storeenable=0b0; storesel=0b001; storedata=0b0011; }
-//     sfg test_1 { asel=0b100; bsel=0b011; storeenable=0b0; storesel=0b010; storedata=0b1100; }
-//     sfg test_2 { asel=0b101; bsel=0b010; storeenable=0b1; storesel=0b000; storedata=0b0100; }
-//     sfg test_3 { asel=0b000; bsel=0b110; storeenable=0b1; storesel=0b111; storedata=0b1100; }
+//     sfg test_0 { asel=0b000; bsel=0b001; write_enable=0b0; write_addr=0b001; write_data=0b0011; }
+//     sfg test_1 { asel=0b100; bsel=0b011; write_enable=0b0; write_addr=0b010; write_data=0b1100; }
+//     sfg test_2 { asel=0b101; bsel=0b010; write_enable=0b1; write_addr=0b000; write_data=0b0100; }
+//     sfg test_3 { asel=0b000; bsel=0b110; write_enable=0b1; write_addr=0b111; write_data=0b1100; }
 // }
 
 // fsm f_testbench(test_regfile) { 
-//     initial s0;
-//     state s1, s2, s3;    
-//     @s0 (test_0) -> s1;
-//     @s1 (test_1) -> s2;
-//     @s2 (test_2) -> s3;
-//     @s3 (test_3) -> s0;
-// }
+    //     initial s0;
+    //     state s1, s2, s3;    
+    //     @s0 (test_0) -> s1;
+    //     @s1 (test_1) -> s2;
+    //     @s2 (test_2) -> s3;
+    //     @s3 (test_3) -> s0;
+    // }
 
-// system regfile_sys {
-//     regfile(asel, bsel, storeenable, storesel, storedata, a, b);
-//     test_regfile(asel, bsel, storeenable, storesel, storedata, a, b);
-// }
+    // system regfile_sys {
+        //     regfile(asel, bsel, write_enable, write_addr, write_data, a, b);
+        //     test_regfile(asel, bsel, write_enable, write_addr, write_data, a, b);
+        // }

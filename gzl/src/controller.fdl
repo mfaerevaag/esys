@@ -1,42 +1,43 @@
-dp controller(in opcode    : ns(4);
-              out jmp      : ns(1);
-	          out jlt      : ns(1);
-	          out jgt      : ns(1);
-	          out alu_op   : ns(1);
-	          out alu_sel  : ns(2);
-	          out load     : ns(1);
-	          out store    : ns(1);
-	          out set      : ns(1);
-	          out addi     : ns(1);
-	          out cmp      : ns(1);
-	          out mov      : ns(1);
-	          out dis      : ns(1)) {
+dp controller(
+	in opcode    : ns(4);
+	out jmp      : ns(1);
+	out jlt      : ns(1);
+	out jgt      : ns(1);
+	out alu_op   : ns(1);
+	out alu_sel  : ns(2);
+	out load     : ns(1);
+	out store    : ns(1);
+	out set      : ns(1);
+	out addi     : ns(1);
+	out cmp      : ns(1);
+	out mov      : ns(1);
+	out dis      : ns(1)) { 
 
-        always {
-            jmp     = opcode == 0b1100;
-            jlt     = opcode == 0b1101;
-            jgt     = opcode == 0b1110;
+	always {
+		jmp     = opcode == 0b1100;
+		jlt     = opcode == 0b1101;
+		jgt     = opcode == 0b1110;
 
-            alu_op  = opcode <  0b0100;
-            alu_sel = opcode[0:1]; //00 = add, 01 = sub, 10 = mul
+		alu_op  = opcode <  0b0100;
+		alu_sel = opcode[0:1]; //00 = add, 01 = sub, 10 = mul
 
-            load    = opcode == 0b1000;
-	        store   = opcode == 0b1001;
+		load    = opcode == 0b1000;
+		store   = opcode == 0b1001;
 
-	        dis     = opcode == 0b1111;
-	        set     = opcode == 0b0100;
-	        addi    = opcode == 0b0101;
-	        cmp     = opcode == 0b0110;
-            mov     = opcode == 0b0111;
+		dis     = opcode == 0b1111;
+		set     = opcode == 0b0100;
+		addi    = opcode == 0b0101;
+		cmp     = opcode == 0b0110;
+		mov     = opcode == 0b0111;
 
-            //$display($bin, instr, " - ", $bin, instr[25:27]);
-        
-            //$display("CTL --- jmp: ", jmp,
-	        //         " | jlt: ", jlt,
-            //         " | set: ", set,	
-	        //         " | alu_op: ", alu_op,	
-	        //         " | alu_sel: ", $bin, alu_sel,
-            //         " | opcode: ", $bin, opcode,
-            //         " | clk: ", $cycle);
-        }
+		//$display($bin, instr, " - ", $bin, ibnstr[25:27]);
+
+		//$display("CTL --- jmp: ", jmp,
+			//         " | jlt: ", jlt,
+			//         " | set: ", set,	
+			//         " | alu_op: ", alu_op,	
+			//         " | alu_sel: ", $bin, alu_sel,
+			//         " | opcode: ", $bin, opcode,
+			//         " | clk: ", $cycle);
+	}
 }

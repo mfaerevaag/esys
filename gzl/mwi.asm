@@ -1,11 +1,9 @@
 begin:
-        set %one, 1	
-	    set %a, 0
-	    set %b, 0
+        set %sum, 0
+	    set %one, 1
 addit:  
-        add %c, %a, %b
-        dis %c
-        jlt addit
-        set %a, 5
+        add %sum, %sum, %one
+        #jlt begin
+        jmp addit
 	    
         

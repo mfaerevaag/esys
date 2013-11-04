@@ -11,10 +11,10 @@ outer_loop_begin:
         jlt i_gt_lim
         mov %lim, %i
         jmp inner_loop
-        
+
 i_gt_lim:
         mov %lim, %max
-        
+
 inner_loop:
         load %tmp, %j            # load current data point
         add %sum, %sum, %tmp     # add it to sum

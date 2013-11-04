@@ -21,7 +21,7 @@ system main {
     inst_parser(inst, alu_res, set, load, alu_op, dis,
         opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3);
         
-    regfile(r1, r2, rgw_flag, rgw_addr, rgw_data,
+    regfile(r2, r3, rgw_flag, rgw_addr, rgw_data,
         reg_a, reg_b);
 
     controller(opcode,

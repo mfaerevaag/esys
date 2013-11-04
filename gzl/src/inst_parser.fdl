@@ -19,8 +19,7 @@ dp inst_parser (in inst              : ns(32);
             imm_val  = inst[00 : 24];
             target   = inst[00 : 27];
 
-	        rgw_addr = set | load ? r1 :
-                       alu_op ? r1 : 0;
+	        rgw_addr = r1;
 
 	        rgw_data = set ? imm_val :
 	                   alu_op ? alu_res : 0;

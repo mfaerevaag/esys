@@ -1,6 +1,7 @@
 dp inst_parser (in inst              : ns(32);
         	    in alu_res           : ns(32);
-                in set, load, alu_op : ns(1);
+                in set, load         : ns(1);
+                in alu_op, dis       : ns(1);
 	            out opcode           : ns(4);
 	            out rgw_addr         : ns(3);
 	            out rgw_data         : ns(32);
@@ -11,18 +12,18 @@ dp inst_parser (in inst              : ns(32);
 
         always {	
 	        // helpers to simplify assignment of instruction parts
-            opcode  = inst[28:31];
-            r1      = inst[25:27];	
-	        r2      = inst[22:24];	
-	        r3      = inst[19:21];
-            imm_val = inst[0:24];
-            target  = inst[0:27];
+            opcode   = inst[28 : 31];
+            r1       = inst[25 : 27];	
+	        r2       = inst[22 : 24];	
+	        r3       = inst[19 : 21];
+            imm_val  = inst[00 : 24];
+            target   = inst[00 : 27];
 
 	        rgw_addr = set | load ? r1 :
-                             alu_op ? r3 : 0;
-        
+                       alu_op ? r1 : 0;
+
 	        rgw_data = set ? imm_val :
-	                         alu_op ? alu_res : 0;
+	                   alu_op ? alu_res : 0;
 
             rgw_flag = set | alu_op;
         }

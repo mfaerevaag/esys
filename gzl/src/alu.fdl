@@ -1,17 +1,17 @@
 dp alu(in a, b       : tc(32);
        in select     : ns(2);	
-	   in enable     : ns(2);
+	   in enable     : ns(1);
        out r         : tc(32);
        out neg, zero : ns(1)) {
 
     reg res : ns(32);
 
     always {
-            r = (select == 0b00) ? a + b :
-                (select == 0b01) ? a - b :
-                (select == 0b10) ? a * b : a;
+            res = (select == 0b00 & enable) ? a + b :
+                  (select == 0b01 & enable) ? a - b :
+                  (select == 0b10 & enable) ? a * b : a;
 
-            res = enable ? r : res;
+            r = res;
             neg  = res < 0;
             zero = res == 0;
         

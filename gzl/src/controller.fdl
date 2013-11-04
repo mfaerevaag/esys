@@ -9,7 +9,9 @@ dp controller(in opcode    : ns(4);
 	          out set      : ns(1);
 	          out addi     : ns(1);
 	          out cmp      : ns(1);
-	          out mov      : ns(1)) { 
+	          out mov      : ns(1);
+	          out dis      : ns(1)) {
+
         always {
             jmp     = opcode == 0b1100;
             jlt     = opcode == 0b1101;
@@ -21,7 +23,7 @@ dp controller(in opcode    : ns(4);
             load    = opcode == 0b1000;
 	        store   = opcode == 0b1001;
 
-	        //dis     = opcode == 0b1111;
+	        dis     = opcode == 0b1111;
 	        set     = opcode == 0b0100;
 	        addi    = opcode == 0b0101;
 	        cmp     = opcode == 0b0110;

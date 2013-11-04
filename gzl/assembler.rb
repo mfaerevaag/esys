@@ -27,9 +27,7 @@ end
 program = File.read(ARGV[0])
 
 # process immediate values
-program = program.gsub(/[^!][\s|,]\d+/) { |n| trail(n.delete(','), 25) }
-# hax
-program = program.gsub(/!\d+/) { |n| trail(n, 19) }
+program = program.gsub(/[^!][\s|,](\-)?\d+/) { |n| trail(n.delete(','), 25) }
 
 # process opcodes
 imap.each { |instr, bin| program.gsub! instr.to_s, bin }

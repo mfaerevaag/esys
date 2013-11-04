@@ -1,23 +1,20 @@
 #!/usr/bin/ruby
 
 imap = {
-  :dis     => '1111',
-  :set     => '0100',
-  :addi    => '0101',
-  :cmp     => '0110',
-  :mov     => '0111',
-
-  :add     => '0000',
-  :sub     => '0001',
-  :mul     => '0010',
-  :div     => '0011',
-
-  :load    => '1000',
-  :store   => '1001',
-
-  :jmp     => '1100',
-  :jlt     => '1101',
-  :jgt     => '1110',
+  dis:   '1111',
+  set:   '0100',
+  addi:  '0101',
+  cmp:   '0110',
+  mov:   '0111',
+  add:   '0000',
+  sub:   '0001',
+  mul:   '0010',
+  div:   '0011',
+  load:  '1000',
+  store: '1001',
+  jmp:   '1100',
+  jlt:   '1101',
+  jgt:   '1110',
 }
 
 def trail (num, len) 
@@ -36,7 +33,7 @@ imap.each { |instr, bin| program.gsub! instr.to_s, bin }
 regs = program.scan(/%\w+/).uniq
 fail "Too many registers in use (max 8) #{ regs.join("\n") }" if regs.size > 8
 
-regs.each_with_index { |name, n| program = program.gsub name, trail(n, 3) }
+regs.each_with_index { |name, n| program.gsub! name, trail(n, 3) }
 
 # process jumps
 ln = 0
@@ -50,12 +47,10 @@ program.each_line do |line|
   end
 end
 
-jump_map.each do |jump, addr|
-  program = program.gsub jump, addr
-end
+jump_map.each { |jump, addr| program.gsub! jump, addr }
 
 # remove comments
-program = program.gsub(/#.*$/, '')
+program.gsub!(/#.*$/, '')
 
 # fill in zeroes
 ln = 0

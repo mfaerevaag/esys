@@ -6,6 +6,5 @@ dp jump_handler(
 	
 	always {
 		do_jmp = jmp | (jlt & alu_neg) | (jgt & ~alu_neg);
-		$display("-jmp: ", jmp, " -jlt: ", jlt);
 	}
 }

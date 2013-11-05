@@ -1,8 +1,7 @@
 begin:
-	    set %one, $3
-	    set %two, $5
-        jmp go
+	    set %one, $1
+	    set %sum, $5
 go:
-	    mov %three, %one	
-	    mov %three, %two
-        add %three, %three, %two
+        sub %sum, %sum, %one
+        jgt go
+	    mov %three, %sum

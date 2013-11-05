@@ -3,11 +3,11 @@
 #include "alu.fdl"
 #include "reg.fdl"
 #include "inst_mem.fdl"	
-#include "inst_parser.fdl"
 #include "jump_handler.fdl"
 
 system main {
-    pc(pc_out, target, do_jmp);
+    pc(target, do_jmp,
+       pc_out);
 
     jump_handler(alu_neg, alu_zero, jmp, jlt, jgt,
         do_jmp);
@@ -17,17 +17,14 @@ system main {
 
     inst_reader(pc_out,
         inst);
-
-    inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, dis, reg_b,
-        opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3,
-        reg_asel, reg_bsel);
     
     regfile(reg_asel, reg_bsel, rgw_flag, rgw_addr, rgw_data,
         reg_a, reg_b);
 
-    controller(opcode,
+    controller(inst, alu_res, reg_b,
         jmp, jlt, jgt,
         alu_op, alu_sel,
         load, store,
-        set, addi, cmp, mov, dis);
+        rgw_addr, rgw_data, rgw_flag, target,
+	    reg_asel, reg_bsel);
 }

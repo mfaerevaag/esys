@@ -1,13 +1,12 @@
 dp pc(
-	out pc_out : ns(5);
-	in target : ns(5);
-	in jump   : ns(1)) {
+	in target  : ns(5);
+	in jump    : ns(1);
+	out pc_out : ns(5)) {
 
 	reg count : ns(5);
 
 	always {
 		pc_out = jump ? target : count + 1;
 		count = pc_out;
-        $display("iaddr: ", count);
 	}
 }

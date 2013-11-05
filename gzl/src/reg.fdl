@@ -33,14 +33,6 @@ dp regfile(
         r7 = ((write_addr == 0b110) & write_enable) ? write_data : r7;
         r8 = ((write_addr == 0b111) & write_enable) ? write_data : r8;
 
-        //$display("REG --- asel: ", $bin, asel,
-           //         " | bsel: ", $bin, bsel,	
-           //         " | write_addr: ", $bin, write_addr,	
-           //         " | write_data: ", $bin, write_data,
-           //         " | write_enable: ", write_enable,	
-           //         " | clk: ", $cycle);	
-	        //$display("reg_a: ", asel, " reg_b: ", bsel);
-        //	, " write_addr: ", write_addr, " wirte_enable: ", 	write_enable, " write_data: ", write_data
         $display("r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3);
     }
 }

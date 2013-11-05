@@ -18,9 +18,6 @@ dp controller(
 		jlt     = opcode == 0b1101;
 		jgt     = opcode == 0b1110;
 
-		alu_op  = opcode <  0b0100;
-		alu_sel = opcode[0:1]; //00 = add, 01 = sub, 10 = mul
-
 		load    = opcode == 0b1000;
 		store   = opcode == 0b1001;
 
@@ -29,6 +26,10 @@ dp controller(
 		addi    = opcode == 0b0101;
 		cmp     = opcode == 0b0110;
 		mov     = opcode == 0b0111;
+
+	    // do alu sub for comparisons
+		alu_op  = opcode <  0b0100 | cmp;
+		alu_sel = cmp ? 0b01 : opcode[0:1]; //00 = add, 01 = sub, 10 = mul
 
 		//$display($bin, instr, " - ", $bin, ibnstr[25:27]);
 

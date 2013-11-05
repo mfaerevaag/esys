@@ -2,6 +2,7 @@ dp inst_parser(
 	in inst              : ns(32);
 	in alu_res           : tc(32);
 	in set               : ns(1);
+	in cmp               : ns(1);
 	in load              : ns(1);
 	in alu_op            : ns(1);
 	in dis               : ns(1);
@@ -28,11 +29,11 @@ dp inst_parser(
 		rgw_data = set ? imm_val :
 		           alu_op ? alu_res : 0;
 
-		rgw_flag = set | alu_op;
+		rgw_flag = ~cmp & (set | alu_op);
 
-		reg_asel = alu_op ? r2 : r1;
-		reg_bsel = alu_op ? r3 : r2;
+		reg_asel = (alu_op & ~cmp) ? r2 : r1;
+		reg_bsel = (alu_op & ~cmp) ? r3 : r2;
 
-		//$display($bin, inst)    ;
+		$display($bin, inst)    ;
 	}
 }

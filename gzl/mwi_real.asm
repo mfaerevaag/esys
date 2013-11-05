@@ -1,11 +1,11 @@
 begin_mwi:
-        set %const, 14316        # set register to constant
-        set %max, 30             # the max window size
-        set %i, 0                # current number of data points available (simulated)
+        set %const, $14316        # set register to constant
+        set %max, $30             # the max window size
+        set %i, $0                # current number of data points available (simulated)
 
 outer_loop_begin:	
-	    set %j,   0              # init inner loops index
-        set %sum, 0              # current mwi value
+	    set %j,   $0              # init inner loops index
+        set %sum, $0              # current mwi value
 
         cmp %i, %max             # find max of const and
         jlt i_gt_lim

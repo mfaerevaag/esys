@@ -2,10 +2,12 @@ dp inst_parser(
 	in inst              : ns(32);
 	in alu_res           : tc(32);
 	in set               : ns(1);
-	in cmp               : ns(1);
+	in cmp               : ns(1);	
+	in mov               : ns(1);
 	in load              : ns(1);
 	in alu_op            : ns(1);
-	in dis               : ns(1);
+	in dis               : ns(1);	
+	in reg_b             : tc(32);
 	out opcode           : ns(4);
 	out rgw_addr         : ns(3);
 	out rgw_data         : ns(32);
@@ -26,14 +28,15 @@ dp inst_parser(
 
 		rgw_addr = r1;
 
-		rgw_data = set ? imm_val :
+		rgw_data = mov ? reg_b :
+                   set ? imm_val :
 		           alu_op ? alu_res : 0;
 
-		rgw_flag = ~cmp & (set | alu_op);
+		rgw_flag = ~cmp & (set | mov | alu_op);
 
 		reg_asel = (alu_op & ~cmp) ? r2 : r1;
 		reg_bsel = (alu_op & ~cmp) ? r3 : r2;
 
-		$display($bin, inst)    ;
+		$display($bin, inst);
 	}
 }

@@ -18,7 +18,7 @@ system main {
     inst_reader(pc_out,
         inst);
 
-    inst_parser(inst, alu_res, set, cmp, load, alu_op, dis,
+    inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, dis, reg_b,
         opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target, r1, r2, r3,
         reg_asel, reg_bsel);
     

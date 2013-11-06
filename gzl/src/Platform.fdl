@@ -1,6 +1,12 @@
 $option "vcd"
 
-
+#include "pc.fdl"
+#include "controller.fdl"	
+#include "alu.fdl"
+#include "reg.fdl"
+#include "inst_mem.fdl"	
+#include "jump_handler.fdl"
+        
 ////////////////////////////
 // CPU
 ////////////////////////////
@@ -13,14 +19,59 @@ dp CPU(
            in M_dataoutrdy : ns(1)
            //in stall_cpu : ns(1)
        ){
-       		// Implement your CPU here. 
-       		// Please remove the code below (it is only added such that that the platform can run without faults)       
-       always{
-       		M_datain = 0;
-       		M_cmd = 0;
-       		M_datainrdy = 0;
-       }       
+
+        sig target, pc_out, alu_res, reg_a, reg_b, inst, rw_data : ns(32);
+        sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, wait : ns(1);
+        sig reg_asel, reg_bsel, rw_addr : ns(3);
+        sig alu_sel : ns(2);
+        sig dm_addr : ns(24);
+        
+	    use pc(target, do_jmp, wait,
+	       pc_out);
+
+	    use jump_handler(alu_neg, alu_zero, jmp, jlt, jgt,
+	        do_jmp);
+
+	    use alu(reg_a, reg_b, alu_sel, alu_op,
+	        alu_res, alu_neg, alu_zero);
+
+	    use inst_reader(pc_out,
+	        inst);
+	    
+	    use regfile(reg_asel, reg_bsel, rw_flag, rw_addr, rw_data,
+	        reg_a, reg_b);
+
+	    use controller(inst, alu_res, reg_b, M_dataoutrdy,
+	        jmp, jlt, jgt,
+	        alu_op, alu_sel,
+	        load, store,
+	        rw_addr, rw_data, rw_flag, target,
+	        reg_asel, reg_bsel,
+            wait, dm_addr);
+        
+        always {
+	       	M_datain = 0b10000;
+	       	M_cmd = (ns(4))0b0010 # (ns(28))dm_addr;
+        //	store ? 0b00101 # rw_addr :
+	                //load ? 
+	        M_datainrdy = 1;
+	        $display(M_dataoutrdy, " - ", 	M_dataout, " - ", $dec, 	dm_addr);
+        }
 }
+
+//fsm cpu_ctrl(CPU) {
+//        initial wait_s;
+//        state load_s, store_s;
+//
+//        @wait_s  if (stall_reg) then (wait) -> wait;
+//                 else (do_operation)        -> operate;
+//        	
+//	    @store_s if (stall_reg) then (wait) -> wait;
+//	             else (do_operation)        -> operate;
+//	    
+//	    @load_s  if (stall_reg) then (wait) -> wait;
+//	             else (do_operation)        -> operate;
+//}
 
 ////////////////////////////
 // Bus
@@ -451,7 +502,7 @@ ipblock datamem(in address : ns(12);
   iptype "ram";
   ipparm "size=4096";
   ipparm "wl=32";
-  ipparm "file=datamemory.txt"; // initializes content. File syntax needs to be "addr data "* (the last space can also be a linebreak. NB! Should the students do a manual loading of the RAM to simulate a "real" system or is it ok if they just use this parameter?
+  ipparm "file=data/datamemory.txt"; // initializes content. File syntax needs to be "addr data "* (the last space can also be a linebreak. NB! Should the students do a manual loading of the RAM to simulate a "real" system or is it ok if they just use this parameter?
   //ipparm "file=sddb48hex2.ecg"; 
 }
 
@@ -533,7 +584,7 @@ ipblock sensordata(in address : ns(5);
   iptype "ram";
   ipparm "size=32";
   ipparm "wl=32";
-  ipparm "file=sddb48hex.ecg"; // initializes content
+  ipparm "file=data/sddb48hex.ecg"; // initializes content
   
 }
 

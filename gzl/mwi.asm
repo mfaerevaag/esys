@@ -1,7 +1,5 @@
 begin:
-	    set %one, $1
-	    set %sum, $5
-go:
-        sub %sum, %sum, %one
-        jgt go
-	    mov %three, %sum
+        set %adr, $99
+	    set %data, $100
+	    #store %adr, %data	
+	    load %adr, %data

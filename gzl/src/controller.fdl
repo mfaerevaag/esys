@@ -4,6 +4,7 @@ dp controller(
 	in inst                : ns(32);
     in alu_res             : tc(32);	
 	in reg_b               : tc(32);
+    in bus_datardy         : ns(1);
 	out jmp                : ns(1);
 	out jlt                : ns(1);
 	out jgt                : ns(1);
@@ -11,11 +12,13 @@ dp controller(
 	out alu_sel            : ns(2);
 	out load               : ns(1);
 	out store              : ns(1);
-	out rw_addr           : ns(3);
-	out rw_data           : ns(32);
-	out rw_flag           : ns(1);
+	out rw_addr            : ns(3);
+	out rw_data            : ns(32);
+	out rw_flag            : ns(1);
 	out target             : ns(28);
-	out reg_asel, reg_bsel : ns(3)) {
+	out reg_asel, reg_bsel : ns(3);
+    out wait               : ns(1);
+    out dm_addr            : ns(24)) {
 
     sig opcode             : ns(4);
     sig set, cmp, mov      : ns(1);
@@ -36,10 +39,14 @@ dp controller(
 		set     = opcode == 0b0100;
 		cmp     = opcode == 0b0110;
 		mov     = opcode == 0b0111;
-        
+
+        dm_addr = imm_val;
+        $display(imm_val)                ;
 	    // do alu sub for comparisons
 		alu_op  = opcode <  0b0100 | cmp;
         //00 = add, 01 = sub, 10 = mul
 		alu_sel = cmp ? 0b01 : opcode[0:1];
+
+        wait    = (store | load) & ~bus_datardy;
 	}
 }

@@ -11,9 +11,9 @@ dp controller(
 	out alu_sel            : ns(2);
 	out load               : ns(1);
 	out store              : ns(1);
-	out rgw_addr           : ns(3);
-	out rgw_data           : ns(32);
-	out rgw_flag           : ns(1);
+	out rw_addr           : ns(3);
+	out rw_data           : ns(32);
+	out rw_flag           : ns(1);
 	out target             : ns(28);
 	out reg_asel, reg_bsel : ns(3)) {
 
@@ -22,7 +22,7 @@ dp controller(
     sig imm_val            : ns(24);
         
 	use inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, reg_b,
-	        opcode, rgw_addr, rgw_data, rgw_flag, imm_val, target,
+	        opcode, rw_addr, rw_data, rw_flag, imm_val, target,
 	        reg_asel, reg_bsel);
 
 	always {

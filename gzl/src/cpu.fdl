@@ -18,13 +18,13 @@ system main {
     inst_reader(pc_out,
         inst);
     
-    regfile(reg_asel, reg_bsel, rgw_flag, rgw_addr, rgw_data,
+    regfile(reg_asel, reg_bsel, rw_flag, rw_addr, rw_data,
         reg_a, reg_b);
 
     controller(inst, alu_res, reg_b,
         jmp, jlt, jgt,
         alu_op, alu_sel,
         load, store,
-        rgw_addr, rgw_data, rgw_flag, target,
+        rw_addr, rw_data, rw_flag, target,
 	    reg_asel, reg_bsel);
 }

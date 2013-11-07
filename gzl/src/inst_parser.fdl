@@ -32,7 +32,7 @@ dp inst_parser(
                    set ? imm_val :
 		           alu_op ? alu_res : 0;
 
-		rw_flag = ~cmp & (set | mov | alu_op);
+		rw_flag = ~cmp & (set | mov | alu_op | load);
 
 		reg_asel = (alu_op & ~cmp) ? r2 : r1;
 		reg_bsel = (alu_op & ~cmp) ? r3 : r2;

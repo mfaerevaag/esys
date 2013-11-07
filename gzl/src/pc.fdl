@@ -7,8 +7,9 @@ dp pc(
 	reg count : ns(5);
 
 	always {
-		pc_out = wait ? count - 1 :
+		pc_out = wait ? count :
                  jump ? target : count + 1;
 		count = pc_out;
+        $display("pc: ", pc_out) ;
 	}
 }

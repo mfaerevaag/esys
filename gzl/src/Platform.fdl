@@ -24,7 +24,9 @@ dp CPU(
         sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, wait : ns(1);
         sig reg_asel, reg_bsel, rw_addr : ns(3);
         sig alu_sel : ns(2);
-        sig dm_addr : ns(24);
+
+        sig rw_write : ns(1);	
+	    sig rw_data_real : ns(32);
         
 	    use pc(target, do_jmp, wait,
 	       pc_out);
@@ -38,7 +40,7 @@ dp CPU(
 	    use inst_reader(pc_out,
 	        inst);
 	    
-	    use regfile(reg_asel, reg_bsel, rw_flag, rw_addr, rw_data,
+	    use regfile(reg_asel, reg_bsel, rw_write, rw_addr, rw_data_real,
 	        reg_a, reg_b);
 
 	    use controller(inst, alu_res, reg_b, M_dataoutrdy,
@@ -47,15 +49,19 @@ dp CPU(
 	        load, store,
 	        rw_addr, rw_data, rw_flag, target,
 	        reg_asel, reg_bsel,
-            wait, dm_addr);
-        
+            wait);
+
         always {
-	       	M_datain = 0b10000;
-	       	M_cmd = (ns(4))0b0010 # (ns(28))dm_addr;
+	       	M_datain = (ns(8))0 # (ns(24))reg_b;
+	       	M_cmd = load ? (ns(4))0b0010 # (ns(28))0 :
+                    store ? (ns(5))0b00101 # (ns(27))reg_b : (ns(32))0b0;
+	        M_datainrdy = load | store;
+            rw_write = load ? M_dataoutrdy & rw_flag : rw_flag;
+	        rw_data_real = load ? M_dataout : rw_data;
         //	store ? 0b00101 # rw_addr :
-	                //load ? 
-	        M_datainrdy = 1;
-	        $display(M_dataoutrdy, " - ", 	M_dataout, " - ", $dec, 	dm_addr);
+	                //load ?
+            //$display($bin, inst);
+	        //$display(M_dataoutrdy, " - ", store, " - ", $bin, M_cmd);
         }
 }
 

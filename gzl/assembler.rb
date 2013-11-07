@@ -9,7 +9,7 @@ imap = {
   add:   '0000',
   sub:   '0001',
   mul:   '0010',
-  #div:   '0011',
+  div:   '0011',
   load:  '1000',
   store: '1001',
   jmp:   '1100',
@@ -50,9 +50,9 @@ imap.each { |instr, bin| program.gsub! instr.to_s, bin }
 # process registers
 regs = program.scan(/%\w+/).uniq
 fail "Too many registers in use (max 8) #{ regs.join("\n") }" if regs.size > 8
-
 regs.each_with_index { |name, n| program.gsub! name, trail(n, 3) }
 
+#puts regs.size
 
 # fill in zeroes
 ln = 0
@@ -62,7 +62,7 @@ program.each_line do |line|
     size = line.gsub(/,|\s+/, '').size
     n = 32 - size
     instr = line[0..3]
-    if [imap[:store], imap[:load], imap[:set]].include? instr then
+    if [imap[:set]].include? instr then
       line = line[0..6] + ('0' * n) + line[7..-1]
     elsif imap[:dis] == instr then
       line = line[0..3] + ('0' * n) + line[4..-1]

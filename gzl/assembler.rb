@@ -27,6 +27,14 @@ class Integer
   end
 end
 
+class Array
+  def deep_clone
+    clone = []
+    self.each { |e| clone << e.clone }
+    clone
+  end
+end
+
 def fail(msg, line = '?')
   e = SyntaxError.new "#{ARGV[0]}:#{line} #{msg}"
   e.set_backtrace []
@@ -88,8 +96,10 @@ end
 # remove address identifications
 program.reject! { |line| @jump_map.has_key? line.first.delete ':' }
 
-# copy to show original in errors
-asm = program
+
+# copy to show assembly in errors
+asm = program.deep_clone
+
 
 # parse program
 program.each_with_index do |line, i|
@@ -102,14 +112,14 @@ program.each_with_index do |line, i|
   expected_struct = @inst_map[inst.to_sym][:struct]
 
   unless expected_struct.length == line.length - 1
-    fail "Wrong number of arguments in: #{line.to_s}"
+    fail "Wrong number of arguments in: '#{line.join(' ')}'"
   end
 
   line[0] = @inst_map[inst.to_sym][:bin]
 
   expected_struct.each_with_index do |type, j|
     unless validate_type expected_struct[j], line[j+1]
-      fail "Malformed argument in: '#{asm[i].join ' '}'"
+      fail "Malformed argument in: '#{asm[i].join(' ')}'"
     end
 
     line[j+1] = convert_arg type, line[j+1]

@@ -1,21 +1,28 @@
 dp inst_parser(
-	in inst                : ns(32);
-	in alu_res             : tc(32);
-	in set                 : ns(1);
-	in cmp                 : ns(1);	
-	in mov                 : ns(1);
-	in load                : ns(1);
-	in alu_op              : ns(1);
-	in reg_b               : tc(32);
-	out opcode             : ns(4);
-	out rw_addr           : ns(3);
-	out rw_data           : ns(32);
-	out rw_flag           : ns(1);
-	out imm_val            : ns(24);
-	out target             : ns(28);
-	out reg_asel, reg_bsel : ns(3)) {
+	in inst        : ns(32);
+  out opcode     : ns(4);
+  out r1, r2, r3 : ns(3);	
+	out imm        : ns(24);
+	out target     : ns(28)) {
 
-    sig r1, r2, r3 : ns(3);
+
+        
+	// in alu_res             : tc(32);
+	// in set                 : ns(1);
+	// in cmp                 : ns(1);	
+	// in mov                 : ns(1);
+	// in load                : ns(1);
+	// in alu_op              : ns(1);
+	// in reg_b               : tc(32);
+	// out opcode             : ns(4);
+	// out rw_addr           : ns(3);
+	// out rw_data           : ns(32);
+	// out rw_flag           : ns(1);
+	// out imm_val            : ns(24);
+	// out target             : ns(28);
+	// out reg_asel, reg_bsel : ns(3)) {
+
+  // sig r1, r2, r3 : ns(3);
         
 	always {	
 		// helpers to simplify assignment of instruction parts
@@ -26,15 +33,15 @@ dp inst_parser(
 		imm_val  = inst[00 : 24];
 		target   = inst[00 : 27];
 
-		rw_addr = r1;
-
-		rw_data = mov ? reg_b :
-                  set ? imm_val :
-		          alu_op ? alu_res : 0;
-
-		rw_flag = ~cmp & (set | mov | alu_op | load);
-
-		reg_asel = (alu_op & ~cmp) ? r2 : r1;
-		reg_bsel = (alu_op & ~cmp) ? r3 : r2;
+//		rw_addr = r1;
+//
+//		rw_data = mov ? reg_b :
+//                  set ? imm_val :
+//		          alu_op ? alu_res : 0;
+//
+//		rw_flag = ~cmp & (set | mov | alu_op | load);
+//
+//		reg_asel = (alu_op & ~cmp) ? r2 : r1;
+//		reg_bsel = (alu_op & ~cmp) ? r3 : r2;
 	}
 }

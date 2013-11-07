@@ -17,15 +17,17 @@ dp controller(
 	out rw_flag            : ns(1);
 	out target             : ns(28);
 	out reg_asel, reg_bsel : ns(3);
-    out wait               : ns(1)) {
+  out wait               : ns(1)) {
 
-    sig opcode             : ns(4);
-    sig set, cmp, mov      : ns(1);
-    sig imm_val            : ns(24);
-        
-	use inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, reg_b,
-	        opcode, rw_addr, rw_data, rw_flag, imm_val, target,
-	        reg_asel, reg_bsel);
+  sig opcode             : ns(4);
+  sig set, cmp, mov      : ns(1);
+  sig imm                : ns(24);
+
+  use inst_parser(inst
+        opcode, r1, r2, r3, imm, target);
+	//use inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, reg_b,
+	//        opcode, rw_addr, rw_data, rw_flag, imm_val, target,
+	//        reg_asel, reg_bsel);
 
 	always {
 		jmp     = opcode == 0b1100;
@@ -38,6 +40,14 @@ dp controller(
 		set     = opcode == 0b0100;
 		cmp     = opcode == 0b0110;
 		mov     = opcode == 0b0111;
+
+	  rw_addr = r1;
+	  rw_data = mov ? reg_b :
+	            set ? imm :
+	            alu_op ? alu_res : 0;
+	  rw_flag = ~cmp & (set | mov | alu_op | load);
+	  reg_asel = (alu_op & ~cmp) ? r2 : r1;
+	  reg_bsel = (alu_op & ~cmp) ? r3 : r2;        
 
 	    // do alu sub for comparisons
 		alu_op  = opcode <  0b0100 | cmp;

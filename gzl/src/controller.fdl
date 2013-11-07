@@ -22,8 +22,9 @@ dp controller(
   sig opcode             : ns(4);
   sig set, cmp, mov      : ns(1);
   sig imm                : ns(24);
+  sig r1, r2, r3         : ns(32);
 
-  use inst_parser(inst
+  use inst_parser(inst,
         opcode, r1, r2, r3, imm, target);
 	//use inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, reg_b,
 	//        opcode, rw_addr, rw_data, rw_flag, imm_val, target,

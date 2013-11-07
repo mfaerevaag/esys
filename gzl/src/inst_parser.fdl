@@ -30,7 +30,7 @@ dp inst_parser(
 		r1       = inst[25 : 27];
 		r2       = inst[22 : 24];
 		r3       = inst[19 : 21];
-		imm_val  = inst[00 : 24];
+		imm      = inst[00 : 24];
 		target   = inst[00 : 27];
 
 //		rw_addr = r1;

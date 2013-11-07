@@ -1,7 +1,7 @@
 begin:	
 	    set $cadr, 0
         set $acc, 0	
-	    #set $tmp, 31
+	    set $tmp, 31
 	    set $tmp, 31		
         add $eadr, $sadr, $tmp
 loop:

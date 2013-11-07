@@ -29,8 +29,8 @@ dp inst_parser(
 		rw_addr = r1;
 
 		rw_data = mov ? reg_b :
-                   set ? imm_val :
-		           alu_op ? alu_res : 0;
+                  set ? imm_val :
+		          alu_op ? alu_res : 0;
 
 		rw_flag = ~cmp & (set | mov | alu_op | load);
 

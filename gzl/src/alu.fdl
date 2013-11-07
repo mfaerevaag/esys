@@ -1,15 +1,14 @@
 dp alu(
   in a        : tc(32);
   in b        : tc(32);
-  in select   : ns(2);	
+  in select   : ns(2);
   in enable   : ns(1);
   out r       : tc(32);
   out neg     : ns(1);
   out zero    : ns(1)) {
 
   reg res     : tc(32);
-  sig divSig  : ns (64);
-        
+
   always {
     r = (select == 0b00 & enable) ? a + b :
         (select == 0b01 & enable) ? a - b :

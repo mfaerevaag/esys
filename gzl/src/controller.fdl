@@ -9,7 +9,8 @@ dp controller(
 	out jlt                : ns(1);
 	out jgt                : ns(1);
 	out alu_op             : ns(1);
-	out alu_sel            : ns(2);
+	out alu_sel            : ns(2);	
+	out addi               : ns(1);
 	out load               : ns(1);
 	out store              : ns(1);
 	out rw_addr            : ns(3);
@@ -17,18 +18,16 @@ dp controller(
 	out rw_flag            : ns(1);
 	out target             : ns(28);
 	out reg_asel, reg_bsel : ns(3);
-  out wait               : ns(1)) {
-
+	out simm               : ns(32);
+    out wait               : ns(1)) {
+  
   sig opcode             : ns(4);
   sig set, cmp, mov      : ns(1);
   sig imm                : ns(24);
   sig r1, r2, r3         : ns(32);
-
+  
   use inst_parser(inst,
-        opcode, r1, r2, r3, imm, target);
-	//use inst_parser(inst, alu_res, set, cmp, mov, load, alu_op, reg_b,
-	//        opcode, rw_addr, rw_data, rw_flag, imm_val, target,
-	//        reg_asel, reg_bsel);
+        opcode, r1, r2, r3, imm, simm, target);
 
 	always {
 		jmp     = opcode == 0b1100;
@@ -42,18 +41,22 @@ dp controller(
 		cmp     = opcode == 0b0110;
 		mov     = opcode == 0b0111;
 
-	  rw_addr = r1;
-	  rw_data = mov ? reg_b :
-	            set ? imm :
-	            alu_op ? alu_res : 0;
-	  rw_flag = ~cmp & (set | mov | alu_op | load);
-	  reg_asel = (alu_op & ~cmp) ? r2 : r1;
-	  reg_bsel = (alu_op & ~cmp) ? r3 : r2;        
+        addi    = opcode == 0b0101;
+        
+	    rw_addr = r1;
+	    rw_data = mov ? reg_b :
+	              set ? imm :
+	              alu_op ? alu_res : 0;
+
+	    rw_flag = ~cmp & (set | mov | alu_op | load);
+	    reg_asel = (alu_op & ~cmp) ? r2 : r1;
+	    reg_bsel = (alu_op & ~cmp) ? r3 : r2;        
 
 	    // do alu sub for comparisons
-		alu_op  = opcode <  0b0100 | cmp;
+		alu_op  = opcode <  0b0100 | cmp | addi;
         //00 = add, 01 = sub, 10 = mul, 11 = div
-		alu_sel = cmp ? 0b01 : opcode[0:1];
+		alu_sel = cmp ? 0b01 :
+                  addi ? 0b00 : opcode[0:1];
 
         wait    = (store | load) & ~bus_datardy;
 	}

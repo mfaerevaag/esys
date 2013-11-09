@@ -6,6 +6,7 @@
   set:   { bin: '0100', struct: [:reg, :imm] },
   cmp:   { bin: '0110', struct: [:reg, :reg] },
   mov:   { bin: '0111', struct: [:reg, :reg] },
+  addi:  { bin: '0101', struct: [:reg, :reg, :simm] },
   add:   { bin: '0000', struct: [:reg, :reg, :reg] },
   sub:   { bin: '0001', struct: [:reg, :reg, :reg] },
   mul:   { bin: '0010', struct: [:reg, :reg, :reg] },
@@ -43,14 +44,14 @@ end
 
 def validate_type(expected, actual)
   case expected
-    when :reg
-      actual =~ /^\$.*$/
-    when :addr
-      actual =~ /^\$.*$/
-    when :imm
-      actual =~ /^\d+$/
-    when :block
-      actual =~ /^\w+$/
+  when :reg
+    actual =~ /^\$.*$/
+  when :addr
+    actual =~ /^\$.*$/
+  when :imm, :simm
+    actual =~ /^\d+$/
+  when :block
+    actual =~ /^\w+$/
   end
 end
 
@@ -62,6 +63,8 @@ def convert_arg(type, arg)
         fail "Using too many registers (max 8)"
       end
       @regs[arg]
+    when :simm
+      arg.to_i.to_b 22
     when :imm
       arg.to_i.to_b 25
     when :block
@@ -77,7 +80,7 @@ program = File.readlines(ARGV[0])
 
 # split and clean lines
 program = program.inject([]) do |arr, line|
-  line = line.chomp.strip.gsub(/(#.*)$/, '')
+  line = line.chomp.strip.gsub(/(;.*)$/, '')
   unless line.empty?
     arr << line.delete(',').split
   end
@@ -132,5 +135,5 @@ end
 
 # print program
 program.each_with_index do |line, i|
-  puts "#{i} #{line.join.to_i(2).to_s(16)}"
+  puts "#{i.to_s(16)} #{line.join.to_i(2).to_s(16)}"
 end

@@ -1,4 +1,7 @@
 $option "vcd"
+$option "profile_toggle_alledge"
+$option "profile_display_operations"
+
 
 #include "pc.fdl"
 #include "controller.fdl"	
@@ -65,10 +68,7 @@ dp CPU(
 	        M_datainrdy = load | store;
             rw_write = load ? M_dataoutrdy & rw_flag : rw_flag;
 	        rw_data_real = load ? M_dataout : rw_data;
-        //	store ? 0b00101 # rw_addr :
-	                //load ?
-            $display($bin, inst);
-	        //$display(M_dataoutrdy, " - ", store, " - ", $bin, M_cmd);
+            //$display($bin, inst);
         }
 }
 

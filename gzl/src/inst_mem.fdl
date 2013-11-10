@@ -12,7 +12,7 @@ ipblock inst_mem(
 }
         
 dp inst_reader(
-	in addr      : ns(32);
+	in addr      : ns(10);
 	out data_out : ns(32)) {
 
 	reg data_in  : ns(32);

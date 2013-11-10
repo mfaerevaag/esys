@@ -68,6 +68,7 @@ af opgaven og rapporten.}
 \clearpage
 
 \section{Introduktion}
+Vi har i denne opgave analyseret og oversat et specifikt filter fra den tidligere \code{C} implementation. Dette er MWI filteret
 Lavet C til assembler, udviklet hardware
 
 \section{Problemstilling}
@@ -86,7 +87,7 @@ Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt 
     \code{set}   & \code{ra}, \code{imm} 
     & Sæt register \code{ra} til den konstante værdi \code{imm} \\ \hline
     \code{cmp}   & \code{ra}, \code{rb} 
-    & Sammenlign register ra og rb vha.\ en \code{sub} operation og sæt flags i ALU'en  \\ \hline
+    & Sammenlign register ra og rb vha.\ en \code{sub} operation og sæt flag i ALU'en  \\ \hline
     \code{mov}   & \code{ra}, \code{rb} 
     & Kopier værdi i register \code{rb} til \code{ra} \\ \hline
     \code{addi}  & \code{ra}, \code{rb}, \code{simm} 
@@ -116,8 +117,6 @@ Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt 
 \subsection{Moduler}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use} statement, for at abstrahere de forskellige fysiske dele af instruktionerne væk.
 
-
-
 \subsection{CPU diagram}
 
 \section{Implementering}
@@ -129,15 +128,23 @@ Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette arbejdet me
 \subsection{Pre-processor}
 Vi har gjort brug af \code{C} pre-processoren til inkludering af filer i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil og samlet dem med \code{\#include} statements. Det har gjort det meget mere overskueligt at arbejde med end at have alt stående i én lang fil.
 
-\subsection{Moduler}
+\subsection{Komponenter}
 \begin{table}[H]
   \begin{tabular}{|l|p{14cm}|}
     \hline
     \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
-       Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flags, jump-flags og ALU selector.  \\ \hline
+    Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flag, jump-flag og ALU selector.  \\ \hline
+    Program Counter  & Styrer hvilken adresse der læses fra instruction memory  \\ \hline
+    Jump Handler  & Holder styr på om der skal udføres et jump vha. ALU flag og kontrolsignaler  \\ \hline
+    Inst. memory & ROM, som indeholder program data \\ \hline
+    ALU & Klassisk ALU komponent, udfører addition, subtraktion og multiplikation. Sætter \code{neg} og \code{zero} flag afhængig af resultatet. \\ \hline
+    Register File & Indeholder 8 stk. 32-bit registre og kan outputte to af deres værdier per cycle. Kan skrive én 32-bit værdi til et vilkårligt register per cycle. \\ \hline
   \end{tabular}
   \caption{Komponenter i CPU'en}
 \end{table}
+
+\subsubsection{Division}
+Gezel kan ikke udføre division hvorfor vi har måttet implementere dette på anden vis. Vi har haft valget mellem at lave division implementeret i assembler med en løkke og en counter, eller at bruge bit shifting og en prekalkuleret konstant. Vi har valgt den sidstnævnte da dette gør assembler koden langt simplere og det bruger kun en enkelt cycle i forhold til assembler metoden hvis køretid stiger linært med resultatets størrelse.
 
 \section{Resultater}
 

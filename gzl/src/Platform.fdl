@@ -68,23 +68,8 @@ dp CPU(
 	        M_datainrdy = load | store;
             rw_write = load ? M_dataoutrdy & rw_flag : rw_flag;
 	        rw_data_real = load ? M_dataout : rw_data;
-            //$display($bin, inst);
         }
 }
-
-//fsm cpu_ctrl(CPU) {
-//        initial wait_s;
-//        state load_s, store_s;
-//
-//        @wait_s  if (stall_reg) then (wait) -> wait;
-//                 else (do_operation)        -> operate;
-//        	
-//	    @store_s if (stall_reg) then (wait) -> wait;
-//	             else (do_operation)        -> operate;
-//	    
-//	    @load_s  if (stall_reg) then (wait) -> wait;
-//	             else (do_operation)        -> operate;
-//}
 
 ////////////////////////////
 // Bus

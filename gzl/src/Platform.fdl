@@ -10,65 +10,65 @@ $option "profile_display_operations"
 #include "inst_mem.fdl"	
 #include "jump_handler.fdl"	
 #include "mux.fdl"
-        
+
+
 ////////////////////////////
 // CPU
 ////////////////////////////
 
-dp CPU(
-           out M_datain : ns(32);
-           out M_cmd : ns(32);
-           out M_datainrdy : ns(1);
-           in M_dataout : ns(32);
-           in M_dataoutrdy : ns(1)
-           //in stall_cpu : ns(1)
-       ){
+dp CPU(	
+	in  M_dataout    : ns(32);
+	in  M_dataoutrdy : ns(1);	
+	//in  stall_cpu    : ns(1);
+  out M_datain     : ns(32);
+  out M_cmd        : ns(32);
+  out M_datainrdy  : ns(1)){
 
-        sig target, pc_out, alu_res, reg_a, reg_b, inst, rw_data : ns(32);
-        sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, addi, wait : ns(1);
-        sig reg_asel, reg_bsel, rw_addr : ns(3);
-        sig alu_sel : ns(2);
+  sig target, pc_out, alu_res, reg_a, reg_b, inst, rw_data : ns(32);
+  sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, addi, wait : ns(1);
+  sig alu_sel                     : ns(2);
+  sig reg_asel, reg_bsel, rw_addr : ns(3);
 
-        sig rw_write : ns(1);	
-	    sig rw_data_real : ns(32);	
-	    sig alu_b_arg : ns(32);	
-	    sig simm : ns(32);
+  sig rw_write     : ns(1);	
+  sig rw_data_real : ns(32);	
+  sig alu_b_arg    : ns(32);	
+  sig simm         : ns(32);
         
-	    use pc(target, do_jmp, wait,
+  use pc(target, do_jmp, wait,
 	       pc_out);
 
-	    use jump_handler(alu_neg, alu_zero, jmp, jlt, jgt,
-	        do_jmp);
+  use jump_handler(alu_neg, alu_zero, jmp, jlt, jgt,
+                   do_jmp);
 
-	    use alu(reg_a, alu_b_arg, alu_sel, alu_op,
+  use alu(reg_a, alu_b_arg, alu_sel, alu_op,
 	        alu_res, alu_neg, alu_zero);
 
-        use mux(reg_b, simm, addi,
-            alu_b_arg);
+  use mux(reg_b, simm, addi,
+          alu_b_arg);
 
-	    use inst_reader(pc_out,
-	        inst);
+	use inst_reader(pc_out,
+	                inst);
 	    
-	    use regfile(reg_asel, reg_bsel, rw_write, rw_addr, rw_data_real,
-	        reg_a, reg_b);
+	use regfile(reg_asel, reg_bsel, rw_write, rw_addr, rw_data_real,
+	            reg_a, reg_b);
 
-	    use controller(inst, alu_res, reg_b, M_dataoutrdy,
-	        jmp, jlt, jgt,
-	        alu_op, alu_sel, addi,
-	        load, store,
-	        rw_addr, rw_data, rw_flag, target,
-	        reg_asel, reg_bsel,
-            simm,
-            wait);
+	use controller(inst, alu_res, reg_b, M_dataoutrdy,
+	               jmp, jlt, jgt,
+	               alu_op, alu_sel, addi,
+	               load, store,
+	               rw_addr, rw_data, rw_flag, target,
+	               reg_asel, reg_bsel,
+                 simm,
+                 wait);
 
-        always {
-	       	M_datain = (ns(8))0 # (ns(24))reg_b;
-	       	M_cmd = load ? (ns(4))0b0010 # (ns(28))0 :
-                    store ? (ns(5))0b00101 # (ns(27))reg_b : (ns(32))0b0;
-	        M_datainrdy = load | store;
-            rw_write = load ? M_dataoutrdy & rw_flag : rw_flag;
-	        rw_data_real = load ? M_dataout : rw_data;
-        }
+  always {
+	 	M_datain     = (ns(8))0 # (ns(24))reg_b;
+	 	M_cmd        = load  ? (ns(4))0b0010  # (ns(28))0 :
+                   store ? (ns(5))0b00101 # (ns(27))reg_b : (ns(32))0b0;
+	  M_datainrdy  = load | store;
+    rw_write     = load ? M_dataoutrdy & rw_flag : rw_flag;
+	  rw_data_real = load ? M_dataout : rw_data;
+  }
 }
 
 ////////////////////////////

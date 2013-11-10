@@ -143,6 +143,9 @@ forskellige metoder til implementation af MWI filteret.
   \caption{Instruktionssættet. \code{simm} står for small immediate, da denne er 3 bits kortere end \code{imm}}
 \end{table}
 
+Hver instruktion har sin egen binære struktur ift.~dens argumenter. Alle har de en 4-bit opcode som er de 4 MSB. Eksempelvis oversættes en \code{sub} instruktion som følger:
+
+\code{sub \$r0, \$r1, \$r2} $\rightarrow$ \code{0001}
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
 forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
@@ -168,7 +171,7 @@ Den mottar
 \section{Implementering}
 Brugt ternaries i stedet for mux komponent fleste steder
 
-\subsection{Assembler}
+\subsection{Cross-compiler}
 Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette
 arbejdet med udviklingen af assembler kode, og for at komme tættere et
 realistisk fuldendt software/hardware samspil. Programmet parser
@@ -184,7 +187,25 @@ Vi har gjort brug af \code{C} pre-processoren til inkludering af filer
 i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
 og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
-fil. 
+fil.
+
+\subsection{Assembler}
+forklaring af assembler
+
+\subsection{Komponenter}
+\begin{table}[H]
+  \begin{tabular}{|l|p{14cm}|}
+    \hline
+    \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
+    Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flag, jump-flag og ALU selector.  \\ \hline
+    Program Counter  & Styrer hvilken adresse der læses fra instruction memory  \\ \hline
+    Jump Handler  & Holder styr på om der skal udføres et jump vha. ALU flag og kontrolsignaler  \\ \hline
+    Inst. memory & ROM, som indeholder program data \\ \hline
+    ALU & Klassisk ALU komponent, udfører addition, subtraktion og multiplikation. Sætter \code{neg} og \code{zero} flag afhængig af resultatet. \\ \hline
+    Register File & Indeholder 8 stk. 32-bit registre og kan outputte to af deres værdier per cycle. Kan skrive én 32-bit værdi til et vilkårligt register per cycle. \\ \hline
+  \end{tabular}
+  \caption{Komponenter i CPU'en}
+\end{table}
 
 \subsubsection{Division}
 Gezel kan ikke udføre division hvorfor vi har måttet implementere
@@ -195,18 +216,30 @@ sidstnævnte da dette gør assembler koden langt simplere og det bruger
 kun en enkelt cycle i forhold til assembler metoden hvis køretid
 stiger linært med resultatets størrelse.
 
-Metoden går ud på at udregne en konstant, som gør os i stand til at udføre division med et specifikt tal, uden egentlig at bruge division, men derimod multiplikation og bit shifting.
+Metoden går ud på at udregne en konstant, som gør os i stand til at
+udføre division med et specifikt tal, uden egentlig at bruge division,
+men derimod multiplikation og bit shifting.
 
-Ulempen ved denne metode er at vi skal bruge et 64-bit register for at vedholde præcisionen af udregningen, men den ekstra plads og strøm har vi accepteret som værende klart at foretrække i forhold til assembler implementation. Jo større divisionskonstanten er jo større præcision har resultatet. Vi bruger den største værdi vores immediate instruktion tillader, nemlig 25-bit. Dog vil man i dette tilfælde stadig ikke kunne dividere med meget store tal da der vil forekomme bit overflow.
+Ulempen ved denne metode er at vi skal bruge et 64-bit register for at
+vedholde præcisionen af udregningen, men den ekstra plads og strøm har
+vi accepteret som værende klart at foretrække i forhold til assembler
+implementation. Jo større divisionskonstanten er jo større præcision
+har resultatet. Vi bruger den største værdi vores immediate
+instruktion tillader, nemlig 25-bit. Dog vil man i dette tilfælde
+stadig ikke kunne dividere med meget store tal da der vil forekomme
+bit overflow.
 
-Følgende er udregning af divisionskonstanten for division med $30$ med 25 bits konstant:
+Følgende er udregning af divisionskonstanten for division med $30$ med
+25 bits konstant:
 
 \begin{align*}
   k &= 2^{25} / 30 \\
   &= 1118481.07
 \end{align*}
 
-$k$ rundes op til $1118482$, da vi derved undgår afrundsfejl i resultatet. Denne værdi kan nu bruges til at dividere $200$ med $30$ på følgende vis:
+$k$ rundes op til $1118482$, da vi derved undgår afrundsfejl i
+resultatet. Denne værdi kan nu bruges til at dividere $200$ med $30$
+på følgende vis:
 
 \begin{align*}
   200 / 30 &= 200 \cdot k >> 25 \\
@@ -214,7 +247,9 @@ $k$ rundes op til $1118482$, da vi derved undgår afrundsfejl i resultatet. Denne
   &= 6
 \end{align*}
 
-Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er acceptabelt da vores MWI implementation både i assembler og C versionen kun arbejder med heltal.
+Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er
+acceptabelt da vores MWI implementation både i assembler og C
+versionen kun arbejder med heltal.
 
 \section{Resultater}
 

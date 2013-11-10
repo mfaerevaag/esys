@@ -1,9 +1,4 @@
 begin:  
-        set %r1, 30	
-	    set %r2, 0
-        jmp end
-
-end:
-        dis %r1
+        sub $r0, $r1, $r2
 
         

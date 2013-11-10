@@ -68,16 +68,24 @@ af opgaven og rapporten.}
 \clearpage
 
 \section{Introduktion}
-Vi har i denne opgave analyseret og oversat et specifikt filter fra den tidligere \code{C} implementation. Dette er MWI filteret
-Lavet C til assembler, udviklet hardware
+Vi har i denne opgave analyseret og oversat et specifikt filter fra den tidligere \code{C} implementation. Dette er MWI filteret og er interesant fordi det inkluderer nogle for assembler relevante funktioner.
+
+Vi har oversat C koden til assembler, og ud skrevet en cross-compiler som generer maskinkode. Denne maskinkode eksekveres efterfølgende på en CPU som vi har implementeret i Gezel, og integreret i den udleverede platform kode som giver os en realistisk implementation af en bus, igennem hvilken vi eksempelvis tilgår data memory.
 
 \section{Problemstilling}
-Performance overvejelser, generelt vs. problem-specifikt (finde en balance), problemer ved at gå fra C til assembler
+Der er forskellige udfordringer i forhold til at designe en CPU og dertilhørende instruktionssæt. Vi har været nødt til at afgrænse CPU'ens funktionalitet til et passende niveau i forhold til hvad dens endelige funktion er, samtidig med at vi har implementeret et nogenlunde omspændende instruktionssæt, der giver mulighed for at ændrer den egentlige implementering. Dette har vi gjort undervejs i takt med at vi har fundet mere optimale måder at lave forskellige dele.
+
+Da register filen kun har 8 registre blev vi nødt til at genbruge dem når vi kunne. Instruktioner med immediate værdier letter den opgave meget, da man slipper for at lægge en værdi i et midlertidigt register for efterfølgende at bruge værdien.
+
+Mht. ydeevne har vi forsøgt at implementere både assembler koden og hardwaren på en hensigtmæssig måde der bruger så lidt strøm og plads som muligt samtidig med at være højt ydende. I en maskine som en ECG betyder ydeevne og præcision trods alt mere end størrelsen på maskinen.
+
 \subsection{Moduler}
 Controllers ansvar
 
 \section{Design}
 \subsection{Instruktionssæt}
+
+
 Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt i implementationen af MWI filteret. Grunden til de ekstra instruktioner er at vi gerne ville implementere et fuldt funktionelt instruktionssæt, samt at vi med de ekstra instruktioner kunne prøve forskellige metoder til implementation af MWI filteret.
 
 \begin{table}[H]
@@ -146,6 +154,27 @@ Vi har gjort brug af \code{C} pre-processoren til inkludering af filer i \code{G
 \subsubsection{Division}
 Gezel kan ikke udføre division hvorfor vi har måttet implementere dette på anden vis. Vi har haft valget mellem at lave division implementeret i assembler med en løkke og en counter, eller at bruge bit shifting og en prekalkuleret konstant. Vi har valgt den sidstnævnte da dette gør assembler koden langt simplere og det bruger kun en enkelt cycle i forhold til assembler metoden hvis køretid stiger linært med resultatets størrelse.
 
+Metoden går ud på at udregne en konstant, som gør os i stand til at udføre division med et specifikt tal, uden egentlig at bruge division, men derimod multiplikation og bit shifting.
+
+Ulempen ved denne metode er at vi skal bruge et 64-bit register for at vedholde præcisionen af udregningen, men den ekstra plads og strøm har vi accepteret som værende klart at foretrække i forhold til assembler implementation. Jo større divisionskonstanten er jo større præcision har resultatet. Vi bruger den største værdi vores immediate instruktion tillader, nemlig 25-bit. Dog vil man i dette tilfælde stadig ikke kunne dividere med meget store tal da der vil forekomme bit overflow.
+
+Følgende er udregning af divisionskonstanten for division med $30$ med 25 bits konstant:
+
+\begin{align*}
+  k &= 2^{25} / 30 \\
+  &= 1118481.07
+\end{align*}
+
+$k$ rundes op til $1118482$, da vi derved undgår afrundsfejl i resultatet. Denne værdi kan nu bruges til at dividere $200$ med $30$ på følgende vis:
+
+\begin{align*}
+  200 / 30 &= 200 \cdot k >> 25 \\
+  &= 200 \cdot 1118482 >> 25 \\
+  &= 6
+\end{align*}
+
+Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er acceptabelt da vores MWI implementation både i assembler og C versionen kun arbejder med heltal.
+
 \section{Resultater}
 
 \section{Profiling}
@@ -155,6 +184,7 @@ Gezel kan ikke udføre division hvorfor vi har måttet implementere dette på anden
 \subsection{Power}
 
 \section{Konklusjon}
+Flere immediate instruktioner
 
 \section{Kørsel}
 Hvordan bruke run script osv.

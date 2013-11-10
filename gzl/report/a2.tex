@@ -145,7 +145,8 @@ forskellige metoder til implementation af MWI filteret.
 
 Hver instruktion har sin egen binære struktur ift.~dens argumenter. Alle har de en 4-bit opcode som er de 4 MSB. Eksempelvis oversættes en \code{sub} instruktion som følger:
 
-\code{sub \$r0, \$r1, \$r2} $\rightarrow$ \code{0001}
+\code{sub \$r0, \$r1, \$r2} $\Rightarrow$ \code{0001 000 001 010 0000000000000000000}
+
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
 forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse

@@ -15,9 +15,7 @@ dp inst_reader(
 	in addr      : ns(10);
 	out data_out : ns(32)) {
 
-	reg data_in  : ns(32);
-
   // hardcoded for always reading
-	use inst_mem(addr, 0, 1, data_in,
+	use inst_mem(addr, 0, 1, 0,
         data_out);
 }

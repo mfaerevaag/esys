@@ -68,10 +68,12 @@ af opgaven og rapporten.}
 \clearpage
 
 \section{Introduktion}
+Lavet C til assembler, udviklet hardware
 
 \section{Problemstilling}
+Performance overvejelser, generelt vs. problem-specifikt (finde en balance), problemer ved at gå fra C til assembler
 \subsection{Moduler}
-
+Controllers ansvar
 
 \section{Design}
 \subsection{Instruktionssæt}
@@ -112,11 +114,30 @@ Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt 
 \end{table}
 
 \subsection{Moduler}
+Vi har lavet hver komponent som en Gezel \code{dp} og de er alle forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use} statement, for at abstrahere de forskellige fysiske dele af instruktionerne væk.
+
+
+
+\subsection{CPU diagram}
 
 \section{Implementering}
+Brugt ternaries i stedet for mux komponent fleste steder
+
 \subsection{Assembler}
+Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette arbejdet med udviklingen af assembler kode, og for at komme tættere et realistisk fuldendt software/hardware samspil. Programmet parser assembler meget lig \code{x86} og outputter \code{Gezel}-læsbar data i hex format. Det har været en stor hjælp at have dette program ved hånden da skriv-test-gentag workflowet har været meget bekvemt. Da dette har været en del af opgaven per se, vil vi ikke gå i detaljer med implementeringen. Den er dog inkluderet i kildekoden og ligger i filen \code{assembler.rb}.
+
 \subsection{Pre-processor}
+Vi har gjort brug af \code{C} pre-processoren til inkludering af filer i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil og samlet dem med \code{\#include} statements. Det har gjort det meget mere overskueligt at arbejde med end at have alt stående i én lang fil.
+
 \subsection{Moduler}
+\begin{table}[H]
+  \begin{tabular}{|l|p{14cm}|}
+    \hline
+    \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
+       Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flags, jump-flags og ALU selector.  \\ \hline
+  \end{tabular}
+  \caption{Komponenter i CPU'en}
+\end{table}
 
 \section{Resultater}
 

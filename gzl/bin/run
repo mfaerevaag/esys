@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 # assemble mach code
 if bin/assembler.rb $1 > src/data/mwi.out; then

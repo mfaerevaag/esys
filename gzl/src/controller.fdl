@@ -1,10 +1,10 @@
 #include "inst_parser.fdl"
 
 dp controller(
-	in inst                : ns(32);
-  in alu_res             : tc(32);	
-	in reg_b               : tc(32);
-  in bus_datardy         : ns(1);
+	in  inst               : ns(32);
+  in  alu_res            : tc(32);	
+	in  reg_b              : tc(32);
+  in  bus_datardy        : ns(1);
 	out jmp                : ns(1);
 	out jlt                : ns(1);
 	out jgt                : ns(1);
@@ -24,7 +24,7 @@ dp controller(
   sig opcode             : ns(4);
   sig set, cmp, mov      : ns(1);
   sig imm                : ns(24);
-  sig r1, r2, r3         : ns(32);
+  sig r1, r2, r3         : ns(3);
   
   use inst_parser(inst,
         opcode, r1, r2, r3, imm, simm, target);

@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+# assemble mach code
+if bin/assembler.rb $1 > src/data/mwi.out; then
+    # process fdl and run
+    cpp -P src/Platform.fdl | /opt/gezel/bin/fdlsim $2
+fi

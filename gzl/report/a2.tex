@@ -105,7 +105,7 @@ Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9
 er brugt i implementationen af MWI filteret. Grunden til de ekstra
 instruktioner er at vi gerne ville implementere et fuldt funktionelt
 instruktionssæt, samt at vi med de ekstra instruktioner kunne prøve
-forskellige metoder til implementation af MWI filteret. 
+forskellige metoder til implementation af MWI filteret.
 
 \begin{table}[H]
   \begin{tabular}{|l|l|l|}
@@ -139,10 +139,12 @@ forskellige metoder til implementation af MWI filteret.
     & Branch til blok med id \code{block} hvis både ALU flag neg og zero er lavt \\ \hline
   \end{tabular}
   \caption{Instruktionssættet. \code{simm} står for small immediate, da denne er 3 bits kortere end \code{imm}}
+  \label{table:inst_map}
 \end{table}
 
 Hver instruktion har sin egen binære struktur ift.~dens
-argumenter. Alle har de en 4-bit opcode som er de 4 MSB. Eksempelvis
+argumenter. Alle har de en 4-bit opcode som er de 4 MSB\footnote{Most
+  Significant Bits}. Eksempelvis
 oversættes en \code{sub} instruktion som følger:
 
 \parbox{4cm}{\code{sub \$r0, \$r1, \$r2}} $\Rightarrow$ \code{0001 000 001 010 0000000000000000000}
@@ -154,6 +156,8 @@ argument, for ikke at ændre på immediate værdien. Eksempelvis:
 
 \parbox{4cm}{\code{set \$r0, 15}} $\Rightarrow$ \code{0100 000 0000000000000000000001111}
 
+\subsection{CPU Diagram}
+
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
 forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
@@ -161,8 +165,7 @@ er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
 statement, for at abstrahere de forskellige fysiske dele af
 instruktionerne væk.
 
-\subsection{CPU Diagram}
-\subsection{Controller} % Norsk
+\subsubsection{Controller} % Norsk
 \emph{Kontrolleren} er den sentrale komponent i prosessoren. Den styrer
 hvordan de andre komponentene skal fungere ved å sette en rekke
 kontrollsignaler og registre til deres oenskede verdier.
@@ -179,14 +182,14 @@ Utifra hvilken operasjon det er, skal saa de riktige flagg bli satt
 slik at de tilkoblede komponenter fungerer slik instruksjonen
 oensker. 
 
-\subsection{Program Counter} % Norsk
+\subsubsection{Program Counter} % Norsk
 \emph{Program Telleren} styrer hvilken instruksjon som skal
 eksikveres. Normalt vil den ta den forrige instruksjons adresse og
 legge én til, altsaa neste linje i programmet. Hvis det forrige
 instruksjon saa var en jump operasjon, skal den neste instruksjon
 komme fra den adresse jump instruksjonen ba den om aa jumpe til.
 
-\subsection{Jump Handler} % Norsk
+\subsubsection{Jump Handler} % Norsk
 \emph{Jump Handleren} bestemmer utifra hvilken jump operasjon den har
 blitt gitt og hvilken flagg som er satt i \emph{ALU}, om den skal
 jumpe. Hvis feks. instruksjonen sier at programmet skal jumpe hvis
@@ -194,19 +197,19 @@ forrige vaerdier som ble sammenlignet er negative, og \emph{ALU} viser
 at de var det, setter den et flagg som sier at programmet skal
 jumpe. Dette flagg ses saa av \emph{Program Counter}, som beskrevet over.
 
-\subsection{Instruction Memory} % Norsk
+\subsubsection{Instruction Memory} % Norsk
 Utifra hvilken instruksjons adresse \emph{Program Counter} sier skal
 leses som neste, leser \emph{Instruction Memory} denne fra programmet,
 ogsaa gir instruksjonen videre til \emph{Controller}.
 
-\subsection{ALU} % Norsk
+\subsubsection{ALU} % Norsk
 \emph{ALU}, eller \emph{Arithmetic Logic Unit}, som navnet tilsier,
 utfoerer de aritmetiske operasjoner. Den mottar fra \emph{Controller}
 hvilken operasjon, feks. addisjon, den skal utfoere, og dataen skal
 skal utfoere de paa. Den gir saa resultatet og ytligere setter flagg
 som beskriver om resultatet var negativt eller null.
 
-\subsection{Register File} % Norsk
+\subsubsection{Register File} % Norsk
 \emph{Register Filen} gjemmer dataen til de aatte forskjellige
 registerene programmet har til raadighet. Den kan baade motta data som
 den gjemmer, eller gi data den har allerede gjemt. Ved aa bestemme
@@ -246,7 +249,8 @@ bliver fjernet af cross-compileren før den egentlige compilering
 begynder.
 
 \section{Implementering}
-Brugt ternaries i stedet for mux komponent fleste steder
+Brugt ternaries i stedet for mux komponent fleste steder \\
+TODO: always i stedet for sfg?????????????????????????
 
 \subsection{Cross-compiler}
 Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette
@@ -301,15 +305,143 @@ forklaring af assembler
 
 \subsection{Komponenter}
 \subsubsection{Controller} % Norsk
+Den instruksjon som mottas har vi valgt og parse med en ekstra
+komponent kalt \emph{Instruction Parser}. Denne mottar blott en
+instruksjon paa 32-bit og returnerer:
+
+\begin{itemize}
+  \item \code{opcode} (4-bit)
+  \item \code{r1}, \code{r2}, \code{r3} (3-bit)
+  \item \code{imm} (24-bit)
+  \item \code{simm} (21-bit)
+  \item \code{target} (28-bit)
+\end{itemize}
+
+Kontrolleren maa selv bestemme hvilken av disse vaerdier den skal
+bruke utifra opcoden. 
+
+Dette har vi valgt aa gjoere ved aa ha et flag per instruksjon i
+instruksjonssettet, for saa aa sette disse lik med true eller false,
+bestemt av en \code{==} statement som tar opcode og instruksjonens
+binaere verdi. Instruksjonenes sine respektive flag vil saa vaere true
+eller false, alt etter om opcoden svarer til deres binaere verdi.
+
+For aa utfoere skrive eller lese operasjoner vil vi trenge foelgenede
+output: 
+\begin{description}
+
+  \item[rw\_flag(1)] Blott sier om det skal foregaa en
+    skrive operasjon. 
+
+    \begin{equation}
+      \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
+      \code{mov} + \code{alu\_op} + \code{load}) 
+    \end{equation}
+    
+  \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
+    til. Denne blir satt lik med \code{r1}, fordi det er saann vi har
+    bestemt syntaxen til assembly koden, at det foerste argument er
+    plasseringen dataen skal gemmes.
+
+  \item[rw\_data(32)] Bestemmer dataen som skal
+    skrives. Vaerdien avhenger av instrusjonen. Er det feks. en
+    \code{mov} instruksjon er det \code{r2}, osv. \ref{table:inst_map}
+
+  \item[reg\_asel, reg\_bsel(3)] Bestemmer de to (eller to siste)
+    registerene isntruksjonen skal bruke. Hvis det er en
+    \code{alu\_op} og ikke en \code{cmp} instruksjon, blir de satt til
+    \code{r1} og \code{r2}. Hvis ikke, \code{r1} og \code{r2}.
+
+\end{description}
+
+Ydermere trenger vi output signaler for aa operere \emph{ALU}'en:
+\begin{description}
+
+  \item[alu\_op(1)] Blott sier om det skal forega en
+    \emph{ALU} operasjon. Settes lik med true om \code{opcode} er
+    mindre enn \code{0b0100}, som svarer til \code{add}, \code{sub},
+    \code{mul}, \code{div}, eller om det er en
+    \code{cmp} eller \code{addi} operasjon.
+
+  \item[alu\_sel(2)] Sier hvilken aritmetisk operasjon
+    \emph{ALU}'en skal utfoere. Er det \code{cmp} operasjon saa er det
+    \code{sub}, er den en \code{add} saa er det en \code{add}
+    operasjon, ellers er bestemmes det av de to LSB\footnote{Least
+      Significant Bits} i \code{opcode}.
+
+\end{description}
+
+Ydermere, har vi et \code{wait} flagg. Dette er noedvendig for
+instruksjoner som involverer bussen, da det tar flere cycluser aa
+lese/skrive informasjon. Denne blir satt til true, altsaa at den skal
+vente, kun hvis det er den \code{load} eller \code{store} operasjon,
+og \code{bus\_datardy}, som sier om bussen er klar, ikke er true.
+
 \subsubsection{Program Counter} % Norsk
+\emph{Program Counter} har kun ett output, nemlig \code{pc\_out}. Hvis
+dens \code{jump} kontrollsignal er true, saa blir den satt til sin
+\code{target} input den faar fra \emph{Controller}. Hvis den er false
+blir \code{pc\_out} lagt én til sin forrige vaerdi. Dette blir saa
+gjemt i et register \code{count} saa den husker sin forrige vaerdi
+neste gang det kjoerer.
+
+Dog, trenger vi et mer input, nettop et \code{wait}
+kontrollsignal. For hvis bussen stadig arbeider med aa skrive/lese
+data vil vi ikke gaa videre i programmet foer den er ferdig. Derfor,
+hvis \code{wait} er satt, saa tar den blott sin forrigev vaerdi.
+
+Ydermere er det viktig at \code{pc\_out} blir satt foerst, for saa at
+den gjemmer denne vaerdi i \code{count} registeret. Hvis man setter
+registeret lik med den oenskede adresse, for saa aa sette
+\code{pc\_out} lik med registeret vil dette ta flere clock cycles,
+mens programmet ikke venter, som vil gjoere at programmet ikke kjoerer
+riktig.
+
 \subsubsection{Jump Handler} % Norsk
+Denne komponent er meget viktig, men stadig meget enkelt
+implementert. Den faar kontrollsignalene \code{alu\_neg} og
+\code{alu\_zero} fra \emph{ALU}'en, og \code{jmp}, \code{jlt} og
+\code{jgt} fra \emph{Controller}'en. Den setter saa sitt eneste
+output, kontrollsignalet \code{do\_jmp}:
+
+\begin{equation}
+  \code{do\_jmp} \equiv \code{jmp} + (\code{jlt} \wedge \code{alu\_neg}) +
+  (\code{jgt} \wedge \lnot \code{alu\_neg} \wedge \lnot \code{alu\_neg})
+\end{equation}
+
 \subsubsection{Instruction Memory} % Norsk
+Her bruker vi \emph{Gezel}'s innebyggede RAM\footnote{Random Access
+  Memory} vha. en \code{ipblock}, som aa er hardwired til aa kun
+lese. Denne bruker vi i \code{datapath} som heter \code{inst\_reader},
+som leser ifra \code{RAM}.
+
+Den mottar en adresse kalt \code{addr} og sender ut igjen
+instruksjonen paa den adresse vha. \code{RAM}, med et signal kalt
+\code{data\_out}.
+
 \subsubsection{ALU} % Norsk
-\subsubsection{Register File}
+Her mottar den to vaerdier \code{a} og \code{b} i two's complement,
+begge med bredde 32-bits, en \code{select} paa 2-bits, som sier
+hvilken aritmetisk opersjon skal skal utfoere og et kontrollsignal
+\code{enable}, som blott sier om den skal gjoere noe.
 
+Ut saa gir den saa et resultat \code{r}, ogsaa i two's complement med
+bredde 32-bits, og to kontrollsignaler \code{neg} og \code{zero}.
 
+Resultatet blir saa satt lik med resultatet av den aritmetiske
+opersjon \code{select} bestemmer. Til addisjon, subtraksjon og
+multipliasjon bruker bare \emph{Gezel}'s innebyggede operators, mens
+divisjon maa vi selv lave. Dette beskriver vi naermere under.
 
-\subsubsection{Division}
+Kontrollsignalene \code{neg} og \code{zero} setter henholdsvis hvis
+resultatet er mindre enn 0 og om den er lik med null. For at disse
+kontrollsignaler skal vedvare ved fremtidige cycles der \emph{ALU}'en
+ikke skal lave en operasjon blir vi noedt til aa gjemme resultatet i
+et register. Derfor blir resultatet ogsaa satt til registerets verdi
+hvis ikke \code{enable} er true.
+
+\label{division_method}
+\textbf{Division} \\
 Gezel kan ikke udføre division hvorfor vi har måttet implementere
 dette på anden vis. Vi har haft valget mellem at lave division
 implementeret i assembler med en løkke og en counter, eller at bruge
@@ -352,6 +484,25 @@ på følgende vis:
 Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er
 acceptabelt da vores MWI implementation både i assembler og C
 versionen kun arbejder med heltal.
+
+\subsubsection{Register File} % Norsk
+Den faar inn to register adresser \code{asel} og \code{bsel}, hver paa
+3-bits, et kontrollsignal \code{write\_enable}, en register adresse
+\code{write\_addr} paa 3-bits, og en vaerdi \code{write\_data} paa
+32-bits.
+
+Ut giver den to vaerdier \code{a} og \code{b}, hver paa 32-bits i
+two's complement.
+
+Ydermere har den aatte registere \code{r1} ... \code{r8}, hver paa
+32-bits i two's complement.
+
+Output \code{a} og \code{b} blir satt til henholdsvis det register som
+\code{asel} og \code{bsel} bestemmer.
+
+Efter det saa blir registeret givet i \code{write\_addr} satt til
+\code{write\_data}, hvis \code{write\_enable} er true.
+
 
 \section{Resultater}
 

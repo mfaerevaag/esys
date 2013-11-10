@@ -80,13 +80,34 @@ Da register filen kun har 8 registre blev vi nødt til at genbruge dem når vi kun
 Mht. ydeevne har vi forsøgt at implementere både assembler koden og hardwaren på en hensigtmæssig måde der bruger så lidt strøm og plads som muligt samtidig med at være højt ydende. I en maskine som en ECG betyder ydeevne og præcision trods alt mere end størrelsen på maskinen.
 
 \subsection{Moduler}
+Performance overvejelser, generelt vs. problem-specifikt (finde en balance), problemer ved at gå fra C til assembler
+
+\subsection{Komponenter}
+\begin{table}[H]
+  \begin{tabular}{|l|p{14cm}|}
+    \hline
+    \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
+    Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flag, jump-flag og ALU selector.  \\ \hline
+    Program Counter  & Styrer hvilken adresse der læses fra instruction memory  \\ \hline
+    Jump Handler  & Holder styr på om der skal udføres et jump vha. ALU flag og kontrolsignaler  \\ \hline
+    Inst. Memory & ROM, som indeholder program data \\ \hline
+    ALU & Klassisk ALU komponent, udfører addition, subtraktion,
+    multiplikation og division. Sætter \code{neg} og \code{zero} flag afhængig af resultatet. \\ \hline
+    Register File & Indeholder 8 stk. 32-bit registre og kan outputte to af deres værdier per cycle. Kan skrive én 32-bit værdi til et vilkårligt register per cycle. \\ \hline
+  \end{tabular}
+  \caption{Komponenter i CPU'en}
+\end{table}
+
+>>>>>>> Stashed changes
 Controllers ansvar
 
 \section{Design}
 \subsection{Instruktionssæt}
-
-
-Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt i implementationen af MWI filteret. Grunden til de ekstra instruktioner er at vi gerne ville implementere et fuldt funktionelt instruktionssæt, samt at vi med de ekstra instruktioner kunne prøve forskellige metoder til implementation af MWI filteret.
+Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9
+er brugt i implementationen af MWI filteret. Grunden til de ekstra
+instruktioner er at vi gerne ville implementere et fuldt funktionelt
+instruktionssæt, samt at vi med de ekstra instruktioner kunne prøve
+forskellige metoder til implementation af MWI filteret. 
 
 \begin{table}[H]
   \begin{tabular}{|l|l|l|}
@@ -122,37 +143,57 @@ Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt 
   \caption{Instruktionssættet. \code{simm} står for small immediate, da denne er 3 bits kortere end \code{imm}}
 \end{table}
 
-\subsection{Moduler}
-Vi har lavet hver komponent som en Gezel \code{dp} og de er alle forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use} statement, for at abstrahere de forskellige fysiske dele af instruktionerne væk.
+\subsection{Komponenter}
+Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
+forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
+er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
+statement, for at abstrahere de forskellige fysiske dele af
+instruktionerne væk. 
 
-\subsection{CPU diagram}
+\subsection{CPU Diagram}
+\subsection{Controller}
+% Norsk
+Kontrolleren den sentrale komponent i prosessoren. Den styrer hvordan
+de andre komponentene skal fungere ved å sette en rekke
+kontrollsignaler.
+
+Den mottar 
+
+\subsection{Program Counter}
+\subsection{Jump Handler}
+\subsection{Instr. Memory}
+\subsection{ALU}
+\subsection{Register File}
 
 \section{Implementering}
 Brugt ternaries i stedet for mux komponent fleste steder
 
 \subsection{Assembler}
-Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette arbejdet med udviklingen af assembler kode, og for at komme tættere et realistisk fuldendt software/hardware samspil. Programmet parser assembler meget lig \code{x86} og outputter \code{Gezel}-læsbar data i hex format. Det har været en stor hjælp at have dette program ved hånden da skriv-test-gentag workflowet har været meget bekvemt. Da dette har været en del af opgaven per se, vil vi ikke gå i detaljer med implementeringen. Den er dog inkluderet i kildekoden og ligger i filen \code{assembler.rb}.
+Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette
+arbejdet med udviklingen af assembler kode, og for at komme tættere et
+realistisk fuldendt software/hardware samspil. Programmet parser
+assembler meget lig \code{x86} og outputter \code{Gezel}-læsbar data i
+hex format. Det har været en stor hjælp at have dette program ved
+hånden da skriv-test-gentag workflowet har været meget bekvemt. Da
+dette har været en del af opgaven per se, vil vi ikke gå i detaljer
+med implementeringen. Den er dog inkluderet i kildekoden og ligger i
+filen \code{assembler.rb}.
 
 \subsection{Pre-processor}
-Vi har gjort brug af \code{C} pre-processoren til inkludering af filer i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil og samlet dem med \code{\#include} statements. Det har gjort det meget mere overskueligt at arbejde med end at have alt stående i én lang fil.
-
-\subsection{Komponenter}
-\begin{table}[H]
-  \begin{tabular}{|l|p{14cm}|}
-    \hline
-    \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
-    Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flag, jump-flag og ALU selector.  \\ \hline
-    Program Counter  & Styrer hvilken adresse der læses fra instruction memory  \\ \hline
-    Jump Handler  & Holder styr på om der skal udføres et jump vha. ALU flag og kontrolsignaler  \\ \hline
-    Inst. memory & ROM, som indeholder program data \\ \hline
-    ALU & Klassisk ALU komponent, udfører addition, subtraktion og multiplikation. Sætter \code{neg} og \code{zero} flag afhængig af resultatet. \\ \hline
-    Register File & Indeholder 8 stk. 32-bit registre og kan outputte to af deres værdier per cycle. Kan skrive én 32-bit værdi til et vilkårligt register per cycle. \\ \hline
-  \end{tabular}
-  \caption{Komponenter i CPU'en}
-\end{table}
+Vi har gjort brug af \code{C} pre-processoren til inkludering af filer
+i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
+og samlet dem med \code{\#include} statements. Det har gjort det meget
+mere overskueligt at arbejde med end at have alt stående i én lang
+fil. 
 
 \subsubsection{Division}
-Gezel kan ikke udføre division hvorfor vi har måttet implementere dette på anden vis. Vi har haft valget mellem at lave division implementeret i assembler med en løkke og en counter, eller at bruge bit shifting og en prekalkuleret konstant. Vi har valgt den sidstnævnte da dette gør assembler koden langt simplere og det bruger kun en enkelt cycle i forhold til assembler metoden hvis køretid stiger linært med resultatets størrelse.
+Gezel kan ikke udføre division hvorfor vi har måttet implementere
+dette på anden vis. Vi har haft valget mellem at lave division
+implementeret i assembler med en løkke og en counter, eller at bruge
+bit shifting og en prekalkuleret konstant. Vi har valgt den
+sidstnævnte da dette gør assembler koden langt simplere og det bruger
+kun en enkelt cycle i forhold til assembler metoden hvis køretid
+stiger linært med resultatets størrelse.
 
 Metoden går ud på at udregne en konstant, som gør os i stand til at udføre division med et specifikt tal, uden egentlig at bruge division, men derimod multiplikation og bit shifting.
 
@@ -178,6 +219,10 @@ Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er acceptabelt 
 \section{Resultater}
 
 \section{Profiling}
+Transistorstørrelser på 90 nm.
+ 
+Kapacitans: 1.8*10-16 F
+Vdd: 1.2V
 
 \subsection{Speed}
 \subsection{Area}

@@ -13,7 +13,7 @@ dp alu(
     r = (select == 0b00 & enable) ? a + b :
         (select == 0b01 & enable) ? a - b :
         (select == 0b10 & enable) ? a * b :
-        (select == 0b11 & enable) ? (ns(57)) (a * b) >> 25 : 0;
+        (select == 0b11 & enable) ? (ns(57)) (a * b) >> 25 : res;
 
     res = r;
     neg  = res < 0;

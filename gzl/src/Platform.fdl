@@ -24,13 +24,8 @@ dp CPU(
   out M_cmd        : ns(32);
   out M_datainrdy  : ns(1)){
 
-  sig target, pc_out,
-      alu_res, reg_a, reg_b,
-      inst, rw_data              : ns(32);
-  sig do_jmp, jmp, jlt, jgt,
-      load, store, rw_flag,
-      alu_op, alu_neg, alu_zero,
-      addi, wait                  : ns(1);
+  sig target, pc_out, alu_res, reg_a, reg_b, inst, rw_data : ns(32);
+  sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, addi, wait : ns(1);
   sig alu_sel                     : ns(2);
   sig reg_asel, reg_bsel, rw_addr : ns(3);
 

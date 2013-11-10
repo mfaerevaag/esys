@@ -4,6 +4,7 @@ ipblock inst_mem(
 	in rd      : ns(1);
 	in idata   : ns(32);
 	out odata  : ns(32)) {
+
 	iptype "ram";
 	ipparm "size=512";
 	ipparm "wl=32";
@@ -16,7 +17,7 @@ dp inst_reader(
 
 	reg data_in  : ns(32);
 
-    // hardcoded for always reading
+  // hardcoded for always reading
 	use inst_mem(addr, 0, 1, data_in,
         data_out);
 }

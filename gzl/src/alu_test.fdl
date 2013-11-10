@@ -1,0 +1,40 @@
+#include "alu.fdl"
+
+dp test_alu(
+  in  r         : tc(32);
+  in  neg, zero : ns(1);
+	out a, b      : tc(32);
+	out select    : ns(2)) {
+
+  always{
+    $display($dec, 
+             " cycle:", $cycle,
+             " a:", a, 
+             " b:", b, 
+             " s:", select, 
+             " r:", r,
+             " neg:", neg,
+             " zero:", zero);
+  }
+
+  sfg test_0 { a=1; b=3; select=0b00; }
+  sfg test_1 { a=1; b=1; select=0b01; }
+  sfg test_2 { a=1; b=3; select=0b10; }
+  sfg test_3 { a=1; b=3; select=0b11; }
+}
+
+fsm f_testbench(test_alu) { 
+  initial s0;
+
+  state s1, s2, s3;    
+
+  @s0 (test_0) -> s1;
+  @s1 (test_1) -> s2;
+  @s2 (test_2) -> s3;
+  @s3 (test_3) -> s0;
+}
+
+system alu_sys {
+  alu(a, b, s, r, neg, zero);
+  test_alu(a, b, s, r, neg, zero);
+}

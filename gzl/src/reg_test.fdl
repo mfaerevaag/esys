@@ -1,0 +1,42 @@
+#include "reg.fdl"
+
+dp test_regfile(
+  in  a, b         : tc(4);
+  out asel, bsel   : ns(3);
+  out write_enable : ns(1);
+  out write_addr   : ns(3);
+  out write_data   : tc(4)) {
+
+  always {
+    $display($dec, 
+             " cycle: ", $cycle,
+             " asel: ", asel, 
+             " bsel: ", bsel, 
+             " write_enable: ", write_enable, 
+             " write_addr: ", write_addr, 
+             " write_data: ", write_data, 
+             " a: ", a, 
+             " b: ", b);
+  }
+
+  sfg test_0 { asel=0b000; bsel=0b001; write_enable=0b0; write_addr=0b001; write_data=0b0011; }
+  sfg test_1 { asel=0b100; bsel=0b011; write_enable=0b0; write_addr=0b010; write_data=0b1100; }
+  sfg test_2 { asel=0b101; bsel=0b010; write_enable=0b1; write_addr=0b000; write_data=0b0100; }
+  sfg test_3 { asel=0b000; bsel=0b110; write_enable=0b1; write_addr=0b111; write_data=0b1100; }
+}
+
+fsm f_testbench(test_regfile) { 
+  initial s0;
+
+  state s1, s2, s3;
+
+  @s0 (test_0) -> s1;
+  @s1 (test_1) -> s2;
+  @s2 (test_2) -> s3;
+  @s3 (test_3) -> s0;
+}
+
+system regfile_sys {
+  regfile(asel, bsel, write_enable, write_addr, write_data, a, b);
+  test_regfile(asel, bsel, write_enable, write_addr, write_data, a, b);
+}

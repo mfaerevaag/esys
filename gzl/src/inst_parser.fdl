@@ -1,7 +1,7 @@
 dp inst_parser(
-	in inst        : ns(32);
-    out opcode     : ns(4);
-    out r1, r2, r3 : ns(3);	
+	in  inst       : ns(32);
+  out opcode     : ns(4);
+  out r1, r2, r3 : ns(3);	
 	out imm        : ns(24);	
 	out simm       : ns(21);
 	out target     : ns(28)) {

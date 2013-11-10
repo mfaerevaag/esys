@@ -5,7 +5,7 @@
 \usepackage[danish]{babel}
 \usepackage{listings}
 \usepackage{caption}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{fancyhdr}
@@ -23,6 +23,10 @@
 \usepackage{subfigure}
 \usepackage[bottom]{footmisc}
 \usepackage{hyperref}
+\usepackage{tikz}
+
+% bootstrap label style highlighting
+\newcommand\hw[2][]{\tikz[overlay]\node[fill=blue!20,inner sep=1pt, anchor=text, rectangle, rounded corners=0.1mm,#1] {#2};\phantom{#2}}
 
 % styling
 \newcommand{\code}[1]{\texttt{#1}}
@@ -56,22 +60,57 @@
 
 \begin{document}
 \maketitle
+\centerline{Gruppens arbejde har været fordelt lige i forbindelse med udarbejdelse
+af opgaven og rapporten.}
 \clearpage
 
 \tableofcontents
 \clearpage
 
 \section{Introduktion}
-Mel. Ost. Pi-fucking-zza.
-
-Gruppens arbejde har været fordelt lige i forbindelse med udarbejdelse
-af opgaven og rapporten.
 
 \section{Problemstilling}
 \subsection{Moduler}
 
+
 \section{Design}
 \subsection{Instruktionssæt}
+Vores instruktionssæt består af 13 forskellige instruktioner, hvoraf 9 er brugt i implementationen af MWI filteret. Grunden til de ekstra instruktioner er at vi gerne ville implementere et fuldt funktionelt instruktionssæt, samt at vi med de ekstra instruktioner kunne prøve forskellige metoder til implementation af MWI filteret.
+
+\begin{table}[H]
+  \begin{tabular}{|l|l|l|}
+    \hline
+    \rowcolor{blue!25} Instruktion & Argumenter & Beskrivelse \\ \hline
+    \code{set}   & \code{ra}, \code{imm} 
+    & Sæt register \code{ra} til den konstante værdi \code{imm} \\ \hline
+    \code{cmp}   & \code{ra}, \code{rb} 
+    & Sammenlign register ra og rb vha.\ en \code{sub} operation og sæt flags i ALU'en  \\ \hline
+    \code{mov}   & \code{ra}, \code{rb} 
+    & Kopier værdi i register \code{rb} til \code{ra} \\ \hline
+    \code{addi}  & \code{ra}, \code{rb}, \code{simm} 
+    & Adder register \code{rb} og den konstante værdi \code{simm} og gem resultatet i register \code{ra} \\ \hline
+    \code{add}   & \code{ra}, \code{rb}, \code{rc} 
+    & Adder register \code{rb} og \code{rc} og gem resultatet i register \code{ra} \\ \hline
+    \code{sub}   & \code{ra}, \code{rb}, \code{rc} 
+    & Subtraher register \code{rb} og \code{rc} og gem resultatet i register \code{ra} \\ \hline
+    \code{mul}   & \code{ra}, \code{rb}, \code{rc} 
+    & Multiplicer register \code{rb} og \code{rc} og gem resultatet i register \code{ra} \\ \hline
+    \code{div}   & \code{ra}, \code{rb}, \code{rc} 
+    & Divider register \code{rb} og \code{rc} og gem resultatet i register \code{ra}. Se \ref{division_method} \\ \hline
+    \code{load}  & \code{ra}, \code{rb} 
+    & Load data til \code{ra} fra RAM med adressen i register \code{rb} \\ \hline
+    \code{store} & \code{ra}, \code{rb} 
+    & Lagr data i \code{rb} i RAM på adressen i register \code{ra} \\ \hline
+    \code{jmp}   & \code{block} 
+    & Branch til blok med id \code{block} \\ \hline
+    \code{jlt}   & \code{block} 
+    & Branch til blok med id \code{block} hvis ALU flag neg er højt \\ \hline
+    \code{jgt}   & \code{block} 
+    & Branch til blok med id \code{block} hvis både ALU flag neg og zero er lavt \\ \hline
+  \end{tabular}
+  \caption{Instruktionssættet. \code{simm} står for small immediate, da denne er 3 bits kortere end \code{imm}}
+\end{table}
+
 \subsection{Moduler}
 
 \section{Implementering}
@@ -91,5 +130,10 @@ af opgaven og rapporten.
 
 \section{Kørsel}
 Hvordan bruke run script osv.
+
+\newpage
+\appendix
+\section{Clang}\label{app:clang_asm}
+Syg kode her
 
 \end{document}

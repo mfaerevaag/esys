@@ -5,6 +5,6 @@ dp jump_handler(
 	out do_jmp           : ns(1)) {
 	
 	always {
-		do_jmp = jmp | (jlt & alu_neg) | (jgt & ~alu_neg);
+		do_jmp = jmp | (jlt & alu_neg) | (jgt & ~alu_neg & ~alu_zero);
 	}
 }

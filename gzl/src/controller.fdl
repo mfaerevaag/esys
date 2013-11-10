@@ -42,22 +42,22 @@ dp controller(
 		mov     = opcode == 0b0111;
 
     addi    = opcode == 0b0101;
-        
+
+    rw_flag = ~cmp & (set | mov | alu_op | load);
     rw_addr = r1;
     rw_data = mov ? reg_b :
               set ? imm :
               alu_op ? alu_res : 0;
-
-    rw_flag  = ~cmp & (set | mov | alu_op | load);
+    
     reg_asel = (alu_op & ~cmp) ? r2 : r1;
     reg_bsel = (alu_op & ~cmp) ? r3 : r2;        
 
     // do alu sub for comparisons
 		alu_op  = opcode <  0b0100 | cmp | addi;
-    //00 = add, 01 = sub, 10 = mul, 11 = div
-		alu_sel = cmp ? 0b01 :
+    // 00 = add, 01 = sub, 10 = mul, 11 = div
+		alu_sel = cmp  ? 0b01 :
               addi ? 0b00 : opcode[0:1];
 
-    wait    = (store | load) & ~bus_datardy;
+    wait = (store | load) & ~bus_datardy;
 	}
 }

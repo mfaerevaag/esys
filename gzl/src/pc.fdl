@@ -7,8 +7,8 @@ dp pc(
 	reg count : ns(32);
 
 	always {
-		pc_out = wait ? count :
-                 jump ? target : count + 1;
+		pc_out = wait ? count  :
+             jump ? target : count + 1;
 		count = pc_out;
 	}
 }

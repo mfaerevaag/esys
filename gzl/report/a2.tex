@@ -143,16 +143,25 @@ forskellige metoder til implementation af MWI filteret.
   \caption{Instruktionssættet. \code{simm} står for small immediate, da denne er 3 bits kortere end \code{imm}}
 \end{table}
 
-Hver instruktion har sin egen binære struktur ift.~dens argumenter. Alle har de en 4-bit opcode som er de 4 MSB. Eksempelvis oversættes en \code{sub} instruktion som følger:
+Hver instruktion har sin egen binære struktur ift.~dens
+argumenter. Alle har de en 4-bit opcode som er de 4 MSB. Eksempelvis
+oversættes en \code{sub} instruktion som følger:
 
-\code{sub \$r0, \$r1, \$r2} $\Rightarrow$ \code{0001 000 001 010 0000000000000000000}
+\parbox{4cm}{\code{sub \$r0, \$r1, \$r2}} $\Rightarrow$ \code{0001 000 001 010 0000000000000000000}
+
+Der paddes altså $0$'er til højre. Dette er imidlertid ikke tilfældet
+i en instruktion som bruger immediate værdier, der indsættes de
+manglende bits som nuller i mellem immediate værdien og sidste
+argument, for ikke at ændre på immediate værdien. Eksempelvis:
+
+\parbox{4cm}{\code{set \$r0, 15}} $\Rightarrow$ \code{0100 000 0000000000000000000001111}
 
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
 forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
 er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
 statement, for at abstrahere de forskellige fysiske dele af
-instruktionerne væk. 
+instruktionerne væk.
 
 \subsection{CPU Diagram}
 \subsection{Controller}
@@ -168,6 +177,37 @@ Den mottar
 \subsection{Instr. Memory}
 \subsection{ALU}
 \subsection{Register File}
+
+
+\subsection{Assembler}
+Vi har designet assembler sproget så det er overskueligt og nemt at
+bruge. Vi har været være konsistente mht. strukturen i
+instruktionerne, ved eksempelvis altid at have registeret der skrives
+til det første. Da vi bruger en cross-compiler har vi været i stand
+til at implementere nogle velkendte assembly features, mest
+nævneværdigt de følgende.
+
+\subsubsection{Jump identifiers}
+Hvis en linje starter med et ord efterfulgt af kolon
+(f.eks. \code{loop:}) kan dette navn bruges til at udføre et jump,
+således at man skriver \code{jmp loop} i stedet for \code{jmp
+  001011}. Det gør det \emph{meget} nemmere at overskue flowet i
+koden, og man kan rykke rundt på instruktioner uden at bekymre sig om
+at adresserne ændre sig.
+
+\subsubsection{Register navngivning}
+Register angivning foregår ved brug af dollar tegnet
+(\$). Cross-compileren bestemmer dermed hvilke navne der
+korresponderer til hvilke fysiske registre. Den tager dem blot i
+rækkefølge og mapper første register den ser til det fysiske register
+\code{000}, anden den ser til \code{001} osv. Man kan naturligvis
+stadig kun bruge 8 registre, og hvis der forekommer mere end 8 unikke
+navne kastes der en fejlmeddelelse.
+
+\subsubsection{Kommentare}
+Kommentare markeres med semikolon og fortsætter til end-of-line. De
+bliver fjernet af cross-compileren før den egentlige compilering
+begynder.
 
 \section{Implementering}
 Brugt ternaries i stedet for mux komponent fleste steder
@@ -189,9 +229,6 @@ i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
 og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
 fil.
-
-\subsection{Assembler}
-forklaring af assembler
 
 \subsection{Komponenter}
 \begin{table}[H]

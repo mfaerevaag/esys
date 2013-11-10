@@ -45,7 +45,7 @@
 \lfoot{Side \thepage{} af \pageref{LastPage}}
 \rfoot{30/09-2013}
 \lhead{Embedded Systems}
-\chead{Assignment 1}
+\chead{Assignment 2}
 \rhead{}
 
 \title{Assignment 2}
@@ -79,10 +79,9 @@ Da register filen kun har 8 registre blev vi nødt til at genbruge dem når vi kun
 
 Mht. ydeevne har vi forsøgt at implementere både assembler koden og hardwaren på en hensigtmæssig måde der bruger så lidt strøm og plads som muligt samtidig med at være højt ydende. I en maskine som en ECG betyder ydeevne og præcision trods alt mere end størrelsen på maskinen.
 
-\subsection{Moduler}
+\subsection{Komponenter}
 Performance overvejelser, generelt vs. problem-specifikt (finde en balance), problemer ved at gå fra C til assembler
 
-\subsection{Komponenter}
 \begin{table}[H]
   \begin{tabular}{|l|p{14cm}|}
     \hline
@@ -98,7 +97,6 @@ Performance overvejelser, generelt vs. problem-specifikt (finde en balance), pro
   \caption{Komponenter i CPU'en}
 \end{table}
 
->>>>>>> Stashed changes
 Controllers ansvar
 
 \section{Design}
@@ -164,19 +162,57 @@ statement, for at abstrahere de forskellige fysiske dele af
 instruktionerne væk.
 
 \subsection{CPU Diagram}
-\subsection{Controller}
-% Norsk
-Kontrolleren den sentrale komponent i prosessoren. Den styrer hvordan
-de andre komponentene skal fungere ved å sette en rekke
-kontrollsignaler.
+\subsection{Controller} % Norsk
+\emph{Kontrolleren} er den sentrale komponent i prosessoren. Den styrer
+hvordan de andre komponentene skal fungere ved å sette en rekke
+kontrollsignaler og registre til deres oenskede verdier.
 
-Den mottar 
+Den mottar en instruksjon fra \emph{Instruction Memory}, et resultat
+fra \emph{ALU}, et register fra \emph{Register File} og et
+kontrollsignal fra \emph{Bus} som sier om dens data er klar for lesning.
 
-\subsection{Program Counter}
-\subsection{Jump Handler}
-\subsection{Instr. Memory}
-\subsection{ALU}
-\subsection{Register File}
+Instrksjonen blir så analysert ved at den blir delt opp i hvilken
+operasjon som skal kjoeres og hvilken registere, vaerdier eller data
+adresse, den saa skal bruke.
+
+Utifra hvilken operasjon det er, skal saa de riktige flagg bli satt
+slik at de tilkoblede komponenter fungerer slik instruksjonen
+oensker. 
+
+\subsection{Program Counter} % Norsk
+\emph{Program Telleren} styrer hvilken instruksjon som skal
+eksikveres. Normalt vil den ta den forrige instruksjons adresse og
+legge én til, altsaa neste linje i programmet. Hvis det forrige
+instruksjon saa var en jump operasjon, skal den neste instruksjon
+komme fra den adresse jump instruksjonen ba den om aa jumpe til.
+
+\subsection{Jump Handler} % Norsk
+\emph{Jump Handleren} bestemmer utifra hvilken jump operasjon den har
+blitt gitt og hvilken flagg som er satt i \emph{ALU}, om den skal
+jumpe. Hvis feks. instruksjonen sier at programmet skal jumpe hvis
+forrige vaerdier som ble sammenlignet er negative, og \emph{ALU} viser
+at de var det, setter den et flagg som sier at programmet skal
+jumpe. Dette flagg ses saa av \emph{Program Counter}, som beskrevet over.
+
+\subsection{Instruction Memory} % Norsk
+Utifra hvilken instruksjons adresse \emph{Program Counter} sier skal
+leses som neste, leser \emph{Instruction Memory} denne fra programmet,
+ogsaa gir instruksjonen videre til \emph{Controller}.
+
+\subsection{ALU} % Norsk
+\emph{ALU}, eller \emph{Arithmetic Logic Unit}, som navnet tilsier,
+utfoerer de aritmetiske operasjoner. Den mottar fra \emph{Controller}
+hvilken operasjon, feks. addisjon, den skal utfoere, og dataen skal
+skal utfoere de paa. Den gir saa resultatet og ytligere setter flagg
+som beskriver om resultatet var negativt eller null.
+
+\subsection{Register File} % Norsk
+\emph{Register Filen} gjemmer dataen til de aatte forskjellige
+registerene programmet har til raadighet. Den kan baade motta data som
+den gjemmer, eller gi data den har allerede gjemt. Ved aa bestemme
+hvilken to registere som skal du vil den skal tilgaa, gir den saa
+denne data tilbake. I tillegg kan du da si om du vil gjemme noe data,
+og tilfellet i hvilken register dataen skal bli gjemt.
 
 
 \subsection{Assembler}
@@ -230,20 +266,10 @@ og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
 fil.
 
-\subsection{Komponenter}
-\begin{table}[H]
-  \begin{tabular}{|l|p{14cm}|}
-    \hline
-    \rowcolor{blue!25} Komponent & Beskrivelse \\ \hline
-    Controller  & Styrer kontrol signaler til de fleste andre komponenter, såsom write-flag, jump-flag og ALU selector.  \\ \hline
-    Program Counter  & Styrer hvilken adresse der læses fra instruction memory  \\ \hline
-    Jump Handler  & Holder styr på om der skal udføres et jump vha. ALU flag og kontrolsignaler  \\ \hline
-    Inst. memory & ROM, som indeholder program data \\ \hline
-    ALU & Klassisk ALU komponent, udfører addition, subtraktion og multiplikation. Sætter \code{neg} og \code{zero} flag afhængig af resultatet. \\ \hline
-    Register File & Indeholder 8 stk. 32-bit registre og kan outputte to af deres værdier per cycle. Kan skrive én 32-bit værdi til et vilkårligt register per cycle. \\ \hline
-  \end{tabular}
-  \caption{Komponenter i CPU'en}
-\end{table}
+\subsection{Assembler}
+forklaring af assembler
+
+
 
 \subsubsection{Division}
 Gezel kan ikke udføre division hvorfor vi har måttet implementere

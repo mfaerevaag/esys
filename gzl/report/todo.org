@@ -1,9 +1,5 @@
-* Design
-** CPU Diagram
-** Lese over komponenter
 * Implementering
 ** always vs fsm
-** Lese over komponenter
 * Profiling
 ** Area
 * Resultater

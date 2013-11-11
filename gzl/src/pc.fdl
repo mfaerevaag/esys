@@ -8,7 +8,7 @@ dp pc(
 
 	always {
 		pc_out = wait ? count  :
-             jump ? target : count + 1;
+                 jump ? target : count + 1;
 		count = pc_out;
 	}
 }

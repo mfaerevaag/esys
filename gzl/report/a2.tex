@@ -351,7 +351,7 @@ output:
 
     \[ \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
       \code{mov} + \code{alu\_op} + \code{load}) \]
-    p
+
   \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
     til. Denne bliver satt lik med \code{r1}, fordi det er sådan vi har
     bestemt syntaxen til assembly koden; at det første argument er
@@ -518,7 +518,6 @@ Efterfølgende bliver registeret givet i \code{write\_addr} sat til
 \section{Resultater}
 
 \section{Profiling}
-Transistorstørrelser på 90 nm.
 
 \subsection{Clock cycles}
 Til hele datasættet bliver der kørt $9414$ cycles. De første $30$
@@ -536,19 +535,58 @@ hver tager $9$ cycles.
 Vi har målt arealet på nogle udvalgte komponenter for at få en idé om
 hvor meget plads de involverede operationer optager.
 
-\subsubsection{Jump handler}
-Jump handleren benytter 1 stk. 3-bit OR, 1 stk. 3-bit AND og 1
-stk. 2-bit AND gate. Jvf. slides fra forelæsning 9, summerer vi, og
-har $5-bit AND + 3-bit OR$.
+Arealet måler vi ved at tælle antal gates brugt i et givent
+komponent. Vi bruger en
+tabel\footnote{\url{http://en.wikipedia.org/wiki/Transistor\_count\#Logic\_functions}}
+til at finde antal transistore i hver gate, hvilket vi kan bruge til
+at udregne arealet af komponentet vha.~den givne transistorstørrelse
+på $90nm$. Til multiplier operationen har vi brugt et skema over gates\footnote{\url{http://en.wikipedia.org/wiki/Binary\_multiplier\#Example}}.
 
-Til AND og OR gates bruges 1 transistor per bit, og vi har altså i alt
-$8$ transistore i vores jump handler. Med den givne
-transistorstørrelse på $90nm$ er arealet af vores jump handler
+Som eksempel før hele CPU'en udregner vi her antal transistore i \code{Jump Handler}. Dets eneste logiske operation er
 
-\[ 8 \cdot 90nm = 720nm^2 \]
+\begin{lstlisting}
+  do_jmp = jmp | (jlt & alu_neg) | (jgt & ~alu_neg & ~alu_zero)
+\end{lstlisting}
 
-\subsubsection{Registre}
+Der er heri $5 * 2-way$ \code{AND}, $2$ \code{NOT} og $3 * 2-way$
+\code{OR} gates. Ifølge tabellen giver dette i alt $5 * 6 + 2 * 2 + 3 * 6 = 52$ transistore. Dermed er arealet
 
+\[ 52 \cdot 90nm = 4680nm^2 \]
+
+\subsubsection{CPU total areal}
+Vi har talt samtlige operationer i CPU'en og er kommet frem til resultatet i tabel\ref{table:transistors}. Det skal bemærkes at flip-flops i sig selv består af gates, men at vi har talt dem for sig selv. Ydermere er der flere gates i et rigtigt 32-bit register, men vi har simplificeret det her. 
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline \rowcolor{blue!25}
+    & Controller & ALU & Regfile & PC & Jump handler & Total gates & Trans. pr. enh. & Trans.\\ 
+    \hline \cellcolor{blue!25}
+    XNOR & 36 & 9 & 82 & 0 & 0 & 127 & 8 & 1016\\ 
+    \hline \cellcolor{blue!25}
+    AND & 44 & 32 & 82 & 0 & 5 & 163 & 6 & 978\\ 
+    \hline \cellcolor{blue!25}
+    NOT & 4 & 0 & 0 & 0 & 2 & 6 & 2 & 12\\ 
+    \hline \cellcolor{blue!25}
+    OR & 21 & 0 & 0 & 0 & 3 & 24 & 6 & 144\\ 
+    \hline \cellcolor{blue!25}
+    MUX & 106 & 128 & 704 & 64 & 0 & 1002 & 6 & 6012\\ 
+    \hline \cellcolor{blue!25}
+    ADDER & 0 & 64 & 0 & 32 & 0 & 96 & 28 & 2688\\ 
+    \hline \cellcolor{blue!25}
+    MULT & 0 & 32 & 0 & 0 & 0 & 32 & 12 & 384\\ 
+    \hline \cellcolor{blue!25}
+    Flip-Flop & 0 & 0 & 256 & 0 & 0 & 256 & 12 & 3072\\ 
+    \Xhline{2\arrayrulewidth} \cellcolor{blue!25}
+    Total &  &  &  &  &  &  &  & 14306\\ 
+    \hline\end{tabular}
+  \label{table:transistors}
+  \caption{Antal transistore i CPU'en} 
+\end{table}
+
+Ud fra disse tal får vi dermed et total areal af CPU'en på
+
+\[ 14306 \cdot 90nm = 1.288mm^2 \]
 
 \subsection{Strømforbrug}
 For at måle strømforbruget finder vi først en realistisk clock

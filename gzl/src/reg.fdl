@@ -33,7 +33,6 @@ dp regfile(
     r7 = ((write_addr == 0b110) & write_enable) ? write_data : r7;
     r8 = ((write_addr == 0b111) & write_enable) ? write_data : r8;
 
-    //$display($cycle, " r1: ", $dec, r1, 	"  r2: ", $dec,  r2, "  r3: ", $dec, r3, "  r4: ", $dec, r4, "  r5: ", $dec, r5, "  r6: ", $dec, r6,  "  r7: ", $dec, r7, "  r8: ", $dec, r8);
-		$display($dec, r1, " - ", r4);
+    $display($dec, r1, " - ", r4);
   }
 }

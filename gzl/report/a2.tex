@@ -275,6 +275,7 @@ dette har været en del af opgaven per se, vil vi ikke gå i detaljer
 med implementeringen. Den er dog inkluderet i kildekoden og ligger i
 filen \code{assembler.rb}.
 
+
 \subsection{Assembler}
 Assembler koden bliver compiled til binære instrukser af
 cross-compileren som til slut konverterer dem til hex repræsentation
@@ -311,6 +312,14 @@ i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
 og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
 hbfil.
+
+\subsection{Tests} % Norsk
+Ved aa bruke pre-processoren har vi derfor kunne ta testene ut ifra en
+hver komponents \code{.fdl} fil, og inn i en fil med sammenavnet, men
+appended med \code{_test}. I disse test filene har vi saa bare include
+den orginale \code{fdl}-fil. Dette gjoer at vi kan trenger aa ta
+valget mellom ha test koden liggenede sammen med implementasjonen
+eller aa fjerne den fullstendig.
 
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
@@ -538,7 +547,7 @@ komponent. Vi bruger en
 tabel\footnote{\url{http://en.wikipedia.org/wiki/Transistor\_count\#Logic\_functions}}
 til at finde antal transistore i hver gate, hvilket vi kan bruge til
 at udregne arealet af komponentet vha.~den givne transistorstørrelse
-på $90nm$. Til multiplier operationen har vi brugt et skema over gates\footnote{\url{http://en.wikipedia.org/wiki/Binary\_multiplier\#Example}}.
+på $90\ nm$. Til multiplier operationen har vi brugt et skema over gates\footnote{\url{http://en.wikipedia.org/wiki/Binary\_multiplier\#Example}}.
 
 Som eksempel før hele CPU'en udregner vi her antal transistore i \code{Jump Handler}. Dets eneste logiske operation er
 
@@ -673,8 +682,6 @@ men kun hvis dets værdi var henholdsvis større eller mindre end
 destinationen.
 
 \section{Konklusion}
-Flere immediate instruktioner
-
 I dette projekt har vi arbejdet med at lave en indlejret processor
 hvor vi til at starte med kunne køre vores \code{MWI} filter
 funktion. Vi har simuleret input fra en sensor vha. en på forhånd sat
@@ -686,6 +693,23 @@ gav et meget mere effektivt workflow, med at man kan skrive assembly
 kode og teste det med samme, uden at først bruge tid på at
 oversett the manuelt. I tillegg at man så kan debugge i assembly kode
 og ikke i maskinkode, noget der tager meget tid.
+
+% Norsk
+
+Vi har vi faatt god innsikt i hvordan strukturere Gezel kode
+vha. \emph{C} pre-processoren, med hensikt aa lave mer oversiktlig og
+enkapsulert kode. Vi har utnyttet dette til aa lave separate test
+filer som vi kan kjoere for aa forsikre oss at enhver komponent stadig
+fungerer efter aa ha gjort endringer.
+
+Vi har sett hvordan programmet bruker ressurser som areal og
+stroemforbruk, og analysert om hvordan disse vaerdier kunne forbedres,
+og hvilken effekt det saa kunne ha paa programmet. Ydermere har vi
+gjort flere overvejelser av valg av komponenter, som innebygede Gezel
+funksjoner i motsetning til komponenter man skal selv
+implementere. Resultatet er et godt strukturert og forholdsvis
+oversiktlig system som kjoerer feilfritt i foelge den givne fasit. Med
+det set vi oss godt tilfredse.
 
 \section{Kørsel}
 For at lette kørsel af assembler koden har vi lavet et simpelt

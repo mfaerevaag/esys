@@ -1,6 +1,2 @@
 * Implementering
 ** always vs fsm
-* Profiling
-** Area
-* Resultater
-* Konklusjon

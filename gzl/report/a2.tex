@@ -251,9 +251,19 @@ Kommentare markeres med semikolon og fortsætter til end-of-line. De
 bliver fjernet af cross-compileren før den egentlige compilering
 begynder.
 
-\section{Implementering}
+\section{Implementering} % Norsk
+Gjennom implementasjonen har vi valgt aa bruke \emph{Gezel}'s
+innebyggede terneries:
 
-Brugt ternaries i stedet for mux komponent fleste steder \\
+\[ \code{statement}\ ?\ \code{if\_true}\ :\ \code{if\_false} \]
+
+i setedet for \code{MUX} komponenter (se
+feks. \code{src/reg.fdl}). Dette er fordi, skulle vi ha brukt
+\code{MUX} komponenter, skulle vi ha lavet saa mange
+forskjellige. Altsaa med forskjellige bit bredder og antall
+inputs. Kode stoerrelsen hadde derfor blitt stoerre, samtidig som vi
+mener koden ikke noedvendigvis hadde blitt mer overskuelig. 
+
 TODO: always i stedet for sfg?????????????????????????
 
 \subsection{Cross-compiler}

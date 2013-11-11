@@ -2,7 +2,6 @@
 ** CPU Diagram
 ** Lese over komponenter
 * Implementering
-** Terneries vs mux
 ** always vs fsm
 ** Lese over komponenter
 * Profiling

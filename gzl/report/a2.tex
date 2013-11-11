@@ -249,20 +249,18 @@ Kommentare markeres med semikolon og fortsætter til end-of-line. De
 bliver fjernet af cross-compileren før den egentlige compilering
 begynder.
 
-\section{Implementering} % Norsk
-Gjennom implementasjonen har vi valgt aa bruke \emph{Gezel}'s
-innebyggede terneries:
+\section{Implementering}
+Gennem implementasionen har vi valgt at bruke \emph{Gezel}'s
+indbyggede terneries:
 
 \[ \code{statement}\ ?\ \code{if\_true}\ :\ \code{if\_false} \]
 
-i setedet for \code{MUX} komponenter (se
-feks. \code{src/reg.fdl}). Dette er fordi, skulle vi ha brukt
-\code{MUX} komponenter, skulle vi ha lavet saa mange
-forskjellige. Altsaa med forskjellige bit bredder og antall
-inputs. Kode stoerrelsen hadde derfor blitt stoerre, samtidig som vi
-mener koden ikke noedvendigvis hadde blitt mer overskuelig. 
-
-TODO: always i stedet for sfg?????????????????????????
+i stedet for \code{MUX} komponenter (se
+feks. \code{src/reg.fdl}). Dette er fordi, skulle vi have brugt
+\code{MUX} komponenter, skulle vi have lavet så mange
+forskellige. Altså med forskellige bit bredder og antal inputs. Kode
+størrelsen ville derfor blevet større, samtidig at vi mener koden ikke
+nødvendigvis var blevet mere overskuelig.
 
 \subsection{Cross-compiler}
 Vi har valgt at udvikle en cross-compiler i \code{Ruby} for at lette
@@ -311,15 +309,15 @@ Vi har gjort brug af \code{C} pre-processoren til inkludering af filer
 i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
 og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
-hbfil.
+fil.
 
-\subsection{Tests} % Norsk
-Ved aa bruke pre-processoren har vi derfor kunne ta testene ut ifra en
-hver komponents \code{.fdl} fil, og inn i en fil med sammenavnet, men
-appended med \code{_test}. I disse test filene har vi saa bare include
-den orginale \code{fdl}-fil. Dette gjoer at vi kan trenger aa ta
-valget mellom ha test koden liggenede sammen med implementasjonen
-eller aa fjerne den fullstendig.
+\subsection{Tests}
+Ved at bruge pre-processoren har vi derfor kunne tage testene ud af
+enhver komponents \code{.fdl} fil, og ind i en fil med samme navn, men
+appended med \code{\_test}. I disse test filer har vi så inkluderet
+den orginale \code{fdl}-fil. Dette gør at vi kan trænger at tage
+valget mellem at have test koden liggenede sammen med implementionen
+eller at fjerne den fuldstændig.
 
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
@@ -694,22 +692,28 @@ kode og teste det med samme, uden at først bruge tid på at
 oversett the manuelt. I tillegg at man så kan debugge i assembly kode
 og ikke i maskinkode, noget der tager meget tid.
 
-% Norsk
+Vi har vi fåt god indsigt i hvordan man strukturerer Gezel kode, og
+hardware design kode generelt, vha. \emph{C} pre-processoren, med
+hensigt på at lave mere overskueligt og enkapsuleret kode. Vi har
+udnyttet dette til at lave separate test filer som vi kan køre for at
+forsikre os at ethvert komponent stadig fungerer efter at have lavet
+endringer.
 
-Vi har vi faatt god innsikt i hvordan strukturere Gezel kode
-vha. \emph{C} pre-processoren, med hensikt aa lave mer oversiktlig og
-enkapsulert kode. Vi har utnyttet dette til aa lave separate test
-filer som vi kan kjoere for aa forsikre oss at enhver komponent stadig
-fungerer efter aa ha gjort endringer.
+Vi har set hvordan programmet bruger ressourcer som areal og
+strømforbrug, og analyseret hvordan disse værdier kunne forbedres, og
+hvilken effekt det så kunne have på programmet. Ydermere har vi gjort
+flere overvejelser omkring valg af komponenter, som indbyggede Gezel
+funktioner i modsætning til komponenter man skal selv
+implementere. Resultatet er et godt struktureret og forholdsvist
+overskueligt system som kører ifølge den givne facit. Med det ser vi
+os godt tilfredse.
 
-Vi har sett hvordan programmet bruker ressurser som areal og
-stroemforbruk, og analysert om hvordan disse vaerdier kunne forbedres,
-og hvilken effekt det saa kunne ha paa programmet. Ydermere har vi
-gjort flere overvejelser av valg av komponenter, som innebygede Gezel
-funksjoner i motsetning til komponenter man skal selv
-implementere. Resultatet er et godt strukturert og forholdsvis
-oversiktlig system som kjoerer feilfritt i foelge den givne fasit. Med
-det set vi oss godt tilfredse.
+En feature af Gezel som vi har valgt ikke at bruge er \code{fsm},
+\code{sequencer} og \code{hardwired}. Vi har ikke kunnet finde et
+realistisk use case til dem, hovedsageligt fordi man i en \code{fsm}
+ikke kan tilgå \code{sig}, men kun \code{reg}, og i de fleste tilfælde
+er det uhensigtsmæssigt at skulle vente på at et registers output
+opdateres.
 
 \section{Kørsel}
 For at lette kørsel af assembler koden har vi lavet et simpelt

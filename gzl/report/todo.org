@@ -1,2 +1,0 @@
-* Implementering
-** always vs fsm

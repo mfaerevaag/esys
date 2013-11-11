@@ -310,7 +310,7 @@ Vi har gjort brug af \code{C} pre-processoren til inkludering af filer
 i \code{Gezel} koden. Vi har udviklet hvert komponent i sin egen fil
 og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
-fil.
+hbfil.
 
 \subsection{Komponenter}
 Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
@@ -515,9 +515,6 @@ Output \code{a} og \code{b} bliver sat til henholdsvis det register som
 Efterfølgende bliver registeret givet i \code{write\_addr} sat til
 \code{write\_data}, hvis \code{write\_enable} er true.
 
-
-\section{Resultater}
-
 \section{Profiling}
 
 \subsection{Clock cycles}
@@ -648,6 +645,32 @@ $f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
   \caption{Toggle data fra Gezel}
   \label{table:toggles}
 \end{table}
+
+\section{Resultater}
+Vores assembler implementation har virket efter hensigten. Vi har
+været i stand til at udvikle et fyldestgørende program og køre det på
+Gezel hardwaren. Vi er tilfredse med den måde hardwaren blev designet
+på, omend det til tider er svært at overskue alle sammenhængende
+komponenter på én gang.
+
+CPU'en og samspillet mellem assembler koden gik godt, vi syntes at
+$39$ cycles per data sample er et acceptabelt resultat. Ydermere er
+selve assembler koden nogenlunde kompakt og overskueligt.
+
+Under måling af performance/profiling af systemet fandt vi tilgengæld
+nogle resultater vi har svært ved at stole på. At CPU'ens samlede
+strømforbrug er $0.4355 nanowatt$ er mildest talt urealistisk. Det er
+omtrent det samme som energi outputtet som en enkelt nyre
+celle. Hvorfor resultatet blev så småt kan der være flere grunde til,
+bl.a. at den givne kapacitans er for lille, eller at der er fejl i
+vores udregning af aktiviteten. 
+
+Hvis vi skulle arbejde videre på systemet ville vi implementere flere
+\emph{immediate} instruktioner, såsom \code{subi}, \code{muli} og
+\code{divi}. Det ville også være bekvemt at have \code{movgt} og
+\code{movlt} som ville kopiere en værdi fra et register til et andet,
+men kun hvis dets værdi var henholdsvis større eller mindre end
+destinationen.
 
 \section{Konklusion}
 Flere immediate instruktioner

@@ -158,16 +158,12 @@ argument, for ikke at ændre på immediate værdien. Eksempelvis:
 \subsection{CPU Diagram}
 
 \subsection{Komponenter}
-Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
-forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
-er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
-statement, for at abstrahere de forskellige fysiske dele af
-instruktionerne væk.
 
 \subsubsection{Controller} % Norsk
 \emph{Kontrolleren} er den sentrale komponent i prosessoren. Den styrer
 hvordan de andre komponentene skal fungere ved å sette en rekke
-kontrollsignaler og registre til deres oenskede verdier.
+kontrollsignaler og registre som saa bestemmer hvordan de tilkoblede
+komponenter opererer.
 
 Den mottar en instruksjon fra \emph{Instruction Memory}, et resultat
 fra \emph{ALU}, et register fra \emph{Register File} og et
@@ -179,22 +175,28 @@ adresse, den saa skal bruke.
 
 Utifra hvilken operasjon det er, skal saa de riktige flagg bli satt
 slik at de tilkoblede komponenter fungerer slik instruksjonen
-oensker. 
+oensker.
+
+Vi blir ogsaa noedt til aa implementere et kontrollsignal som
+forteller de tilkoblede komponenter at de skal vente i tilfellet
+bussen er i gang med en \code{load} eller \code{store} operasjon.
 
 \subsubsection{Program Counter} % Norsk
 \emph{Program Telleren} styrer hvilken instruksjon som skal
-eksikveres. Normalt vil den ta den forrige instruksjons adresse og
-legge én til, altsaa neste linje i programmet. Hvis det forrige
-instruksjon saa var en jump operasjon, skal den neste instruksjon
-komme fra den adresse jump instruksjonen ba den om aa jumpe til.
+eksikveres, eller naermere paa hvilken adresse i \emph{Instruction
+  Memory} den ligger. Normalt vil den ta den forrige instruksjons
+adresse og legge én til, altsaa neste linje i programmet. Men, hvis
+det forrige instruksjon saa var en jump operasjon skal den neste
+instruksjon komme fra den adresse jump instruksjonen ba den om aa
+jumpe til. 
 
 \subsubsection{Jump Handler} % Norsk
-\emph{Jump Handleren} bestemmer utifra hvilken jump operasjon den har
-blitt gitt og hvilken flagg som er satt i \emph{ALU}, om den skal
-jumpe. Hvis feks. instruksjonen sier at programmet skal jumpe hvis
-forrige vaerdier som ble sammenlignet er negative, og \emph{ALU} viser
-at de var det, setter den et flagg som sier at programmet skal
-jumpe. Dette flagg ses saa av \emph{Program Counter}, som beskrevet over.
+\emph{Jump Handleren} bestemmer utifra hvilken jump kontrollsignaler
+som er satt i \emph{Controller} og \emph{ALU}, om den skal jumpe. Hvis
+feks. instruksjonen sier at programmet skal jumpe hvis forrige
+vaerdier som ble sammenlignet er negative, og \emph{ALU} viser at de
+var det, setter den et flagg som sier at programmet skal jumpe. Dette
+flagg ses saa av \emph{Program Counter}, som beskrevet over.
 
 \subsubsection{Instruction Memory} % Norsk
 Utifra hvilken instruksjons adresse \emph{Program Counter} sier skal
@@ -204,17 +206,18 @@ ogsaa gir instruksjonen videre til \emph{Controller}.
 \subsubsection{ALU} % Norsk
 \emph{ALU}, eller \emph{Arithmetic Logic Unit}, som navnet tilsier,
 utfoerer de aritmetiske operasjoner. Den mottar fra \emph{Controller}
-hvilken operasjon, feks. addisjon, den skal utfoere, og dataen skal
-skal utfoere de paa. Den gir saa resultatet og ytligere setter flagg
-som beskriver om resultatet var negativt eller null.
+hvilken operasjon den skal utfoere, feks. addisjon, suktraksjon,
+multiplikasjon eller divisjon, og dataen der skal utfoere de paa. Den
+gir saa resultatet og ytligere setter kontrollsignaler som beskriver
+om resultatet var negativt eller null.
 
 \subsubsection{Register File} % Norsk
-\emph{Register Filen} gjemmer dataen til de aatte forskjellige
+\emph{Register Filen} holder styr pa dataen til de aatte forskjellige
 registerene programmet har til raadighet. Den kan baade motta data som
 den gjemmer, eller gi data den har allerede gjemt. Ved aa bestemme
 hvilken to registere som skal du vil den skal tilgaa, gir den saa
 denne data tilbake. I tillegg kan du da si om du vil gjemme noe data,
-og tilfellet i hvilken register dataen skal bli gjemt.
+og tilfellet i hvilket register og hvilken data der skal gjemmes.
 
 
 \subsection{Assembler}
@@ -248,6 +251,12 @@ bliver fjernet af cross-compileren før den egentlige compilering
 begynder.
 
 \section{Implementering}
+Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
+forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
+er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
+statement, for at abstrahere de forskellige fysiske dele af
+instruktionerne væk.
+
 Brugt ternaries i stedet for mux komponent fleste steder \\
 TODO: always i stedet for sfg?????????????????????????
 

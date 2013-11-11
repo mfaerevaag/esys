@@ -7,4 +7,3 @@ next_fib:
         add $a, $a, $b
         mov $b, $tmp
         jmp next_fib
-        

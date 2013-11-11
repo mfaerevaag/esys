@@ -512,13 +512,81 @@ Efter det saa blir registeret givet i \code{write\_addr} satt til
 
 \section{Profiling}
 Transistorstørrelser på 90 nm.
- 
-Kapacitans: 1.8*10-16 F
-Vdd: 1.2V
 
-\subsection{Speed}
+\subsection{Clock cycles}
+Til hele datasættet bliver der kørt $9414$ cycles. De første $30$
+gennemsnit bruger én load instruktion mindre (forklaret i assembler
+koden), og da vi har målt at en load instruktion varer $9$ cycles
+betyder det at der bliver kørt $9 \cdot 30 = 270$ cycles mindre i
+forhold til gennemsnittet. Dermed har vi et realistisk gennemsnit på
+$(9414+270)/250 = 38.7$ cycles per MWI udregning. Vi har manuelt talt
+$39$ cycles per MWI gennemsnit, hvilket stemmer fint overens.
+
+Dette inkluderer en \code{store} og to \code{load} instruktioner som
+hver tager $9$ cycles.
+
 \subsection{Area}
-\subsection{Power}
+
+\subsection{Strømforbrug}
+For at måle strømforbruget finder vi først en realistisk clock
+frekvens til CPU'en. Vi ved fra forrige opgave at samples bliver målt
+$250/s$, og at vi bruger $39$ cycles på at udregne en MWI værdi. Vi
+har altså at
+
+\[  \frac{1}{250} s / 39 cycles = 102.6\frac{\mu s}{cycle}  \]
+
+Fra dette kan vi finde det ønskede antal cycles per sekund (clock frekvensen):
+
+\[  \frac{1s}{102.6\frac{\mu s}{cycle}} = 9747 cycles \]
+
+Vi vil altså gerne udføre $9747$ cycles i sekundet, og dermed en have
+clock frekvens på $9747 Hz$. Vi runder op til $1 kHz$ da vi vil undgå
+en clock speed der er for langsom til at følge med sample raten.
+
+Nu ser vi på hvor mange toggles der bliver udført per MWI udregning,
+se tabel~\ref{table:toggles}. Vi målte $6548$ toggles for én MWI
+udregning, dette er \emph{aktiviteten}.
+
+Vi finder nu strømforbruget af CPU vha.~af følgende formel:
+\[  \alpha \cdot C \cdot V_{dd}^2 \cdot f \]
+
+Hvor $\alpha$ er aktivitet, $C$ er kapacitans, $V_{dd}$ er spænding og
+$f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
+= 1.2V$ og $C = 1.8 \cdot 10^{-16}F$ og får følgende:
+
+\[  6548 \cdot 1.8 \cdot 10^{-16}F \cdot 1.2 V^2 \cdot 1 kHz = 1.414 nanowatt \]
+
+
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+    \hline \rowcolor{blue!25}
+    Operation  & Slut MWI & Start MWI & Forskel \\  \hline
+    dpoutput   & 381008   & 379463    & 1545    \\  \hline
+    reg        & 114479   & 114020    & 459     \\  \hline
+    sig        & 229343   & 228418    & 925     \\  \hline
+    assign\_op & 440290   & 438526    & 1764    \\  \hline
+    ior\_op    & 20150    & 20066     & 84      \\  \hline
+    and\_op    & 21917    & 21825     & 92      \\  \hline
+    shl\_op    & 495      & 495       & 0       \\  \hline
+    add\_op    & 26049    & 25944     & 105     \\  \hline
+    sub\_op    & 2479     & 2473      & 6       \\  \hline
+    concat\_op & 14408    & 14353     & 55      \\  \hline
+    mul\_op    & 3112     & 3112      & 0       \\  \hline
+    cast\_op   & 17513    & 17458     & 55      \\  \hline
+    not\_op    & 3007     & 2995      & 12      \\  \hline
+    sel\_op    & 266452   & 265426    & 1026    \\  \hline
+    eq\_op     & 62851    & 62589     & 262     \\  \hline
+    ne\_op     & 3766     & 3750      & 16      \\  \hline
+    smt\_op    & 1943     & 1935      & 8       \\  \hline
+    ipoutput   & 33739    & 33605     & 134     \\  \hline
+    total      & 1643001  & 1636453   & \hw{6548} \\  \hline
+    cycle      & 9414     & 9375      & \hw{39}   \\  \hline
+  \end{tabular}
+  \caption{Toggle data fra Gezel}
+  \label{table:toggles}
+\end{table}
 
 \section{Konklusjon} % Norsk
 Flere immediate instruktioner
@@ -536,6 +604,10 @@ oversett the manuelt. I tillegg at man saa kan debugge i assembly kode
 og ikke i maskinkode, noe der tar meget tid.
 
 \section{Kørsel}
-For at lette kørsel af assembler koden har vi lavet et simpelt \code{run} eksekverbart script. Det tager en \code{.asm} fil og et antal cycles som argumenter og skal eksekveres fra rod mappen. Eksempelvis kan MWI filteret køres med kommanden \code{bin/run assembly/mwi.asm 1000}.
+For at lette kørsel af assembler koden har vi lavet et simpelt
+\code{run} eksekverbart script. Det tager en \code{.asm} fil og et
+antal cycles som argumenter og skal eksekveres fra rod
+mappen. Eksempelvis kan MWI filteret køres med kommanden \code{bin/run
+  assembly/mwi.asm 1000}.
 
 \end{document}

@@ -10,6 +10,9 @@ get_next_point:
         
 	    div $res, $acc, $tmp    ; divide the accumulator by 30, this is the MWI
 
+        set $tmp, 251           ; store result to address 251
+        store $res, $tmp
+
         set $tmp, 30            ; check if we have 30 points accumulated
         cmp $cadr, $tmp
         jgt align_acc           ; if we do, then align the accumulator

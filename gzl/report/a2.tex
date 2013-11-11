@@ -322,14 +322,16 @@ instruksjon paa 32-bit og returnerer:
   \item \code{target} (28-bit)
 \end{itemize}
 
-Kontrolleren maa selv bestemme hvilken av disse vaerdier den skal
-bruke utifra opcoden. 
+Det er nu kun opp til \emph{Kontrolleren} aa selv bestemme hvilken av disse vaerdier den skal
+bruke utifra \code{opcode}'n.
 
-Dette har vi valgt aa gjoere ved aa ha et flag per instruksjon i
+For aa bestemme operasjonen bestemt i \code{opcode}'n har vi valgt aa
+gjoere ved aa ha et kontrollsignal per instruksjon i
 instruksjonssettet, for saa aa sette disse lik med true eller false,
 bestemt av en \code{==} statement som tar opcode og instruksjonens
-binaere verdi. Instruksjonenes sine respektive flag vil saa vaere true
-eller false, alt etter om opcoden svarer til deres binaere verdi.
+binaere verdi. Instruksjonenes sine respektive kontrollsignal vil saa
+vaere true eller false, alt etter om \code{opcod}'en svarer til deres
+binaere verdi.
 
 For aa utfoere skrive eller lese operasjoner vil vi trenge foelgenede
 output: 
@@ -343,12 +345,12 @@ output:
     
   \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
     til. Denne blir satt lik med \code{r1}, fordi det er saann vi har
-    bestemt syntaxen til assembly koden, at det foerste argument er
+    bestemt syntaxen til assembly koden; at det foerste argument er
     plasseringen dataen skal gemmes.
 
-  \item[rw\_data(32)] Bestemmer dataen som skal
-    skrives. Vaerdien avhenger av instrusjonen. Er det feks. en
-    \code{mov} instruksjon er det \code{r2}, osv. \ref{table:inst_map}
+  \item[rw\_data(32)] Bestemmer dataen som skal skrives. Vaerdien
+    avhenger av instrusjonen. Er det feks. en \code{mov} instruksjon
+    er det \code{r2}, osv. \ref{table:inst_map}
 
   \item[reg\_asel, reg\_bsel(3)] Bestemmer de to (eller to siste)
     registerene isntruksjonen skal bruke. Hvis det er en

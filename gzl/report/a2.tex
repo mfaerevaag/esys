@@ -97,7 +97,6 @@ Performance overvejelser, generelt vs. problem-specifikt (finde en balance), pro
   \caption{Komponenter i CPU'en}
 \end{table}
 
-Controllers ansvar
 
 \section{Design}
 \subsection{Instruktionssæt}
@@ -300,9 +299,6 @@ og samlet dem med \code{\#include} statements. Det har gjort det meget
 mere overskueligt at arbejde med end at have alt stående i én lang
 fil.
 
-\subsection{Assembler}
-forklaring af assembler
-
 \subsection{Komponenter}
 \subsubsection{Controller} % Norsk
 Den instruksjon som mottas har vi valgt og parse med en ekstra
@@ -333,10 +329,8 @@ output:
   \item[rw\_flag(1)] Blott sier om det skal foregaa en
     skrive operasjon. 
 
-    \begin{equation}
-      \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
-      \code{mov} + \code{alu\_op} + \code{load}) 
-    \end{equation}
+    \[ \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
+      \code{mov} + \code{alu\_op} + \code{load}) \]
     
   \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
     til. Denne blir satt lik med \code{r1}, fordi det er saann vi har
@@ -404,10 +398,9 @@ implementert. Den faar kontrollsignalene \code{alu\_neg} og
 \code{jgt} fra \emph{Controller}'en. Den setter saa sitt eneste
 output, kontrollsignalet \code{do\_jmp}:
 
-\begin{equation}
-  \code{do\_jmp} \equiv \code{jmp} + (\code{jlt} \wedge \code{alu\_neg}) +
-  (\code{jgt} \wedge \lnot \code{alu\_neg} \wedge \lnot \code{alu\_neg})
-\end{equation}
+\[ \code{do\_jmp} \equiv \code{jmp} + (\code{jlt} \wedge
+\code{alu\_neg}) + (\code{jgt} \wedge \lnot \code{alu\_neg} \wedge
+\lnot \code{alu\_neg}) \]
 
 \subsubsection{Instruction Memory} % Norsk
 Her bruker vi \emph{Gezel}'s innebyggede RAM\footnote{Random Access
@@ -516,15 +509,22 @@ Vdd: 1.2V
 \subsection{Area}
 \subsection{Power}
 
-\section{Konklusjon}
+\section{Konklusjon} % Norsk
 Flere immediate instruktioner
+
+I dette prosjekt har vi arbeid aa lave en inlejret prosessor hvor vi
+til aa starte med kunne kjoere vaares \code{MWI} filter funksjon. Vi
+har simulert input fra en sensor vha. en forhaands satt data minne som
+vi saa har kjoert vaares filter program paa som gjemmer resultatet
+tilbake i data minnet slik at den kan videre analysert.
+
+Vi har valgt aa implementere en \code{assembler} fordi vi syntes det
+ga et meget mer effektivt workflow, med at man kan skrive assembly
+kode ogsaa teste det med samme, uten aa foerst bruke tid paa aa
+oversett the manuelt. I tillegg at man saa kan debugge i assembly kode
+og ikke i maskinkode, noe der tar meget tid.
 
 \section{Kørsel}
 For at lette kørsel af assembler koden har vi lavet et simpelt \code{run} eksekverbart script. Det tager en \code{.asm} fil og et antal cycles som argumenter og skal eksekveres fra rod mappen. Eksempelvis kan MWI filteret køres med kommanden \code{bin/run assembly/mwi.asm 1000}.
-
-\newpage
-\appendix
-\section{Clang}\label{app:clang_asm}
-Syg kode her
 
 \end{document}

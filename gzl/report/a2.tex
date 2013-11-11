@@ -556,7 +556,7 @@ Som eksempel før hele CPU'en udregner vi her antal transistore i \code{Jump Hand
 Der er heri $5 * 2-way$ \code{AND}, $2$ \code{NOT} og $3 * 2-way$
 \code{OR} gates. Ifølge tabellen giver dette i alt $5 * 6 + 2 * 2 + 3 * 6 = 52$ transistore. Dermed er arealet
 
-\[ 52 \cdot 90nm = 4680nm^2 \]
+\[ 52 \cdot 90\ nm = 4680\ nm^2 \]
 
 \subsubsection{CPU total areal}
 Vi har talt samtlige operationer i CPU'en og er kommet frem til resultatet i tabel\ref{table:transistors}. Det skal bemærkes at flip-flops i sig selv består af gates, men at vi har talt dem for sig selv. Ydermere er der flere gates i et rigtigt 32-bit register, men vi har simplificeret det her. 
@@ -591,7 +591,7 @@ Vi har talt samtlige operationer i CPU'en og er kommet frem til resultatet i tab
 
 Ud fra disse tal får vi dermed et total areal af CPU'en på
 
-\[ 14306 \cdot 90nm = 1.288mm^2 \]
+\[ 14306 \cdot 90\ nm = 1.288\ mm^2 \]
 
 \subsection{Strømforbrug}
 For at måle strømforbruget finder vi først en realistisk clock
@@ -599,29 +599,29 @@ frekvens til CPU'en. Vi ved fra forrige opgave at samples bliver målt
 $250/s$, og at vi bruger $39$ cycles på at udregne en MWI værdi. Vi
 har altså at
 
-\[  \frac{1}{250} s / 39 cycles = 102.6\frac{\mu s}{cycle}  \]
+\[  \frac{1\ s}{250 * 39\ cycles} = 102.6\frac{\mu s}{cycle}  \]
 
 Fra dette kan vi finde det ønskede antal cycles per sekund (clock frekvensen):
 
-\[  \frac{1s}{102.6\frac{\mu s}{cycle}} = 9747 cycles \]
+\[  \frac{1s}{102.6\frac{\mu s}{cycle}} = 9747\ cycles \]
 
 Vi vil altså gerne udføre $9747$ cycles i sekundet, og dermed en have
-clock frekvens på $9747 Hz$. Vi runder op til $10 kHz$ da vi vil undgå
+clock frekvens på $9747\ Hz$. Vi runder op til $10\ kHz$ da vi vil undgå
 en clock speed, der er for langsom til at følge med sample raten.
 
 Nu ser vi på hvor mange toggles der bliver udført per sekund, se
 tabel~\ref{table:toggles}. Vi målte $6548$ toggles for én MWI
 udregning, og vi fandt $39$ cycles per MWI. Dette giver os
-$\frac{6548}{39} = 168 cycles/s $, hvilket er vores aktivitet.
+$\frac{6548}{39} = 168\ cycles/s $, hvilket er vores aktivitet.
 
 Vi finder nu strømforbruget af CPU vha.~af følgende formel:
 \[  \alpha \cdot C \cdot V_{dd}^2 \cdot f \]
 
 Hvor $\alpha$ er aktivitet, $C$ er kapacitans, $V_{dd}$ er spænding og
 $f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
-= 1.2V$ og $C = 1.8 \cdot 10^{-16}F$ og får følgende:
+= 1.2\ V$ og $C = 1.8 \cdot 10^{-16}\ F$ og får følgende:
 
-\[168 \cdot 1.8 \cdot 10^{-16}F \cdot {(1.2 V)}^2 \cdot 10 kHz = 0.4355 nanowatt\]
+\[168 \cdot 1.8 \cdot 10^{-16}\ F \cdot {(1.2\ V)}^2 \cdot 10\ kHz = 0.4355\ nanowatt\]
 
 \begin{table}[H]
   \centering

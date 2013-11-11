@@ -1,0 +1,12 @@
+* Design
+** CPU Diagram
+** Lese over komponenter
+** Forklare asm kode
+* Implementering
+** Terneries vs mux
+** always vs fsm
+** Lese over komponenter
+* Profiling
+** Area
+* Resultater
+* Konklusjon

@@ -157,6 +157,7 @@ argument, for ikke at ændre på immediate værdien. Eksempelvis:
 \parbox{4cm}{\code{set \$r0, 15}} $\Rightarrow$ \code{0100 000 0000000000000000000001111}
 
 \subsection{CPU Diagram}
+\includegraphics[width=17.5cm]{diagrams/cpu.pdf}
 
 \subsection{Komponenter}
 
@@ -351,7 +352,7 @@ output:
 
     \[ \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
       \code{mov} + \code{alu\_op} + \code{load}) \]
-    p
+    
   \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
     til. Denne bliver satt lik med \code{r1}, fordi det er sådan vi har
     bestemt syntaxen til assembly koden; at det første argument er

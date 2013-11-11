@@ -1,26 +1,26 @@
 init:
-        set $cadr, 0  ; keep a pointer to where we are in the data set
-	    set $acc, 0   ; the accumulator
+        set $cadr, 0  ; her gemmes seneste adresse som er blevet processeret
+	    set $acc, 0   ; her gemmes summen af de 30 samples i MWI'et
 
 get_next_point:
-        load $tmp, $cadr        ; load the next data point
-        add $acc, $acc, $tmp    ; add the value to the accumulator
-        addi $cadr, $cadr, 1    ; inc the address cursor
-	    set $tmp, 1118482       ; div const for 30
+        load $tmp, $cadr        ; load det næste sample fra data memory
+        add $acc, $acc, $tmp    ; læg værdien til akkumulator registeret
+        addi $cadr, $cadr, 1    ; øg den nuværende adresse med 1
         
-	    div $res, $acc, $tmp    ; divide the accumulator by 30, this is the MWI
+	    set $tmp, 1118482       ; divisionskonstanten for at dividere med 30
+	    div $res, $acc, $tmp    ; divider akkumulatoren for at få et MWI
 
-        set $tmp, 251           ; store result to address 251
-        store $res, $tmp
+        set $tmp, 251           ; store mwi til adresse 251
+        store $res, $tmp        ;
 
-        set $tmp, 30            ; check if we have 30 points accumulated
+        set $tmp, 30            ; tjek om der er akkumuleret 30 eller flere samples
         cmp $cadr, $tmp
-        jgt align_acc           ; if we do, then align the accumulator
-	    jmp get_next_point      ; if not, load the next data point
+        jgt align_acc           ; hvis der er, så tilpas akkumulator
+	    jmp get_next_point      ; hvis ikke, så gå til næste sample load
 
 align_acc:
-	    set $tmp, 30              ; get the address 30 samples before the current
+	    set $tmp, 30              ; find adressen 30 samples tilbage i datasættet
         sub $odp_adr, $cadr, $tmp
-        load $odp, $odp_adr       ; load the data point at that address
-        sub $acc, $acc, $odp      ; subtract it's value from the accumulator
-	    jmp get_next_point        ; load the next data point
+        load $odp, $odp_adr       ; load samplet på denne adresse
+        sub $acc, $acc, $odp      ; træk dets værdi fra akkumulatoren
+	    jmp get_next_point        ; gå til næste sample load

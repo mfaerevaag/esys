@@ -15,10 +15,8 @@ dp alu(
         (select == 0b10 & enable) ? a * b :
         (select == 0b11 & enable) ? (ns(57)) (a * b) >> 25 : res;
 
-    res = r;
+    res  = r;
     neg  = res < 0;
     zero = res == 0;
-
-    //$display("ALU --- a: ", $dec,  a, " b: ", $dec,  b,	" alu_op: ", enable	, " alu_sel: ", select	, " neg: ", neg	, " zero: ", zero	, " res: ", $dec, res);
   }
 }

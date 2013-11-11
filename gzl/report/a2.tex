@@ -24,6 +24,7 @@
 \usepackage[bottom]{footmisc}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{makecell}
 
 % bootstrap label style highlighting
 \newcommand\hw[2][]{\tikz[overlay]\node[fill=blue!20,inner sep=1pt, anchor=text, rectangle, rounded corners=0.1mm,#1] {#2};\phantom{#2}}
@@ -342,7 +343,7 @@ output:
 
     \[ \code{rw\_flag} \equiv \lnot \code{cmp} \wedge (\code{set} +
       \code{mov} + \code{alu\_op} + \code{load}) \]
-    
+    p
   \item[rw\_addr(3)] Bestemmer hvilket register som skal skrives
     til. Denne blir satt lik med \code{r1}, fordi det er saann vi har
     bestemt syntaxen til assembly koden; at det foerste argument er
@@ -413,11 +414,11 @@ output, kontrollsignalet \code{do\_jmp}:
 \code{alu\_neg}) + (\code{jgt} \wedge \lnot \code{alu\_neg} \wedge
 \lnot \code{alu\_neg}) \]
 
-\subsubsection{Instruction Memory} % Norsk
-Her bruker vi \emph{Gezel}'s innebyggede RAM\footnote{Random Access
-  Memory} vha. en \code{ipblock}, som aa er hardwired til aa kun
-lese. Denne bruker vi i \code{datapath} som heter \code{inst\_reader},
-som leser ifra \code{RAM}.
+\subsubsection{Instruction Memory}
+Her bruger vi \emph{Gezel}'s indbyggede RAM\footnote{Random Access
+  Memory} vha. en \code{ipblock}, som er hardwired til kun at
+læse. Denne bruger vi i en \code{dp} som hedder \code{inst\_reader},
+som læser fra \code{RAM}.
 
 Den mottar en adresse kalt \code{addr} og sender ut igjen
 instruksjonen paa den adresse vha. \code{RAM}, med et signal kalt
@@ -489,22 +490,21 @@ Det bemærkes at resultatet rundes ned til nærmeste heltal. Dette er
 acceptabelt da vores MWI implementation både i assembler og C
 versionen kun arbejder med heltal.
 
-\subsubsection{Register File} % Norsk
-Den faar inn to register adresser \code{asel} og \code{bsel}, hver paa
-3-bits, et kontrollsignal \code{write\_enable}, en register adresse
-\code{write\_addr} paa 3-bits, og en vaerdi \code{write\_data} paa
-32-bits.
+\subsubsection{Register File}
+Den får to register adresser som input \code{asel} og \code{bsel},
+hver på 3-bits, et kontrollsignal \code{write\_enable}, en register
+adresse \code{write\_addr} på 3-bits, og en værdi \code{write\_data}
+på 32-bits.
 
-Ut giver den to vaerdier \code{a} og \code{b}, hver paa 32-bits i
-two's complement.
+Ud giver den to værdier \code{a} og \code{b}, på hver 32-bits.
 
-Ydermere har den aatte registere \code{r1} ... \code{r8}, hver paa
+Ydermere har den 8 registre \code{r1} \ldots \code{r8}, hver på
 32-bits i two's complement.
 
-Output \code{a} og \code{b} blir satt til henholdsvis det register som
+Output \code{a} og \code{b} bliver sat til henholdsvis det register som
 \code{asel} og \code{bsel} bestemmer.
 
-Efter det saa blir registeret givet i \code{write\_addr} satt til
+Efterfølgende bliver registeret givet i \code{write\_addr} sat til
 \code{write\_data}, hvis \code{write\_enable} er true.
 
 
@@ -526,6 +526,22 @@ Dette inkluderer en \code{store} og to \code{load} instruktioner som
 hver tager $9$ cycles.
 
 \subsection{Area}
+Vi har målt arealet på nogle udvalgte komponenter for at få en idé om
+hvor meget plads de involverede operationer optager.
+
+\subsubsection{Jump handler}
+Jump handleren benytter 1 stk. 3-bit OR, 1 stk. 3-bit AND og 1
+stk. 2-bit AND gate. Jvf. slides fra forelæsning 9, summerer vi, og
+har $5-bit AND + 3-bit OR$.
+
+Til AND og OR gates bruges 1 transistor per bit, og vi har altså i alt
+$8$ transistore i vores jump handler. Med den givne
+transistorstørrelse på $90nm$ er arealet af vores jump handler
+
+\[ 8 \cdot 90nm = 720nm^2 \]
+
+\subsubsection{Registre}
+
 
 \subsection{Strømforbrug}
 For at måle strømforbruget finder vi først en realistisk clock
@@ -540,12 +556,13 @@ Fra dette kan vi finde det ønskede antal cycles per sekund (clock frekvensen):
 \[  \frac{1s}{102.6\frac{\mu s}{cycle}} = 9747 cycles \]
 
 Vi vil altså gerne udføre $9747$ cycles i sekundet, og dermed en have
-clock frekvens på $9747 Hz$. Vi runder op til $1 kHz$ da vi vil undgå
-en clock speed der er for langsom til at følge med sample raten.
+clock frekvens på $9747 Hz$. Vi runder op til $10 kHz$ da vi vil undgå
+en clock speed, der er for langsom til at følge med sample raten.
 
-Nu ser vi på hvor mange toggles der bliver udført per MWI udregning,
-se tabel~\ref{table:toggles}. Vi målte $6548$ toggles for én MWI
-udregning, dette er \emph{aktiviteten}.
+Nu ser vi på hvor mange toggles der bliver udført per sekund, se
+tabel~\ref{table:toggles}. Vi målte $6548$ toggles for én MWI
+udregning, og vi fandt $39$ cycles per MWI. Dette giver os
+$\frac{6548}{39} = 168 cycles/s $, hvilket er vores aktivitet.
 
 Vi finder nu strømforbruget af CPU vha.~af følgende formel:
 \[  \alpha \cdot C \cdot V_{dd}^2 \cdot f \]
@@ -554,9 +571,7 @@ Hvor $\alpha$ er aktivitet, $C$ er kapacitans, $V_{dd}$ er spænding og
 $f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
 = 1.2V$ og $C = 1.8 \cdot 10^{-16}F$ og får følgende:
 
-\[  6548 \cdot 1.8 \cdot 10^{-16}F \cdot 1.2 V^2 \cdot 1 kHz = 1.414 nanowatt \]
-
-
+\[168 \cdot 1.8 \cdot 10^{-16}F \cdot {(1.2 V)}^2 \cdot 10 kHz = 0.4355 nanowatt\]
 
 \begin{table}[H]
   \centering
@@ -580,7 +595,7 @@ $f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
     eq\_op     & 62851    & 62589     & 262     \\  \hline
     ne\_op     & 3766     & 3750      & 16      \\  \hline
     smt\_op    & 1943     & 1935      & 8       \\  \hline
-    ipoutput   & 33739    & 33605     & 134     \\  \hline
+    ipoutput   & 33739    & 33605     & 134     \\  \Xhline{2\arrayrulewidth}
     total      & 1643001  & 1636453   & \hw{6548} \\  \hline
     cycle      & 9414     & 9375      & \hw{39}   \\  \hline
   \end{tabular}

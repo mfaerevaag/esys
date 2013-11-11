@@ -252,11 +252,6 @@ bliver fjernet af cross-compileren før den egentlige compilering
 begynder.
 
 \section{Implementering}
-Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
-forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
-er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
-statement, for at abstrahere de forskellige fysiske dele af
-instruktionerne væk.
 
 Brugt ternaries i stedet for mux komponent fleste steder \\
 TODO: always i stedet for sfg?????????????????????????
@@ -310,10 +305,16 @@ mere overskueligt at arbejde med end at have alt stående i én lang
 fil.
 
 \subsection{Komponenter}
+Vi har lavet hver komponent som en Gezel \code{dp} og de er alle
+forbundet i \code{Platform.fdl}'s CPU \code{dp}. Den eneste undtagelse
+er \code{inst\_parser.fdl} som bruges i controlleren via en \code{use}
+statement, for at abstrahere de forskellige fysiske dele af
+instruktionerne væk.
+
 \subsubsection{Controller} % Norsk
-Den instruksjon som mottas har vi valgt og parse med en ekstra
-komponent kalt \emph{Instruction Parser}. Denne mottar blott en
-instruksjon paa 32-bit og returnerer:
+Den instruktion som modtages har vi valgt at parse med et ekstra
+komponent kaldet \emph{Instruction Parser}. Denne modtager blot en
+instruktion på 32-bit og returnerer:
 
 \begin{itemize}
   \item \code{opcode} (4-bit)

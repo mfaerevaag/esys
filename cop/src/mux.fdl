@@ -1,0 +1,9 @@
+dp mux(
+  in a, b    : tc(32);
+  in select  : ns(1);
+  out r      : tc(32)) {
+
+  always {
+    r = select ? b : a;
+  }
+}

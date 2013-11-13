@@ -1,0 +1,29 @@
+#include "adder.fdl"
+
+dp test_adder(
+  in  r    : tc(32);
+  out a, b : tc(32)) {
+
+  always{
+    $display($dec, "cycle:", $cycle, ", a=", a, ", b=", b, ", r=", r);
+  }
+
+  sfg test_0 { a=3; b=6; }
+  sfg test_1 { a=23; b=17; }
+  sfg test_2 { a=12; b=0; }
+}
+
+fsm f_testbench(test_adder) { 
+  initial s0;
+
+  state s1, s2;
+
+  @s0 (test_0) -> s1;
+  @s1 (test_1) -> s2;
+  @s2 (test_2) -> s0;
+}
+
+system adder_sys {
+  adder(a, b, r);
+  test_adder(a, b, r);
+}

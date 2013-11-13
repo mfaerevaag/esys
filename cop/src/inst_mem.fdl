@@ -1,0 +1,21 @@
+ipblock inst_mem(
+	in address : ns(10);
+	in wr      : ns(1);
+	in rd      : ns(1);
+	in idata   : ns(32);
+	out odata  : ns(32)) {
+
+	iptype "ram";
+	ipparm "size=512";
+	ipparm "wl=32";
+	ipparm "file=data/mwi.out";
+}
+        
+dp inst_reader(
+	in addr      : ns(10);
+	out data_out : ns(32)) {
+
+  // hardcoded for always reading
+	use inst_mem(addr, 0, 1, 0,
+        data_out);
+}

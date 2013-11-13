@@ -1,0 +1,10 @@
+dp jump_handler(
+	in alu_neg           : ns(1);
+	in alu_zero          : ns(1);
+	in jmp, jlt, jgt     : ns(1);
+	out do_jmp           : ns(1)) {
+	
+	always {
+		do_jmp = jmp | (jlt & alu_neg) | (jgt & ~alu_neg & ~alu_zero);
+	}
+}

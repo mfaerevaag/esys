@@ -1,0 +1,46 @@
+dp regfile(
+  in asel, bsel     : ns(3);
+  in write_enable   : ns(1);
+  in write_addr     : ns(3);
+  in write_data     : tc(32);
+  out a, b          : tc(32)) {
+
+  reg r1, r2, r3, r4, r5, r6, r7, r8 : tc(32);
+
+  always {
+    a = (asel == 0b000) ? r1 :
+        (asel == 0b001) ? r2 :
+        (asel == 0b010) ? r3 :
+        (asel == 0b011) ? r4 :
+        (asel == 0b100) ? r5 :
+        (asel == 0b101) ? r6 :
+        (asel == 0b110) ? r7 : r8;
+
+    b = (bsel == 0b000) ? r1 :
+        (bsel == 0b001) ? r2 :
+        (bsel == 0b010) ? r3 :
+        (bsel == 0b011) ? r4 :
+        (bsel == 0b100) ? r5 :
+        (bsel == 0b101) ? r6 :
+        (bsel == 0b110) ? r7 : r8;
+
+    r1 = ((write_addr == 0b000) & write_enable) ? write_data : r1;
+    r2 = ((write_addr == 0b001) & write_enable) ? write_data : r2;
+    r3 = ((write_addr == 0b010) & write_enable) ? write_data : r3;
+    r4 = ((write_addr == 0b011) & write_enable) ? write_data : r4;
+    r5 = ((write_addr == 0b100) & write_enable) ? write_data : r5;
+    r6 = ((write_addr == 0b101) & write_enable) ? write_data : r6;
+    r7 = ((write_addr == 0b110) & write_enable) ? write_data : r7;
+    r8 = ((write_addr == 0b111) & write_enable) ? write_data : r8;
+
+    $display($dec,
+        "r1: ", r1,
+        " r2: ", r2,
+	    " r3: ", r3,
+	    " r4: ", r4,
+	    " r5: ", r5,
+	    " r6: ", r6,
+	    " r7: ", r7,
+	    " r8: ", r8);
+  }
+}

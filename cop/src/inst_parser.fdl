@@ -1,0 +1,19 @@
+dp inst_parser(
+	in  inst       : ns(32);
+    out opcode     : ns(4);
+    out r1, r2, r3 : ns(3);	
+	out imm        : ns(24);	
+	out simm       : ns(21);
+	out target     : ns(28)) {
+        
+	always {	
+		// helpers to simplify assignment of instruction parts
+		opcode   = inst[28 : 31];
+		r1       = inst[25 : 27];
+		r2       = inst[22 : 24];
+		r3       = inst[19 : 21];
+		imm      = inst[00 : 24];	
+		simm     = inst[00 : 21];
+		target   = inst[00 : 27];
+	}
+}

@@ -1,0 +1,8 @@
+dp adder(
+  in a, b : tc(32);
+  out r : tc(32)) {
+
+  always {
+    r = a + b;
+  }
+}

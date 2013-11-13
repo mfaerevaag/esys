@@ -1,0 +1,14 @@
+dp pc(
+	in target  : ns(32);
+	in jump    : ns(1);	
+	in wait    : ns(1);
+	out pc_out : ns(32)) {
+
+	reg count : ns(32);
+
+	always {
+		pc_out = wait ? count  :
+                 jump ? target : count + 1;
+		count = pc_out;
+	}
+}

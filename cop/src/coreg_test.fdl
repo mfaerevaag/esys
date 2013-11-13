@@ -1,0 +1,33 @@
+#include "coreg.fdl"
+
+dp test_coreg (
+    in  old  : ns(32);
+    in  curr : ns(32);
+    out new  : ns(32);
+    out step : ns(1)) {
+
+    always {
+        $display($dec,
+                 " old:", old,
+                 " curr:", curr,
+                 " new:", new,
+                 " step:", step);
+    }
+
+    sfg test_0 { old=0; curr=0; new=1; step=1; }
+    sfg test_1 { old=0; curr=30; new=2; step=1; }
+    sfg test_2 { old=0; curr=40; new=3; step=1; }
+    sfg test_3 { old=20; curr=50; new=4; step=1; }
+}
+
+sequencer test_coreg_ctrl(test_coreg) {
+    test_0;
+    test_1;
+    test_2;
+    test_3;
+}
+
+system coreg_sys {
+    coreg(old, curr, new, step);
+    test_coreg(old, curr, new, step);
+}

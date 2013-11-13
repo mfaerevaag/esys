@@ -1,0 +1,20 @@
+//#include "copro.fdl"
+
+dp test_copro(
+    out cmd         : ns(32);
+    out datain      : ns(32);
+    out datainrdy   : ns(32);
+
+    in dataout      : ns(32);
+    in dataoutrdy   : ns(32)) {
+
+	always {
+		$display($dec,
+				"cmd: ",       cmd,
+				"datain: ",    datain,
+				"datainrdy: ", datainrdy
+				"dataout: ",   dataout,
+				"dataoutrdy: ",dataoutrdy);
+	}
+
+}

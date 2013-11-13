@@ -1,0 +1,90 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage[latin1]{inputenc}
+\usepackage[danish]{babel}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage[table]{xcolor}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{parskip}
+\usepackage{abstract}
+\usepackage{url}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage[all]{xy}
+\usepackage{amstext}
+\usepackage{fancybox}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage[bottom]{footmisc}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{makecell}
+
+% bootstrap label style highlighting
+\newcommand\hw[2][]{\tikz[overlay]\node[fill=blue!20,inner sep=1pt, anchor=text, rectangle, rounded corners=0.1mm,#1] {#2};\phantom{#2}}
+
+% styling
+\newcommand{\code}[1]{\texttt{#1}}
+
+% diagrams
+\newcommand{\switch}[1]%
+  {\ovalbox{\text{\begin{minipage}{1.2in}\centering #1\end{minipage}}}}
+\newcommand{\minibox}[1]%
+  {\ovalbox{\text{\begin{minipage}{0.85in}\centering #1\end{minipage}}}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\parindent}{0pt}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{25pt}
+\lfoot{Side \thepage{} af \pageref{LastPage}}
+\rfoot{09/12-2013}
+\lhead{Embedded Systems}
+\chead{Assignment 3}
+\rhead{}
+
+\title{Assignment 3}
+\date{09.12.2013}
+\author{
+  Simon Altschuler\\
+  \code{s123563}
+  \and
+  Markus Færevaag\\
+  \code{s123692}
+}
+
+\begin{document}
+\maketitle
+\centerline{Gruppens arbejde har været fordelt lige i forbindelse med udarbejdelse
+af opgaven og rapporten.}
+\clearpage
+
+\tableofcontents
+\clearpage
+
+\section{Introduktion}
+
+\section{Problemstilling}
+\subsection{Fokus}
+Skal vælge at fokuserer på størrelse/power/hastighed
+
+\subsection{Algorithm}
+Skal ud fra fokus vælge en passende algoritme
+
+\section{Design}
+\subsection{Fokus}
+Vi vælger at fokuserer på hastighed, størrelse er
+irrelevant. Energiforbrug er af mindre betydning, men er stadig værd
+at overveje
+
+
+\section{Implementation}
+
+\section{Resultater}
+\end{document}

@@ -1,0 +1,6 @@
+report/auto
+*.aux
+*.pdf
+*.toc
+
+!report/diagrams/*.pdf

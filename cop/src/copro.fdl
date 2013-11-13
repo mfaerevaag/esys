@@ -4,14 +4,24 @@
 dp copro(
     in cmd         : ns(32);
     in datain      : ns(32);
-    in datainrdy   : ns(32);
+    in datainrdy   : ns(1);
 
     out dataout    : ns(32);
-    out dataoutrdy : ns(32)) {
+    out dataoutrdy : ns(1)) {
 
-    use mwi(old, curr,
+	sig data              : ns(28);
+	sig old, curr, result : ns(28);
+
+    use coreg(data, datainrdy,
+			  old, curr);
+
+    use mwi(old, curr, datainrdy,
             result);
 
-    use regfile(10, 1,
-                old, curr);
+
+	always {
+		data = cmd[0:27];
+		dataout = result;
+		dataoutrdy = datainrdy;
+	}
 }

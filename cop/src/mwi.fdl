@@ -1,6 +1,7 @@
 dp mwi (
     in  old    : ns(32);
     in  curr   : ns(32);
+    in  enable : ns(1);
     out result : ns(32)) {
 
     reg acc : ns(32);
@@ -9,7 +10,7 @@ dp mwi (
 
     always {
         add = curr + acc;
-        sub = add - old;
+        sub = enable ? add - old : acc;
 
         acc = sub;
         result = (ns(57))(sub * 1118482) >> 25;

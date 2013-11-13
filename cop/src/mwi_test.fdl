@@ -1,24 +1,26 @@
 #include "mwi.fdl"
 
 dp test_mwi(
-    in result : ns(32);
-    out old   : ns(32);
-    out curr  : ns(32)) {
+    in result  : ns(32);
+    out enable : ns(1);
+    out old    : ns(32);
+    out curr   : ns(32)) {
 
     always {
         $display($dec,
                  "result: ", result,
+                 " enable: ", enable,
                  " old: ", old,
                  " curr: ", curr);
     }
 
-    sfg test_0 { old=0; curr=0; }
-    sfg test_1 { old=0; curr=30; }
-    sfg test_2 { old=0; curr=40; }
-    sfg test_3 { old=20; curr=90; }
-    sfg test_4 { old=60; curr=60; }
-    sfg test_5 { old=60; curr=60; }
-    sfg test_6 { old=60; curr=60; }
+    sfg test_0 { enable=0; old=0; curr=0; }
+    sfg test_1 { enable=1; old=0; curr=30; }
+    sfg test_2 { enable=1; old=0; curr=40; }
+    sfg test_3 { enable=1; old=20; curr=90; }
+    sfg test_4 { enable=1; old=60; curr=60; }
+    sfg test_5 { enable=1; old=60; curr=60; }
+    sfg test_6 { enable=1; old=60; curr=60; }
 }
 
 sequencer test_mwi_ctrl(test_mwi) {
@@ -32,6 +34,7 @@ sequencer test_mwi_ctrl(test_mwi) {
 }
 
 system mwi_sys {
-    mwi(old, curr, result);
-    test_mwi(result, old, curr);
+    mwi(old, curr, enable,
+		result);
+    test_mwi(result, enable, old, curr);
 }

@@ -7,17 +7,17 @@ dp test_coreg (
     out step : ns(1)) {
 
     always {
-        $display($dec,
+        $display($cycle, $dec,
                  " old:", old,
                  " curr:", curr,
                  " new:", new,
                  " step:", step);
     }
 
-    sfg test_0 { old=0; curr=0; new=1; step=1; }
-    sfg test_1 { old=0; curr=30; new=2; step=1; }
-    sfg test_2 { old=0; curr=40; new=3; step=1; }
-    sfg test_3 { old=20; curr=50; new=4; step=1; }
+    sfg test_0 { new=1; step=1; }
+    sfg test_1 { new=2; step=1; }
+    sfg test_2 { new=3; step=1; }
+    sfg test_3 { new=4; step=1; }
 }
 
 sequencer test_coreg_ctrl(test_coreg) {
@@ -28,6 +28,6 @@ sequencer test_coreg_ctrl(test_coreg) {
 }
 
 system coreg_sys {
-    coreg(old, curr, new, step);
+    coreg(new, step, old, curr);
     test_coreg(old, curr, new, step);
 }

@@ -2,24 +2,40 @@
 
 dp test_copro(
     in dataout      : ns(32);
-    in dataoutrdy   : ns(32);
+    in dataoutrdy   : ns(1);
 
     out cmd         : ns(32);
     out datain      : ns(32);
-    out datainrdy   : ns(32)) {
+    out datainrdy   : ns(1)) {
 
     always {
          $display($dec,
-                  "cmd: ",       cmd,
-                  "datain: ",    datain,
-                  "datainrdy: ", datainrdy
-                  "dataout: ",   dataout,
-                  "dataoutrdy: ",dataoutrdy);
+                  " cmd:",        cmd,
+                  " datain:",     datain,
+                  " datainrdy:",  datainrdy,
+                  " dataout:",    dataout,
+                  " dataoutrdy:", dataoutrdy);
     }
 
-    sfg test_0 { cmd=0b0100; datain=0; datainrdy=1; }
-    sfg test_0 { cmd=0b0100; datain=0; datainrdy=1; }
-    sfg test_0 { cmd=0b0100; datain=0; datainrdy=1; }
-    sfg test_0 { cmd=0b0100; datain=0; datainrdy=1; }
-
+    sfg test_0 { cmd=0b0100 # (ns(28))30; datain=0; datainrdy=0; }
+    sfg test_1 { cmd=0b0100 # (ns(28))60; datain=0; datainrdy=0; }
+    sfg test_2 { cmd=0b0100 # (ns(28))90; datain=0; datainrdy=0; }
+    sfg test_3 { cmd=0b0100 # (ns(28))10; datain=0; datainrdy=1; }
 }
+
+sequencer test_copro_ctrl(test_copro) {
+	test_0;
+	test_1;
+	test_2;
+	test_3;
+}
+
+system test_mwi {
+	copro(cmd, datain, datainrdy,
+		  dataout, dataoutrdy);
+
+	test_copro(dataout, dataoutrdy,
+			   cmd, datain, datainrdy);
+}
+
+

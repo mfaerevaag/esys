@@ -1,4 +1,4 @@
-dp regfile(
+ dp regfile(
   in asel, bsel     : ns(3);
   in write_enable   : ns(1);
   in write_addr     : ns(3);

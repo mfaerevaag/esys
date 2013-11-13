@@ -1,0 +1,17 @@
+dp mwi(
+	in old     : ns(32);
+	in curr    : ns(32);
+	out result : ns(32)) {
+
+	reg acc : ns(32);
+	sig add : ns(32);
+	sig sub : ns(32);
+
+	always {
+		add = curr + acc;
+		sub = add - old;
+
+		acc = sub;
+		result = (ns(57))(sub * 1118482) >> 25;
+	}
+}

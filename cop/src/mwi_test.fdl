@@ -1,0 +1,31 @@
+#include "mwi.fdl"
+
+dp test_mwi(
+    in result : ns(32);
+    out old   : ns(32);
+    out curr  : ns(32)) {
+
+    always {
+        $display($dec,
+                 "result: ", result,
+                 "old: ", old,
+                 "curr: ", curr);
+    }
+
+    sfg test_0 { old=0; curr=0; }
+    sfg test_1 { old=0; curr=30; }
+    sfg test_2 { old=0; curr=40; }
+    sfg test_3 { old=20; curr=50; }
+}
+
+sequencer test_mwi_ctrl(test_mwi) {
+    test_0;
+    test_1;
+    test_2;
+    test_3;
+}
+
+system mwi_sys {
+    mwi(old, curr, result);
+    test_mwi(old, curr, result);
+}

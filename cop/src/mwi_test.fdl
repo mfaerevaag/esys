@@ -8,14 +8,17 @@ dp test_mwi(
     always {
         $display($dec,
                  "result: ", result,
-                 "old: ", old,
-                 "curr: ", curr);
+                 " old: ", old,
+                 " curr: ", curr);
     }
 
     sfg test_0 { old=0; curr=0; }
     sfg test_1 { old=0; curr=30; }
     sfg test_2 { old=0; curr=40; }
-    sfg test_3 { old=20; curr=50; }
+    sfg test_3 { old=20; curr=90; }
+    sfg test_4 { old=60; curr=60; }
+    sfg test_5 { old=60; curr=60; }
+    sfg test_6 { old=60; curr=60; }
 }
 
 sequencer test_mwi_ctrl(test_mwi) {
@@ -23,9 +26,12 @@ sequencer test_mwi_ctrl(test_mwi) {
     test_1;
     test_2;
     test_3;
+    test_4;
+    test_5;
+    test_6;
 }
 
 system mwi_sys {
     mwi(old, curr, result);
-    test_mwi(old, curr, result);
+    test_mwi(result, old, curr);
 }

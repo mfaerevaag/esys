@@ -10,5 +10,7 @@ dp pc(
 		pc_out = wait ? count  :
                  jump ? target : count + 1;
 		count = pc_out;
+
+		$display("PC: ", pc_out);
 	}
 }

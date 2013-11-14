@@ -1,6 +1,6 @@
 $option "vcd"
 $option "profile_toggle_alledge"
-$option "profile_display_operations"
+//$option "profile_display_operations"
 
 
 #include "pc.fdl"
@@ -25,7 +25,7 @@ dp CPU(
        ){
 
         sig target, pc_out, alu_res, reg_a, reg_b, inst, rw_data : ns(32);
-        sig do_jmp, jmp, jlt, jgt, load, store, rw_flag, alu_op, alu_neg, alu_zero, addi, wait : ns(1);
+	    sig do_jmp, jmp, jlt, jgt, load, store, mwi, rw_flag, alu_op, alu_neg, alu_zero, addi, wait : ns(1);
         sig reg_asel, reg_bsel, rw_addr : ns(3);
         sig alu_sel : ns(2);
 
@@ -55,7 +55,7 @@ dp CPU(
 	    use controller(inst, alu_res, reg_b, M_dataoutrdy,
 	        jmp, jlt, jgt,
 	        alu_op, alu_sel, addi,
-	        load, store,
+            load, store, mwi,
 	        rw_addr, rw_data, rw_flag, target,
 	        reg_asel, reg_bsel,
             simm,
@@ -64,10 +64,14 @@ dp CPU(
         always {
 	       	M_datain = (ns(8))0 # (ns(24))reg_b;
 	       	M_cmd = load ? (ns(4))0b0010 # (ns(28))0 :
-                    store ? (ns(5))0b00101 # (ns(27))reg_b : (ns(32))0b0;
-	        M_datainrdy = load | store;
-            rw_write = load ? M_dataoutrdy & rw_flag : rw_flag;
-	        rw_data_real = load ? M_dataout : rw_data;
+                    store ? (ns(5))0b00101 # (ns(27))reg_b :
+					mwi ? (ns(4))0b0011 # (ns(28))reg_b : (ns(32))0b0;
+	        M_datainrdy = load | store | mwi;
+
+            rw_write = (load | mwi) ? M_dataoutrdy & rw_flag : rw_flag;
+	        rw_data_real = (load | mwi) ? M_dataout : rw_data;
+
+			$display("dataoutrdy: ", M_dataoutrdy);
         }
 }
 
@@ -800,8 +804,8 @@ system CPUsystem{
    bus_toplevel(CPUdatain,CPUcmd,CPUdatainrdy,CPUdataout,CPUdataoutrdy, // master unit
            DMDatain,DMDatainrdy,DMDataout,DMCmdout,DMDataoutrdy,DMStall, // slave (data memory)
            SensorDatain,SensorDatainrdy,SensorDataout,SensorCmdout,SensorDataoutrdy,SensorStall,  // slave (sensor)
-		   CoproDatain,CoproDatainrdy,CoproDataout,CoproCmdout,CoproDataoutrdy,CoproStall,  // slave (co-processor)
-           OPDatain,OPDatainrdy,OPDataout,OPCmdout,OPDataoutrdy,OPStall); // slave (Output)
+		   OPDatain,OPDatainrdy,OPDataout,OPCmdout,OPDataoutrdy,OPStall, // slave (Output)
+		   CoproDatain,CoproDatainrdy,CoproDataout,CoproCmdout,CoproDataoutrdy); // slave (co-processor)
            
    DataMem(DMDataout,DMCmdout,DMDataoutrdy,DMDatain,DMDatainrdy,DMStall); // Data Memory Unit
    Sensor(SensorDataout,SensorCmdout,SensorDataoutrdy,SensorDatain,SensorDatainrdy,SensorStall);

@@ -12,16 +12,19 @@ dp copro(
 	sig data              : ns(28);
 	sig old, curr, result : ns(28);
 
+	reg delay : ns(1);
+
     use coreg(data, datainrdy,
 			  old, curr);
 
     use mwi(old, curr, datainrdy,
             result);
 
-
 	always {
 		data = cmd[0:27];
 		dataout = result;
-		dataoutrdy = datainrdy;
+		delay = datainrdy;
+		dataoutrdy = delay;
+		$display($dec, "data: ", data, " cmd: ", cmd);
 	}
 }

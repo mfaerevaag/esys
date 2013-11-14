@@ -13,6 +13,7 @@ dp controller(
     out addi               : ns(1);
     out load               : ns(1);
     out store              : ns(1);
+    out mwi                : ns(1);
     out rw_addr            : ns(3);
     out rw_data            : ns(32);
     out rw_flag            : ns(1);
@@ -36,6 +37,7 @@ dp controller(
 
         load    = opcode == 0b1000;
         store   = opcode == 0b1001;
+        mwi     = opcode == 0b1010;
 
         set     = opcode == 0b0100;
         cmp     = opcode == 0b0110;
@@ -43,7 +45,7 @@ dp controller(
 
         addi    = opcode == 0b0101;
 
-        rw_flag = ~cmp & (set | mov | alu_op | load);
+        rw_flag = ~cmp & (set | mov | alu_op | load | mwi);
         rw_addr = r1;
         rw_data = mov ? reg_b :
                   set ? imm :
@@ -58,6 +60,6 @@ dp controller(
         alu_sel = cmp  ? 0b01 :
                   addi ? 0b00 : opcode[0:1];
 
-        wait = (store | load) & ~bus_datardy;
+        wait = (store | load | mwi) & ~bus_datardy;
     }
 }

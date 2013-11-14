@@ -16,7 +16,7 @@
 *.out
 *.app
 /bin
-
+TRACE.vcd
 *.log
 tmp.*
 

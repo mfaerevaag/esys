@@ -3,4 +3,6 @@ report/auto
 *.pdf
 *.toc
 
+traces
+
 !report/diagrams/*.pdf

@@ -62,16 +62,15 @@ dp CPU(
             wait);
 
         always {
-	       	M_datain = (ns(8))0 # (ns(24))reg_b;
-	       	M_cmd = load ? (ns(4))0b0010 # (ns(28))0 :
-                    store ? (ns(5))0b00101 # (ns(27))reg_b :
-					mwi ? (ns(4))0b0011 # (ns(28))reg_b : (ns(32))0b0;
-	        M_datainrdy = load | store | mwi;
+		M_datain    = (ns(8))0 # (ns(24))reg_b;
+			M_datainrdy = load | store | mwi;
 
-            rw_write = (load | mwi) ? M_dataoutrdy & rw_flag : rw_flag;
+		M_cmd = load  ? (ns(4))0b0010  # (ns(28))0 :
+                    store ? (ns(5))0b00111 # (ns(27))reg_b :
+					mwi   ? (ns(4))0b0100  # reg_b[0:27] : 0;
+
+            rw_write     = (load | mwi) ? M_dataoutrdy & rw_flag : rw_flag;
 	        rw_data_real = (load | mwi) ? M_dataout : rw_data;
-
-			$display("dataoutrdy: ", M_dataoutrdy);
         }
 }
 
@@ -586,7 +585,6 @@ dp DataMem(
        address = (cmdr[27] == 0) ? datainr : 0b00000 # cmdr[0:26]; // if Store Word instruction, use cmd[0:26] as address. If Load Word instruction use datain as address
        idata = (cmdr[27] == 0) ? 0 : datainr; // if store word use datain as data to be stored, if load word, just set idata to 0
        //$display($dec, "Cycle: ", $cycle);
-   	   //$display($dec, "   address: ", address);
    }
    
    sfg captureData{
@@ -805,10 +803,10 @@ system CPUsystem{
            DMDatain,DMDatainrdy,DMDataout,DMCmdout,DMDataoutrdy,DMStall, // slave (data memory)
            SensorDatain,SensorDatainrdy,SensorDataout,SensorCmdout,SensorDataoutrdy,SensorStall,  // slave (sensor)
 		   OPDatain,OPDatainrdy,OPDataout,OPCmdout,OPDataoutrdy,OPStall, // slave (Output)
-		   CoproDatain,CoproDatainrdy,CoproDataout,CoproCmdout,CoproDataoutrdy); // slave (co-processor)
+		   CoproDatain,CoproDatainrdy,CoproDataout,CoproCmdout,CoproDataoutrdy, CoproStall); // slave (co-processor)
            
    DataMem(DMDataout,DMCmdout,DMDataoutrdy,DMDatain,DMDatainrdy,DMStall); // Data Memory Unit
    Sensor(SensorDataout,SensorCmdout,SensorDataoutrdy,SensorDatain,SensorDatainrdy,SensorStall);
    Output(OPDataout,OPCmdout,OPDataoutrdy,OPDatain,OPDatainrdy,OPStall,FilterOut);
-   copro(CoproCmdout,CoproDataout,CoproDataoutrdy,CoproDatain,CoproDatainrdy);
+   copro(CoproCmdout,CoproDataout,CoproDataoutrdy,CoproDatain,CoproDatainrdy, CoproStall);
 }

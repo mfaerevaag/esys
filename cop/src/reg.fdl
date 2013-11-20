@@ -33,8 +33,8 @@
     r7 = ((write_addr == 0b110) & write_enable) ? write_data : r7;
     r8 = ((write_addr == 0b111) & write_enable) ? write_data : r8;
 
-    $display($dec,
-        "r1: ", r1,
+    $display($cycle, $dec,
+        " r1: ", r1,
         " r2: ", r2,
 	    " r3: ", r3,
 	    " r4: ", r4,

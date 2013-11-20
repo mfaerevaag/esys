@@ -14,7 +14,5 @@ dp mwi (
 
         acc = sub;
         result = (ns(57))(sub * 1118482) >> 25;
-
-        $display($dec, "acc: ", acc);
     }
 }

@@ -69,9 +69,9 @@ af opgaven og rapporten.}
 \clearpage
 
 \section{Introduktion} % Norsk
-Vi har i denne oppgave integrert vaares MWI filter fra A2 om til en
-co-processor som styres av processoren i vaares tidligere system. De
-kommunsirer overbussen og er ikke direkte forbundet.
+Vi har i denne oppgave re-implementeret vores MWI filter fra A2 i form
+af en co-processor, som styres af processoren i vores tidligere
+system. De kommunikerer over bussen og er ikke direkte forbundet.
 
 Dette gjoer at vi kan oppnaa en helt annen ydelse naar det gjelder
 analysen av dataen, resulterende en endnu mer realistisk loesning av et
@@ -79,10 +79,43 @@ komplett inlejret system.
 
 \section{Problemstilling}
 \subsection{Fokus}
-Skal vælge at fokuserer på størrelse/power/hastighed
+Det er nødvendigt at vælge hvilke aspekter af ydeevne man vil
+fokuserer på når man skal designe en processor, eller i dette tilfælde
+en co-processor. I nogle tilfælde, f.eks. GPU'er, er det altafgørende
+hvor hurtigt enheden kan behandle tal. Hvis denne GPU skulle bruges i
+en mobil enhed, ville det være at samme kritiske karakter at den ikke
+bruger for meget strøm og at den er lille nok til at en moderne
+telefon har plads til den.
 
-\subsection{Algorithm}
-Skal ud fra fokus vælge en passende algoritme
+I vores tilfælde er strømforbrug ikke en særlig vigtig egenskab. Det
+er naturligvis hensigsmæssigt at systemet som helhed bruger så lidt
+strøm som muligt, men da der er mange andre komponenter indblandet
+(såsom skærm, sensore og højtalere) vil vores co-processor aldrig
+blive den afgørende faktor for det samlede strømforbrug.
+
+Pladsforbrug er ej heller af høj betydning. Vi ved at størrelsen på
+co-processoren realistisk set ville være utroligt lille, så om den
+fylder $0.5mm^2$ eller $5mm^2$ er ikke noget, der vil afgøre én
+implementationsmetode over en anden.
+
+Vi vælger til slut at fokusere hovedsageligt på hastighedsmæssig
+ydeevne. Medicinalt udstyr bør frem for alt være pålideligt og
+præcist, og det er derfor afgørende at hardwaren aldrig bliver en
+flaskehals for dataanalysen. Vi vil hellere have et system som bruger
+lidt mere strøm, og altid er pålideligt.
+
+\subsection{Algoritmer}
+Ud fra vores fokus på hastighed skal vi finde nogle algoritmer som
+opfylder vores krav til systemet. Disse krav inkluderer bl.a.~at
+co-processoren skal kunne udregne en nyt MWI værdi på én cycle. På den
+måde slipper vi for at systemet venter på udregningen og kan gå i
+hvile eller udføre andre opgaver inden det næste data sample bliver
+sent til main processoren.
+
+Hvis vi ikke havde valgt at fokusere på hastighed, og i stedet
+optimeret for eksempelvis pladsforbrug, ville vi have undersøgt
+hvordan vi kunne bruge færrest mulige registre og andre komponenter i
+implementationen.
 
 \section{Design}
 \subsection{Fokus}

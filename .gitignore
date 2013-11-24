@@ -17,6 +17,8 @@
 *.app
 /bin
 TRACE.vcd
+traces
+*.dvi
 *.log
 tmp.*
 

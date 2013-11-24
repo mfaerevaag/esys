@@ -153,6 +153,7 @@ Beskriv ``pointer'' metoden
 Behøver ikke at tjekke hvor mange samples der er observeret fordi registre som standard = 0
 
 \subsection{MWI udregning}
+Bruger akkumulator, hardcoded division
 
 \section{Profilering}
 \subsection{Strømforbrug}
@@ -242,11 +243,32 @@ har derfor ingen automatisk test til dette, men har blot tjekket
 output manuelt mens vi har kørt simuleringen.
 
 \section{Resultater}
-Antal cycles i forhold til uden copro,
+Vi opdagede under udarbejdelsen af denne rapport at vi har lavet en
+fejl i vores måling af energiforbrug i A2. Vi havde udregnet den
+forkerte aktivitet. Den skulle have været $42000$, da vi havde glemt
+at gange toggles/MWI med $250$. Dette giver os et energiforbrug i A2
+på $0.1089\ \mu w$\footnote{Udregningen er $42000 \cdot 1.8 \cdot
+  10^{-16}\ F \cdot {(1.2\ V)}^2 \cdot 10\ kHz = 0.1089\ \mu$}.
 
-toggles 3545 vs 6548
-cycles  7471 vs 9414
+Tabel~\ref{table:comparison} giver et overblik over de f
 
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+    \hline \rowcolor{blue!25} \cellcolor{blue!25}
+        & Med              & Uden            & Forhold \\ \hline \cellcolor{blue!25}
+Toggles & $3545$           & $6548$          & $0.54$ \\ \hline \cellcolor{blue!25}
+Cycles  & $7471$           & $9414$          & $0.79$ \\ \hline \cellcolor{blue!25}
+Energi  & $0.05962\ \mu w$ & $0.1089\ \mu w$ & $0.55$ \\ \hline
+  \end{tabular}
+  \caption{Sammenligning af implementation med og uden co-processor}
+  \label{table:comparison}
+\end{table}
+
+Vi ser at der på alle områder er en sket en markant forbedring. Det
+hænger til dels sammen, da mindre cycles generelt betyder lavere
+energiforbrug og færre toggles. Det er interessant at det gør en så
+stor forskel på en forholdsvis simpel opgave.
 
 \section{Konlusion}
 

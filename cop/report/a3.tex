@@ -154,6 +154,72 @@ Behøver ikke at tjekke hvor mange samples der er observeret fordi registre som s
 
 \subsection{MWI udregning}
 
+\section{Profilering}
+\subsection{Strømforbrug}
+Vi måler strømforbruget nøjagtig som vi gjorde det i A2, blot med
+nyligt målte antal toggle. Først finder vi en realistisk clock
+frekvens til CPU'en. Vi ved fra forrige opgave at samples bliver målt
+$250/s$, og vi bruger $31$ cycles på at udregne en MWI værdi. Vi har
+altså at
+
+\[  \frac{1\ s}{250 * 31\ cycles} = 129\frac{\mu s}{cycle}  \]
+
+Fra dette kan vi finde det ønskede antal cycles per sekund (clock frekvensen):
+
+\[  \frac{1s}{129\frac{\mu s}{cycle}} = 7752\ cycles \]
+
+Vi vil altså gerne udføre $7752$ cycles i sekundet, og dermed en have
+clock frekvens på $7752\ Hz$. Vi runder op til $8\ kHz$ da vi vil undgå
+en clock speed, der er for langsom til at følge med sample raten.
+
+Nu ser vi på hvor mange toggles der bliver udført per sekund, se
+tabel~\ref{table:toggles}. Vi målte $3545$ toggles for én MWI
+udregning, og vi fandt $31$ cycles per MWI. Dette giver os
+$\frac{3545}{31} \approx 115\ toggles/mwi $. Vi ved at vi skal lave
+omkring $250$ MWI udregninger per sekund, hvorfor vi ganger med dette:
+$115 \cdot 250 = 28750$
+
+Vi finder nu strømforbruget af CPU vha.~af følgende formel:
+\[  \alpha \cdot C \cdot V_{dd}^2 \cdot f \]
+
+Hvor $\alpha$ er aktivitet, $C$ er kapacitans, $V_{dd}$ er spænding og
+$f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
+= 1.2\ V$ og $C = 1.8 \cdot 10^{-16}\ F$ og får følgende:
+
+\[28750 \cdot 1.8 \cdot 10^{-16}\ F \cdot {(1.2\ V)}^2 \cdot 8\ kHz = 0.05962\ microwatts \]
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|}
+    \hline \rowcolor{blue!25}
+    Operation  & Slut MWI & Start MWI & Forskel \\ \hline
+    dpoutput   & 190083   & 189329    & 754     \\ \hline
+    reg        & 90510    & 90147     & 363     \\ \hline
+    sig        & 116382   & 115913    & 469     \\ \hline
+    assign\_op & 257210   & 256181    & 1029    \\ \hline
+    ior\_op    & 13492    & 13436     & 56      \\ \hline
+    and\_op    & 12579    & 12526     & 53      \\ \hline
+    shl\_op    & 493      & 493       & 0       \\ \hline
+    add\_op    & 19187    & 19109     & 78      \\ \hline
+    sub\_op    & 995      & 992       & 3       \\ \hline
+    concat\_op & 4441     & 4424      & 17      \\ \hline
+    mul\_op    & 3024     & 3010      & 14      \\ \hline
+    cast\_op   & 7060     & 7032      & 28      \\ \hline
+    not\_op    & 1452     & 1446      & 6       \\ \hline
+    sel\_op    & 119182   & 118726    & 456     \\ \hline
+    eq\_op     & 40642    & 40471     & 171     \\ \hline
+    ne\_op     & 2990     & 2976      & 14      \\ \hline
+    smt\_op    & 0        & 0         & 0       \\ \hline
+    grt\_op    & 28       & 28        & 0       \\ \hline
+    ipoutput   & 9159     & 9125      & 34      \\ \Xhline{2\arrayrulewidth}
+
+    total      & 888909   & 885364    & \cellcolor{blue!10} 3545    \\ \hline
+    cycle      & 7471     & 7440      & \cellcolor{blue!10} 31      \\ \hline
+  \end{tabular}
+  \caption{Toggle data fra Gezel}
+  \label{table:toggles}
+\end{table}
+
 \section{Test}
 Tester alle komponenter individuelt
 Svært at teste bus integration automatisk

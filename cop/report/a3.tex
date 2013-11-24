@@ -221,12 +221,31 @@ $f$ er clock frekvens. Vi bruger de udleverede værdier, nemlig $V_{dd}
 \end{table}
 
 \section{Test}
-Tester alle komponenter individuelt
-Svært at teste bus integration automatisk
+Vi har testet de tre komponenter hver især i separate filer (med
+{\_test.fdl} endelse). Da man ikke kan lave deciderede unit tests i
+Gezel har vi i stedet brugt \code{\$display} til at undersøge om
+outputtet af et komponent stemte overens med vores forventninger. Det
+er ikke særlig holdbart og kan være kilde til fejlagtig acceptering,
+men i dette størrelsesforhold har det været tilstrækkeligt.
 
+Vi har brugt en \code{sequencer} state machine i hver test til at
+gennenløbe forskellige \code{sfg}er i rækkefølge, da vi på den måde
+nemt har kunnet simulere en strøm af data. Eksempelvis er der i
+\code{mwi\_test.fdl} 7 forskellige states, som hver udfører en enkelt
+operation og vi kan i outputtet følge med i, om det korrekte
+output vises.
+
+Det er svært at teste integrationen af co-processoren i bussen på
+denne måde, dels grundet bussens kompleksitet og dels fordi det er
+svært at skrive en \code{fsm} til at holde styr på state og memory. Vi
+har derfor ingen automatisk test til dette, men har blot tjekket
+output manuelt mens vi har kørt simuleringen.
 
 \section{Resultater}
-Antal cycles i forhold til uden copro
+Antal cycles i forhold til uden copro,
+
+toggles 3545 vs 6548
+cycles  7471 vs 9414
 
 
 \section{Konlusion}

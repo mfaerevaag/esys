@@ -102,7 +102,11 @@ Vi vælger til slut at fokusere hovedsageligt på hastighedsmæssig
 ydeevne. Medicinalt udstyr bør frem for alt være pålideligt og
 præcist, og det er derfor afgørende at hardwaren aldrig bliver en
 flaskehals for dataanalysen. Vi vil hellere have et system som bruger
-lidt mere strøm, og altid er pålideligt.
+lidt mere strøm, og altid er pålideligt. 
+
+Som anden prioritet vil vi optimere for strømforbrug. Vi vil finde
+passende algoritmer der opfylder vores hastighedsmæssige krav og
+forsøge at optimere disse til et minimalt strømforbrug.
 
 \subsection{Algoritmer}
 Ud fra vores fokus på hastighed skal vi finde nogle algoritmer som
@@ -111,6 +115,11 @@ co-processoren skal kunne udregne en nyt MWI værdi på én cycle. På den
 måde slipper vi for at systemet venter på udregningen og kan gå i
 hvile eller udføre andre opgaver inden det næste data sample bliver
 sent til main processoren.
+
+Vores krav til energiforbruget er som udgangspunkt mere vage da vi ved
+at det vil afhænge af hvilket design vi finder passende
+mht.~hastighed. Vi stiller dermed det krav at energiforbruget ikke må
+overstige, og helst være under, det i A2 funde forbrug.
 
 Hvis vi ikke havde valgt at fokusere på hastighed, og i stedet
 optimeret for eksempelvis pladsforbrug, ville vi have undersøgt

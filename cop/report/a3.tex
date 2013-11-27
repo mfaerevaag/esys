@@ -372,6 +372,13 @@ hænger til dels sammen, da mindre cycles generelt betyder lavere
 energiforbrug og færre toggles. Det er interessant at det gør en så
 stor forskel på en forholdsvis simpel opgave.
 
+Det som tager længst tid er kommunikation gennem bussen. Det tager
+minimum 9 cycles fra der sendes en kommando til man får et svar
+tilbage, selvom selve operationen der skal udføres kun tager en enkel
+cycle. Dette kunne optimeres ved enten at gøre bussen hurtigere eller
+ved at lave en bro mellem CPU og Co-processor, hvorved man kunne
+eliminerer forsinkelsen af co-processor operationerne fuldstændig.
+
 \section{Konlusion}
 
 \section{Kørsel}

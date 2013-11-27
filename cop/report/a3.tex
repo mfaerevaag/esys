@@ -221,8 +221,28 @@ ligger. Ved aa gjoere det
 % Behøver ikke at tjekke hvor mange samples der er observeret fordi
 % registre som standard = 0
 
-\subsection{MWI udregning}
-Bruger akkumulator, hardcoded division
+\subsection{MWI} % Norsk
+Vaares \emph{MWI} komponent faar inn to 32-bits vaerdier; en gammel og
+en ny, kalt \code{old} og \code{curr}. Ytligere faar den et flag
+\code{enable} der sier som den operere eller ikke.
+
+Ut saa gir den resultatet av dens beregning, ved et nytt 32-bits
+signal kalt \code{result}.
+
+Ydermere behoever vi en akkumulator der gemmer resultatene i
+register. Denne er naturligvis ogsaa paa 32-bits og kalles \code{acc}.
+
+Faar aa lave utregningen starter vi med aa legge sammen input
+vaerdien, kalt \code{curr}, og den nuvaerende akkumulator vaerdi, for
+saa aa gem det i et signal \code{add}. Derefter setter vi et
+\code{sub} signal det trekker \code{old} fra \code{add}, hvis
+\code{enable} er satt. Hvis ikke setter \code{sub} lik med
+akkumulatoren sin vaerdi, som den saa setter lik meg seg
+selv. Resultatet gir den utregnede \code{sub} vaerdi, delt med 30.
+
+Vi bruker en hardcoded divisjon. Altsaa vi bitshifter efter aa ha
+multiplisert med en faktor som tilsvarer 30. Dette er ytligere
+forklart i A2.
 
 
 \section{Profilering}

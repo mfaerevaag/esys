@@ -170,15 +170,15 @@ komponenter såsom \code{DataMemory} og \code{Sensor}. Slaveinterfacet
 består af 3 output signaler og 2 input mht.~bussen:
 
 \begin{description}
-\item[S_cmdout] Dette signal indeholder den command som bussen sender
+\item[S\_cmdout] Dette signal indeholder den command som bussen sender
   til co-processoren. Vi har implementeret det således at sample
   værdien er indeholdt i dette signal.
-\item[S_dataoutrdy] Indikerer hvorvidt bussen er klar med data gennem
-  \code{S_dataout} signalet.
-\item[S_dataout] Data som kan sendes til komponentet gennem bussen.
-\item[S_datainrdy] Indikerer hvorvidt co-processoren er klar med data
-  gennem \code{S_datain} signalet.
-\item[S_datain] Dataen som co-processoren har behandlet og sender
+\item[S\_dataoutrdy] Indikerer hvorvidt bussen er klar med data gennem
+  \code{S\_dataout} signalet.
+\item[S\_dataout] Data som kan sendes til komponentet gennem bussen.
+\item[S\_datainrdy] Indikerer hvorvidt co-processoren er klar med data
+  gennem \code{S\_datain} signalet.
+\item[S\_datain] Dataen som co-processoren har behandlet og sender
   tilbage gennem bussen.
 \end{description}
 

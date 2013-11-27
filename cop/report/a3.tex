@@ -78,6 +78,7 @@ komplett inlejret system.
 
 \section{Problemstilling}
 \subsection{Fokus}
+\label{subsec:focus}
 Det er nødvendigt at vælge hvilke aspekter af ydeevne man vil
 fokuserer på når man skal designe en processor, eller i dette tilfælde
 en co-processor. I nogle tilfælde, f.eks. GPU'er, er det altafgørende
@@ -101,7 +102,7 @@ Vi vælger til slut at fokusere hovedsageligt på hastighedsmæssig
 ydeevne. Medicinalt udstyr bør frem for alt være pålideligt og
 præcist, og det er derfor afgørende at hardwaren aldrig bliver en
 flaskehals for dataanalysen. Vi vil hellere have et system som bruger
-lidt mere strøm, og altid er pålideligt. 
+lidt mere strøm, og altid er pålideligt.
 
 Som anden prioritet vil vi optimere for strømforbrug. Vi vil finde
 passende algoritmer der opfylder vores hastighedsmæssige krav og
@@ -127,6 +128,9 @@ implementationen.
 
 \section{Design}
 \subsection{Overordnet}
+Under ses det et diagram over co-processoren med deres sentrale
+komponenter:
+
 \begin{figure}[H]
 \includegraphics[width=18cm]{diagrams/copro.pdf}
 \label{fig:schematic}
@@ -183,17 +187,43 @@ hver kan ses som både input til bussen og output fra
 co-processoren. Vi vælger at se det fra bussens perspektiv således at
 output repræsenterer output fra bussen og input til co-processoren.
 
+
 \section{Implementation}
 
-Bruger positive værdier da vi ved det er fucking fedt. % TODO: Le fak?
+Vi har brukt samme buss interface som i hoved processoren. Derfor er
+det ikke alle signalene som blir brukt. Fordi co-processoren faar sin
+data fra \code{S\_cmdout} bruker vi ikke \code{S\_dataout}.
+
+\code{S\_datainrdy} blir satt i \emph{Final State Machinen} til
+co-processoren avhengig om den staller og har fanget dataen.
+
+Da det er givet at data vaerdiene som blir givet er positive, bruker
+vi ikke two's-complement (\code{tc()}). Dette gjoer at vi kan bruke
+dobbelt saa store datavaerdier.
 
 \subsection{Register komponent}
-Bruger 30 registre
-Beskriv ``pointer'' metoden
-Behøver ikke at tjekke hvor mange samples der er observeret fordi registre som standard = 0
+% TODO: Til Design
+% Bruger 30 registre
+Som beskrevet i seksjon~\ref{subsec:focus} saa velger vi at fokusere
+paa hastighet. Derfor velger vi aa bruke en register fil med 30
+registre. Det giver et register per vaerdi, noe der gjoer at vi kun
+bruker en clock cycle paa en beregning, noe der er optimalt for
+hastighet.
+
+% TODO: Til Design
+% Beskriv ``pointer'' metoden
+I stedet for at aa ha tredve registre, der den forste altid er den
+seneste vaerdi, altsa ved at rykke alle vaerdiene et register opp ved
+hver input, velger vi aa bruke en 'pointer'. Denne pointer er saa bare
+en integer der holder styr paa i hvilket register den senester vaerdi
+ligger. Ved aa gjoere det
+
+% Behøver ikke at tjekke hvor mange samples der er observeret fordi
+% registre som standard = 0
 
 \subsection{MWI udregning}
 Bruger akkumulator, hardcoded division
+
 
 \section{Profilering}
 \subsection{Strømforbrug}

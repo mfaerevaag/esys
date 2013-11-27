@@ -127,23 +127,64 @@ hvordan vi kunne bruge færrest mulige registre og andre komponenter i
 implementationen.
 
 \section{Design}
-\subsection{Fokus}
-Vi vælger at fokuserer på hastighed, størrelse er
-irrelevant. Energiforbrug er af mindre betydning, men er stadig værd
-at overveje. En skærm vil alligevel være den klart mest energimæssigt
-krævende enhed.
-
-At bruge 30 registre vs at bruge 4 og loade tilbage. Vi bruger 30+lidt
-for at undgå ekstra load.
-
-
-\section{Implementation}
 \subsection{Overordnet}
 \begin{figure}[H]
 \includegraphics[width=18cm]{diagrams/copro.pdf}
 \label{fig:schematic}
 \caption{Skema over MWI co-processor implementationen}
 \end{figure}
+
+Co-processoren er delt op i 2 komponenter som vist på
+figur~\ref{fig:schematic}, nemlig \code{MWI} og og
+\code{Regfile}. \code{MWI} udfører selve MWI udregningen, mens
+\code{Regfile} holder styr på alle værdier, der modtages fra bussen.
+
+\subsection{Regfile}
+Vi har valgt at bruge 30 registre som buffer af data sample
+værdierne. Disse bliver løbende opdateret og når der er modtaget 30
+eller flere værdier bliver de ældste værdier overskrevet, da de ikke
+længere skal bruges. Allerede her er der en klar fordel i forhold til
+A2 implementationen da vi undgår en ekstra \code{load} instruktion for
+at hente de gamle værdier ud. Dette er dog på bekostning af et
+forholdsvist stort areal.
+
+En anden mulighed var at bruge 4 registre og som før loade den 30
+``iterationer'' gamle værdi ind fra \code{DataMemory}. Dette ville
+være pladsbesparende, men ville formodentlig ikke give en
+energibesparelse, grundet de ekstra cycles nødvendige for \code{load}
+instruktionen.
+
+\subsection{MWI}
+\code{MWI} komponentet bruger \code{Regfile}s output til at akkumulere
+de seneste 30 værdier i et register (ACC). Denne akkumulerede værdi
+bliver i hver cycle divideret med $30$, hvilket er resultatet som
+co-processoren sender tilbage gennem bussen.
+
+\subsection{Bus integration}
+Vi bruger et slaveinterface i bussen til at kommunikere til og fra
+co-processoren. Dette er implementeret ligesom de eksisterende
+komponenter såsom \code{DataMemory} og \code{Sensor}. Slaveinterfacet
+består af 3 output signaler og 2 input mht.~bussen:
+
+\begin{description}
+\item[S_cmdout] Dette signal indeholder den command som bussen sender
+  til co-processoren. Vi har implementeret det således at sample
+  værdien er indeholdt i dette signal.
+\item[S_dataoutrdy] Indikerer hvorvidt bussen er klar med data gennem
+  \code{S_dataout} signalet.
+\item[S_dataout] Data som kan sendes til komponentet gennem bussen.
+\item[S_datainrdy] Indikerer hvorvidt co-processoren er klar med data
+  gennem \code{S_datain} signalet.
+\item[S_datain] Dataen som co-processoren har behandlet og sender
+  tilbage gennem bussen.
+\end{description}
+
+Bemærk at det er lettere forvirrende navngivning af signalerne, da
+hver kan ses som både input til bussen og output fra
+co-processoren. Vi vælger at se det fra bussens perspektiv således at
+output repræsenterer output fra bussen og input til co-processoren.
+
+\section{Implementation}
 
 Bruger positive værdier da vi ved det er fucking fedt. % TODO: Le fak?
 
@@ -248,7 +289,7 @@ fejl i vores måling af energiforbrug i A2. Vi havde udregnet den
 forkerte aktivitet. Den skulle have været $42000$, da vi havde glemt
 at gange toggles/MWI med $250$. Dette giver os et energiforbrug i A2
 på $0.1089\ \mu w$\footnote{Udregningen er $42000 \cdot 1.8 \cdot
-  10^{-16}\ F \cdot {(1.2\ V)}^2 \cdot 10\ kHz = 0.1089\ \mu$}.
+  10^{-16}\ F \cdot {(1.2\ V)}^2 \cdot 10\ kHz = 0.1089\ \mu w$}.
 
 Tabel~\ref{table:comparison} giver et overblik over forskellen på
 vores system med og uden co-processoren:

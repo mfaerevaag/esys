@@ -1,0 +1,13 @@
+* Introduktion
+* Problemstilling
+* Design
+* Implementation
+** Beskrive regfile
+** Beskrive MWI
+* Profilering
+* Test
+* Resultater
+* Konskulsjon
+** Beskrive masse lort
+* Koersel
+** Basic instruks (copy/paste?)

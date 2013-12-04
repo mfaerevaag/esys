@@ -256,7 +256,7 @@ den så sætter lig med sig selv. Resultatet giver den udregnede
 
 Vi bruger en hardcoded division. Altså vi bitshifter efter at have
 multipliceret med en faktor som tilsvarer 30. Dette er yderligere
-forklaret i A2. %TODO
+forklaret i A2.
 
 \section{Profilering}
 \subsection{Areal}
@@ -385,7 +385,44 @@ gennenløbe forskellige \code{sfg}er i rækkefølge, da vi på den måde
 nemt har kunnet simulere en strøm af data. Eksempelvis er der i
 \code{mwi\_test.fdl} 7 forskellige states, som hver udfører en enkelt
 operation og vi kan i outputtet følge med i, om det korrekte
-output vises.
+output vises. Eksemplevis ser \code{sfg}'erne i \code{mwi\_test.fdl}
+ud som følger:
+
+\begin{figure}[H]
+\begin{lstlisting}
+dp test_mwi(...){
+    ...
+
+    sfg test_0 { enable=0; old=0;  curr=0;  }
+    sfg test_1 { enable=1; old=0;  curr=30; }
+    sfg test_2 { enable=1; old=0;  curr=40; }
+    sfg test_3 { enable=1; old=20; curr=90; }
+    sfg test_4 { enable=1; old=60; curr=60; }
+    sfg test_5 { enable=1; old=60; curr=60; }
+    sfg test_6 { enable=1; old=60; curr=60; }
+}
+\end{lstlisting}
+\caption{\code{mwi\_test.fdl}}
+\end{figure}
+
+
+Den korresponderende \code{sequencer} som løber dem igennem, ser sådan
+ud:
+
+\begin{figure}[H]
+\begin{lstlisting}
+sequencer test_mwi_ctrl(test_mwi) {
+    test_0;
+    test_1;
+    test_2;
+    test_3;
+    test_4;
+    test_5;
+    test_6;
+}
+\end{lstlisting}
+\caption{\code{mwi\_test.fdl}}
+\end{figure}
 
 Det er svært at teste integrationen af co-processoren i bussen på
 denne måde, dels grundet bussens kompleksitet og dels fordi det er

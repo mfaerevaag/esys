@@ -94,15 +94,15 @@ telefon har plads til den.
 I vores tilfælde er strømforbrug ikke en særlig vigtig egenskab. Det
 er naturligvis hensigsmæssigt at systemet som helhed bruger så lidt
 strøm som muligt, men da der er mange andre komponenter indblandet
-(såsom skærm, sensore og højtalere) vil vores co-processor aldrig
+(såsom skærm, sensore og højtalere) vil vores co-processor sjældent
 blive den afgørende faktor for det samlede strømforbrug.
 
 Pladsforbrug er ej heller af høj betydning. Vi ved at størrelsen på
 co-processoren realistisk set ville være utroligt lille, så om den
-fylder $0.5mm^2$ eller $5mm^2$ er ikke noget, der vil afgøre én
+fylder $0.001mm^2$ eller $1mm^2$ er ikke noget, der vil afgøre én
 implementationsmetode over en anden.
 
-Vi vælger til slut at fokusere hovedsageligt på hastighedsmæssig
+Vi vælger at fokusere hovedsageligt på hastighedsmæssig
 ydeevne. Medicinalt udstyr bør frem for alt være pålideligt og
 præcist, og det er derfor afgørende at hardwaren aldrig bliver en
 flaskehals for dataanalysen. Vi vil hellere have et system som bruger
@@ -132,13 +132,13 @@ implementationen.
 
 \section{Design}
 \subsection{Overordnet}
-Under ses det et diagram over co-processoren med deres sentrale
+Nedenfor ses det et diagram over co-processoren med deres centrale
 komponenter:
 
 \begin{figure}[H]
 \includegraphics[width=18cm]{diagrams/copro.pdf}
-\label{fig:schematic}
 \caption{Skema over MWI co-processor implementationen}
+\label{fig:schematic}
 \end{figure}
 
 Co-processoren er delt op i 2 komponenter som vist på
@@ -151,13 +151,13 @@ Vi har valgt at bruge 30 registre som buffer af data sample
 værdierne. Disse bliver løbende opdateret og når der er modtaget 30
 eller flere værdier bliver de ældste værdier overskrevet, da de ikke
 længere skal bruges. Allerede her er der en klar fordel i forhold til
-A2 implementationen da vi undgår en ekstra \code{load} instruktion for
-at hente de gamle værdier ud. Dette er dog på bekostning af et
+A2 implementationen, da vi undgår en ekstra \code{load} instruktion
+for at hente de gamle værdier ud. Dette er dog på bekostning af et
 forholdsvist stort areal.
 
 En anden mulighed var at bruge 4 registre og som før loade den 30
 ``iterationer'' gamle værdi ind fra \code{DataMemory}. Dette ville
-være pladsbesparende, men ville formodentlig ikke give en
+være pladsbesparende, men ville formodentlig ikke give en betydelig
 energibesparelse, grundet de ekstra cycles nødvendige for \code{load}
 instruktionen.
 
@@ -194,16 +194,16 @@ output repræsenterer output fra bussen og input til co-processoren.
 
 \section{Implementation}
 
-Vi har brukt samme buss interface som i hoved processoren. Derfor er
-det ikke alle signalene som blir brukt. Fordi co-processoren faar sin
-data fra \code{S\_cmdout} bruker vi ikke \code{S\_dataout}.
+Vi har brugt samme bus interface som i hovedprocessoren. Derfor er
+det ikke alle signalene som bliver brugt. Fordi co-processoren får sin
+data fra \code{S\_cmdout} bruger vi ikke \code{S\_dataout}.
 
-\code{S\_datainrdy} blir satt i \emph{Finite State Machinen} til
-co-processoren avhengig om den staller og har fanget dataen.
+\code{S\_datainrdy} bliver sat i \emph{Finite State Machinen} til
+co-processoren afhængig om den staller og har fanget dataen.
 
-Da det er givet at data vaerdiene som blir givet er positive, bruker
-vi ikke two's-complement (\code{tc()}). Dette gjoer at vi kan bruke
-dobbelt saa store datavaerdier.
+Da det er givet at data værdiene som bliver givet er positive, bruger
+vi ikke two's-complement (\code{tc()}). Dette gør at vi kan bruge
+dobbelt så store dataværdier.
 
 \subsection{Register komponent}
 Register komponentet er implementeret med 30 registre som buffer de
@@ -231,7 +231,8 @@ Vi bruger 31 registre til at holde de 30 seneste værdier. Det er
 nødvendigt fordi vi øger counteren i samme cycle som vi registrer en
 ny værdi. Hvis vi kun brugte 30 registre ville den 30 iterationer
 gamle værdi blive overskrevet og count + 1 ville repræsentere den 29
-iterationer gamle værdi.
+iterationer gamle værdi. Denne \code{pointer} wrappes på samme måde
+som \code{count}.
 
 \subsection{MWI}
 Vores \emph{MWI} komponent får to 32-bits værdier som input; en gammel
@@ -243,7 +244,7 @@ Ud giver den resultatet af dens beregning, som er nyt 32-bits signal
 kaldet \code{result}.
 
 Ydermere behøver vi en akkumulator der gemmer resultaterne i
-registre. Denne er naturligvis også paa 32-bits og kaldes \code{acc}.
+registre. Denne er naturligvis også på 32-bits og kaldes \code{acc}.
 
 For at lave udregningen starter vi med at lægge addere input værdien,
 kaldet \code{curr}, og den nuværende akkumulator værdi, for så at
@@ -281,10 +282,6 @@ CPU'en.
     \hline \cellcolor{blue!25}
     AND       & 2          & 0   & 31       & 33          & 6               & 198    \\
     \hline \cellcolor{blue!25}
-    NOT       & 0          & 0   & 0        & 0           & 2               & 0      \\
-    \hline \cellcolor{blue!25}
-    OR        & 0          & 0   & 0        & 0           & 6               & 0      \\
-    \hline \cellcolor{blue!25}
     MUX       & 0          & 32  & 1984     & 2016        & 6               & 12096  \\
     \hline \cellcolor{blue!25}
     ADDER     & 0          & 64  & 20       & 84          & 28              & 2352   \\
@@ -299,18 +296,23 @@ CPU'en.
   \caption{Antal transistore i CPU'en}
 \end{table}
 
+Det samlede areal af co-processoren er altså
 \[ 42894 \cdot 8100nm^2 = 347.4\mu m^2 \]
 
+Dette er næsten 3 gange så stort som co-processoren, grundet de mange
+registre og MUX komponenter. Det er et resultat af vores fokus på
+hastighed og ikke plads.
+
 \subsection{Cycles}
-Der bliver brugt $7471$ til at behandle hele datasættet. Hver MWI
-værdi udregnes på $31$ cycles.
+Der bliver brugt $7471$ toggles til at behandle hele datasættet. Hver
+MWI værdi udregnes på $31$ cycles.
 
 \subsection{Strømforbrug}
 Vi måler strømforbruget nøjagtig som vi gjorde det i A2, blot med
 nyligt målte antal toggle. Først finder vi en realistisk clock
 frekvens til CPU'en. Vi ved fra forrige opgave at samples bliver målt
-$250/s$, og vi bruger $31$ cycles på at udregne en MWI værdi. Vi har
-altså at
+med en rate på $250/s$, og vi bruger $31$ cycles på at udregne en MWI
+værdi. Vi har altså at
 
 \[  \frac{1\ s}{250 * 31\ cycles} = 129\frac{\mu s}{cycle}  \]
 
@@ -435,7 +437,7 @@ implementation i A3.
 
 Vi har prioriteret hastighed over energi- og pladsforbrug i
 implementationen, men har alligevel oplevet en forbedring på næsten
-alle punkter.
+alle områder, undtagen pladsforbrug som blev øget markant.
 
 Vi har undersøgt forskellige måder at implementere dele af
 co-processoren og har valgt iblandt dem ud fra ovenstående fokus.

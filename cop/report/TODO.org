@@ -1,5 +1,6 @@
 * Raport
-** Introduktion
+** DONE Introduktion
+   CLOSED: [2013-12-04 Wed 12:35]
 ** DONE Problemstilling
 ***  CLOSED: [2013-11-27 Wed 17:41]
 ** DONE Design
@@ -15,9 +16,6 @@
 ** DONE Test
   CLOSED: [2013-11-27 Wed 17:40]
 ** Resultater
-** Konsklusjon
+** DONE Konsklusjon
+   CLOSED: [2013-12-04 Wed 12:34]
 ** DONE Koersel
-  CLOSED: [2013-11-27 Wed 18:12]
-** DONE Basic instruks (copy/paste?)
-   CLOSED: [2013-11-27 Wed 18:12]
-** Danskify

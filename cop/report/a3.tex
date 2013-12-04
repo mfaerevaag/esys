@@ -380,13 +380,28 @@ ved at lave en bro mellem CPU og Co-processor, hvorved man kunne
 eliminerer forsinkelsen af co-processor operationerne fuldstændig.
 
 \section{Konlusion}
+Vi har i denne opgave lavet en co-processor som udfører \code{MWI}
+udregningen af QRS algoritmen. Det vil sige at vi er gået fra C kode i
+A1, til en CPU i Gezel og assembler i A2, til en dedikeret hardware
+implementation i A3.
+
+Vi har prioriteret hastighed over energi- og pladsforbrug i
+implementationen, men har alligevel oplevet en forbedring på næsten
+alle punkter.
+
+Vi har undersøgt forskellige måder at implementere dele af
+co-processoren og har valgt iblandt dem ud fra ovenstående fokus.
+
+Vi har analyseret performance i forhold til implementationen i A2, som
+var uden den dedikerede co-processor, og fandt at der blev sparet
+næsten $50\%$ energi, og køretiden blev nedsat med omkring $20\%$.
 
 \section{Kørsel}
 For at lette kørsel af assembler koden har vi lavet et simpelt
 \code{run} eksekverbart script. Det tager en \code{.asm} fil og et
 antal cycles som argumenter og skal eksekveres fra rod
 mappen. Eksempelvis kan de første 1000 cycles af MWI filteret med
-co-processor køres med kommanden \code{bin/run assembly/mwi_copro.asm
-  1000}.
+co-processor køres med kommanden
+\code{bin/run assembly/mwi\_copro.asm 1000}.
 
 \end{document}

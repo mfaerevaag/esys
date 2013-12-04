@@ -163,7 +163,7 @@ instruktionen.
 
 \subsection{MWI}
 \code{MWI} komponentet bruger \code{Regfile}s output til at akkumulere
-de seneste 30 værdier i et register (ACC). Denne akkumulerede værdi
+de seneste 30 værdier i et register (\emph{ACC}). Denne akkumulerede værdi
 bliver i hver cycle divideret med $30$, hvilket er resultatet som
 co-processoren sender tilbage gennem bussen.
 
@@ -171,7 +171,7 @@ co-processoren sender tilbage gennem bussen.
 Vi bruger et slaveinterface i bussen til at kommunikere til og fra
 co-processoren. Dette er implementeret ligesom de eksisterende
 komponenter såsom \code{DataMemory} og \code{Sensor}. Slaveinterfacet
-består af 3 output signaler og 2 input mht.~bussen:
+består af tre output signaler og to input mht.~bussen:
 
 \begin{description}
 \item[S\_cmdout] Dette signal indeholder den command som bussen sender

@@ -7,15 +7,13 @@
    CLOSED: [2013-11-27 Wed 17:41]
 ** DONE Implementation
    CLOSED: [2013-11-27 Wed 18:12]
-*** DONE Beskrive regfile
-   CLOSED: [2013-11-27 Wed 17:39]
-*** DONE Beskrive MWI
-   CLOSED: [2013-11-27 Wed 17:40]
-** Profilering
-*** Areal
+** DONE Profilering
+   CLOSED: [2013-12-04 Wed 15:55]
 ** DONE Test
    CLOSED: [2013-11-27 Wed 17:40]
-** Resultater
+** DONE Resultater
+   CLOSED: [2013-12-04 Wed 15:55]
 ** DONE Konsklusjon
    CLOSED: [2013-12-04 Wed 12:34]
 ** DONE Koersel
+   CLOSED: [2013-12-04 Wed 15:55]

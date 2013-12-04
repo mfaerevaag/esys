@@ -2,11 +2,11 @@
 ** DONE Introduktion
    CLOSED: [2013-12-04 Wed 12:35]
 ** DONE Problemstilling
-***  CLOSED: [2013-11-27 Wed 17:41]
+   CLOSED: [2013-11-27 Wed 17:41]
 ** DONE Design
-***  CLOSED: [2013-11-27 Wed 17:41]
+   CLOSED: [2013-11-27 Wed 17:41]
 ** DONE Implementation
-***  CLOSED: [2013-11-27 Wed 18:12]
+   CLOSED: [2013-11-27 Wed 18:12]
 *** DONE Beskrive regfile
    CLOSED: [2013-11-27 Wed 17:39]
 *** DONE Beskrive MWI
@@ -14,7 +14,7 @@
 ** Profilering
 *** Areal
 ** DONE Test
-  CLOSED: [2013-11-27 Wed 17:40]
+   CLOSED: [2013-11-27 Wed 17:40]
 ** Resultater
 ** DONE Konsklusjon
    CLOSED: [2013-12-04 Wed 12:34]

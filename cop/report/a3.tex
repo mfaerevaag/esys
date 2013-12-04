@@ -258,6 +258,49 @@ multipliceret med en faktor som tilsvarer 30. Dette er yderligere
 forklaret i A2. %TODO
 
 \section{Profilering}
+\subsection{Areal}
+I A2 har vi lavet en fejl i vores udregning af det totale areal af
+CPUen. Vi fandt at der var $14306$ transistore i CPUen, og transistor
+størrelsen er angivet som $90nm$. Vi antager nu at hver transistor
+optager et kvadratisk areal, og at de dermed er $90nm \cdot 90nm =
+8100nm^2$. Dermed har vi et samlet areal for CPUen på
+
+\[ 14306 \cdot 8100nm^2 = 115.9\mu m^2 \]
+
+Vi finder nu arealet af MWI co-processoren og lægger denne til det
+samlede areal. Det kan vi gøre fordi vi ikke har fjernet noget fra
+CPU'en.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline \rowcolor{blue!25}
+              & Co-pro     & MWI & Regfile  & Total gates & Trans. pr. enh. & Trans. \\
+    \hline \cellcolor{blue!25}
+    XNOR      & 5          & 0   & 1984     & 1989        & 8               & 15912  \\
+    \hline \cellcolor{blue!25}
+    AND       & 2          & 0   & 31       & 33          & 6               & 198    \\
+    \hline \cellcolor{blue!25}
+    NOT       & 0          & 0   & 0        & 0           & 2               & 0      \\
+    \hline \cellcolor{blue!25}
+    OR        & 0          & 0   & 0        & 0           & 6               & 0      \\
+    \hline \cellcolor{blue!25}
+    MUX       & 0          & 32  & 1984     & 2016        & 6               & 12096  \\
+    \hline \cellcolor{blue!25}
+    ADDER     & 0          & 64  & 20       & 84          & 28              & 2352   \\
+    \hline \cellcolor{blue!25}
+    MULT      & 0          & 57  & 0        & 57          & 12              & 684    \\
+    \hline \cellcolor{blue!25}
+    Flip-Flop & 66         & 32  & 873      & 971         & 12              & 11652  \\
+    \Xhline{2\arrayrulewidth} \cellcolor{blue!25}
+    Total     &            &     &          &             &                 & 42894  \\
+    \hline\end{tabular}
+  \label{table:transistors}
+  \caption{Antal transistore i CPU'en}
+\end{table}
+
+\[ 42894 \cdot 8100nm^2 = 347.4\mu m^2 \]
+
 \subsection{Cycles}
 Der bliver brugt $7471$ til at behandle hele datasættet. Hver MWI
 værdi udregnes på $31$ cycles.

@@ -1,23 +1,23 @@
-* Introduktion
-* DONE Problemstilling
-  CLOSED: [2013-11-27 Wed 17:41]
-* DONE Design
-  CLOSED: [2013-11-27 Wed 17:41]
-* DONE Implementation
-  CLOSED: [2013-11-27 Wed 18:12]
-** DONE Beskrive regfile
+* Raport
+** Introduktion
+** DONE Problemstilling
+***  CLOSED: [2013-11-27 Wed 17:41]
+** DONE Design
+***  CLOSED: [2013-11-27 Wed 17:41]
+** DONE Implementation
+***  CLOSED: [2013-11-27 Wed 18:12]
+*** DONE Beskrive regfile
    CLOSED: [2013-11-27 Wed 17:39]
-** DONE Beskrive MWI
+*** DONE Beskrive MWI
    CLOSED: [2013-11-27 Wed 17:40]
-* Profilering
-** Areal
-* DONE Test
+** Profilering
+*** Areal
+** DONE Test
   CLOSED: [2013-11-27 Wed 17:40]
-* Resultater
-* Konskulsjon
-** Beskrive masse lort
-* DONE Koersel
+** Resultater
+** Konsklusjon
+** DONE Koersel
   CLOSED: [2013-11-27 Wed 18:12]
 ** DONE Basic instruks (copy/paste?)
    CLOSED: [2013-11-27 Wed 18:12]
-* Danskify
+** Danskify

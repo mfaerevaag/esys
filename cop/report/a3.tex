@@ -67,14 +67,18 @@ af opgaven og rapporten.}
 \tableofcontents
 \clearpage
 
-\section{Introduktion} % Norsk
-Vi har i denne oppgave re-implementeret vores MWI filter fra A2 i form
+\section{Introduktion}
+Vi har i denne opgave re-implementeret vores MWI filter fra A2 i form
 af en co-processor, som styres af processoren i vores tidligere
-system. De kommunikerer over bussen og er ikke direkte forbundet.
+system. Vi har fundet et fokus område mht.~hvad vi mente var den mest
+optimale performance model for co-processoren.
 
-Dette gjoer at vi kan oppnaa en helt annen ydelse naar det gjelder
-analysen av dataen, resulterende en endnu mer realistisk loesning av et
-komplett inlejret system.
+Co-processoren integreres som et yderligere komponent i platformen, og
+kommunikerer med CPU'en gennem bussen.
+
+Denne metode giver et, i forhold til A2, endnu bedre billede af en
+realistisk dedikeret hardware implementation af et specifikt
+komponent, som har én funktion.
 
 \section{Problemstilling}
 \subsection{Fokus}
